@@ -12,7 +12,7 @@
 #include <map>
 #include <vector>
 
-#include "shaderClass.h"
+#include "Shader.h"
 #include "aMesh.h"
 
 class aModel
@@ -24,6 +24,10 @@ public:
     std::string directory;
     bool gammaCorrection;
 
+    std::vector<aVertex> vertices;    
+    std::vector<unsigned int> indices;
+    std::vector<aTexture> textures;
+    
     aModel(std::string const& path, bool gamma);
     void Draw(Shader& shader);
 

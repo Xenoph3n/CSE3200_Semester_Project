@@ -4,7 +4,7 @@
 #include<glad/glad.h>
 #include<stb/stb_image.h>
 
-#include"shaderClass.h"
+#include"Shader.h"
 
 class Texture
 {
@@ -13,7 +13,7 @@ public:
 	const char* type;
 	GLuint unit;
 
-	Texture(const char* image, const char* texType, GLuint slot, GLenum format, GLenum pixelType);
+	Texture(const char* image, const char* texType, GLuint slot, GLuint id);
 
 	// Assigns a texture unit to a texture
 	void texUnit(Shader& shader, const char* uniform, GLuint unit);

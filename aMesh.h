@@ -10,7 +10,7 @@
 #include <string>
 #include <vector>
 
-#include "shaderClass.h"
+#include "Shader.h"
 
 #define MAX_BONE_INFLUENCE 4
 

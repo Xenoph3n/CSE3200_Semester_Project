@@ -1,10 +1,11 @@
 #include "aCamera.h"
 
 aCamera::aCamera(
-    glm::vec3 position = glm::vec3(0.0f, 0.0f, 0.0f), 
-    glm::vec3 up = glm::vec3(0.0f, 1.0f, 0.0f), 
-    float yaw = YAW, float pitch = PITCH) 
-    : Front(glm::vec3(0.0f, 0.0f, -1.0f)), MovementSpeed(SPEED), MouseSensitivity(SENSITIVITY), Zoom(ZOOM)
+    glm::vec3 position, 
+    glm::vec3 up, 
+    float yaw, 
+    float pitch
+) : Front(glm::vec3(0.0f, 0.0f, -1.0f)), MovementSpeed(SPEED), MouseSensitivity(SENSITIVITY), Zoom(ZOOM)
 {
     Position = position;
     WorldUp = up;
@@ -43,7 +44,7 @@ void aCamera::ProcessKeyboard(Camera_Movement direction, float deltaTime)
 }
 
 // processes input received from a mouse input system. Expects the offset value in both the x and y direction.
-void aCamera::ProcessMouseMovement(float xoffset, float yoffset, GLboolean constrainPitch = true)
+void aCamera::ProcessMouseMovement(float xoffset, float yoffset, GLboolean constrainPitch)
 {
     if (!first_clickz) {
         return;

@@ -39,10 +39,10 @@ class aCamera {
         float Zoom;
 
         aCamera(
-            glm::vec3 position,
-            glm::vec3 up, 
-            float yaw,
-            float pitch
+            glm::vec3 position = glm::vec3(0.0f, 0.0f, 0.0f), 
+            glm::vec3 up = glm::vec3(0.0f, 1.0f, 0.0f), 
+            float yaw = YAW, 
+            float pitch = PITCH
         );
         // aCamera(
         //     float posX, 
@@ -62,7 +62,7 @@ class aCamera {
 
         void ProcessKeyboard(Camera_Movement direction, float deltaTime);
 
-        void ProcessMouseMovement(float xoffset, float yoffset, GLboolean constrainPitch);
+        void ProcessMouseMovement(float xoffset, float yoffset, GLboolean constrainPitch = true);
         
         void ProcessMouseScroll(float yoffset);
 
