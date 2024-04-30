@@ -200,6 +200,15 @@ int main()
        
         ourModel.Draw(ourShader);
         staidum.Draw(ourShader);
+        
+        // std::cout << "Size: " << ourModel.meshes.size() << "\n";
+
+        // for (aMesh mesh : ourModel.meshes) {
+        //     for (aVertex vertex : mesh.vertices) {
+        //         std::cout << "(" << vertex.Normal.x << "," << vertex.Normal.y << "," << vertex.Normal.z << ")" <<  " | ";
+        //     }
+        //     std::cout << "\n";
+        // }
 
         glfwSwapBuffers(window);
         glfwPollEvents();

@@ -22,12 +22,9 @@ public:
     std::vector<aTexture> textures_loaded;	// stores all the textures loaded so far, optimization to make sure textures aren't loaded more than once.
     std::vector<aMesh> meshes;
     std::string directory;
+
     bool gammaCorrection;
 
-    std::vector<aVertex> vertices;    
-    std::vector<unsigned int> indices;
-    std::vector<aTexture> textures;
-    
     aModel(std::string const& path, bool gamma);
     void Draw(Shader& shader);
 

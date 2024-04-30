@@ -134,10 +134,6 @@ aMesh aModel::processMesh(aiMesh* mesh, const aiScene* scene)
     std::vector<aTexture> heightMaps = loadMaterialTextures(material, aiTextureType_AMBIENT, "texture_height");
     textures.insert(textures.end(), heightMaps.begin(), heightMaps.end());
 
-    aModel::vertices = vertices;
-    aModel::indices = indices;
-    aModel::textures = textures;
-
     // return a mesh object created from the extracted mesh data
     return aMesh(vertices, indices, textures);
 }

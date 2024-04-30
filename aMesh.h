@@ -34,7 +34,6 @@ struct aTexture
 class aMesh {
 public:
 
-
     std::vector<aVertex>       vertices;
     std::vector<unsigned int> indices;
     std::vector<aTexture>      textures;
