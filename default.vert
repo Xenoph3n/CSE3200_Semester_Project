@@ -20,7 +20,6 @@ out vec3 color;
 out vec2 texCoord;
 
 
-
 // Imports the camera matrix from the main function
 uniform mat4 camMatrix;
 // Imports the model matrix from the main function

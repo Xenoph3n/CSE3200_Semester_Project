@@ -145,7 +145,7 @@ int main()
     glEnable(GL_DEPTH);
 
     Shader ourShader("./resources/shaders/model.vert", "./resources/shaders/model.frag");
-
+    Shader lightShader("./light.vert", "./light.frag");
     GLuint tex_id_1;
     GLuint text_id_2;
 
@@ -154,7 +154,6 @@ int main()
 		Texture("./resources/planks.png", "diffuse", 0, tex_id_1),
 		Texture("./resources/planksSpec.png", "specular", 1, text_id_2)
 	};
-
 
 	std::vector <Vertex> verts(miniSreenVertices, miniSreenVertices + sizeof(miniSreenVertices) / sizeof(Vertex));
     std::vector <Vertex> vertz(quadVertices, quadVertices + sizeof(quadVertices) / sizeof(Vertex));
@@ -170,6 +169,7 @@ int main()
 
     aModel ourModel("./models/stadium/blue_windows.obj", false);
     aModel staidum("./models/stadium/blue_bottom.obj", false);
+    Mesh light(cubeVerts, cubeInd, tex, false);
 
     // render loop
     // -----------
@@ -190,26 +190,28 @@ int main()
 
         glm::mat4 model = glm::mat4(1.0f);
         model = glm::translate(model, glm::vec3(0.0f, 0.0f, 0.0f)); // translate it down so it's at the center of the scene
-		
+
+        glm::vec3 lightColor = glm::vec3(1.0f, 1.0f, 1.0f);
+
+        lightShader.Activate();
+
+        lightShader.setMat4("projection", projection);
+        lightShader.setMat4("view", view);
+        lightShader.setMat4("model", glm::translate(model, glm::vec3(-10.0f, 1.0f, 0.0f)));
+        lightShader.setVec4("lightColor", lightColor);
+        lightShader.setVec3("camPosition", camera.Position);
+        light.Draw(lightShader);
+
         ourShader.Activate();
         
         ourShader.setMat4("projection", projection);
         ourShader.setMat4("view", view);
         model = glm::scale(model, glm::vec3(1.0f, 1.0f, 1.0f));	// it's a bit too big for our scene, so scale it down
         ourShader.setMat4("model", glm::translate(model, glm::vec3(0.0f,1.0f,0.0f)));
-       
+        ourShader.setVec4("lightColor", lightColor);
         ourModel.Draw(ourShader);
         staidum.Draw(ourShader);
         
-        // std::cout << "Size: " << ourModel.meshes.size() << "\n";
-
-        // for (aMesh mesh : ourModel.meshes) {
-        //     for (aVertex vertex : mesh.vertices) {
-        //         std::cout << "(" << vertex.Normal.x << "," << vertex.Normal.y << "," << vertex.Normal.z << ")" <<  " | ";
-        //     }
-        //     std::cout << "\n";
-        // }
-
         glfwSwapBuffers(window);
         glfwPollEvents();
     }
@@ -233,6 +235,10 @@ void processInput(GLFWwindow *window)
         camera.ProcessKeyboard(LEFT, deltaTime);
     if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
         camera.ProcessKeyboard(RIGHT, deltaTime);
+    if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS)
+        camera.MovementSpeed += 1.0f;
+    if (glfwGetKey(window, GLFW_KEY_RIGHT_SHIFT) == GLFW_PRESS)
+        camera.MovementSpeed -= 1.0f;
 
     if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS) {
         camera.first_clickz = true;
