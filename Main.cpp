@@ -144,7 +144,7 @@ int main()
     glEnable(GL_DEPTH_TEST);
     glEnable(GL_DEPTH);
 
-    Shader ourShader("./resources/shaders/model.vert", "./resources/shaders/model.frag");
+    Shader ourShader("./model.vert", "./model.frag");
     Shader lightShader("./light.vert", "./light.frag");
     GLuint tex_id_1;
     GLuint text_id_2;
