@@ -13,6 +13,7 @@ uniform sampler2D texture_specular3;
 in vec2 TexCoords;
 in vec3 crntPos;
 in vec3 Normal;
+in vec4 color;
 
 uniform vec4 lightColor;
 
@@ -41,5 +42,5 @@ vec4 direcLight()
 
 void main()
 {    
-    FragColor = direcLight();
+    FragColor = color;
 }

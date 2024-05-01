@@ -61,6 +61,16 @@ aMesh aModel::processMesh(aiMesh* mesh, const aiScene* scene)
     std::vector<unsigned int> indices;
     std::vector<aTexture> textures;
 
+    
+    // process materials
+    aiMaterial* material = scene->mMaterials[mesh->mMaterialIndex];
+    // we assume a convention for sampler names in the shaders. Each diffuse texture should be named
+    // as 'texture_diffuseN' where N is a sequential number ranging from 1 to MAX_SAMPLER_NUMBER. 
+    // Same applies to other texture as the following list summarizes:
+    // diffuse: texture_diffuseN
+    // specular: texture_specularN
+    // normal: texture_normalN
+
     // walk through each of the mesh's vertices
     for (unsigned int i = 0; i < mesh->mNumVertices; i++)
     {
@@ -71,6 +81,15 @@ aMesh aModel::processMesh(aiMesh* mesh, const aiScene* scene)
         vector.y = mesh->mVertices[i].y;
         vector.z = mesh->mVertices[i].z;
         vertex.Position = vector;
+
+
+        
+        if (mesh->HasVertexColors(i)) {
+            // std::cout << "Color Point" << mesh->mColors[i]->r;
+            // vertex.Color = vector;
+            std::cout << "Color Point" << mesh->mColors[i]->r;
+        }
+        
         // normals
         if (mesh->HasNormals())
         {
@@ -102,7 +121,19 @@ aMesh aModel::processMesh(aiMesh* mesh, const aiScene* scene)
         else
             vertex.TexCoords = glm::vec2(0.0f, 0.0f);
 
+
+        aiColor4D color(0.0f, 0.0f, 0.0f, 1.0f);
+        material->Get(AI_MATKEY_COLOR_DIFFUSE, color);
+        vertex.Color.x = color.r;
+
+        std::cout << vertex.Color.x;
+
+        vertex.Color.y = color.g;
+        vertex.Color.z = color.b;
+        vertex.Color.w = color.a;
+
         vertices.push_back(vertex);
+
     }
     // now wak through each of the mesh's faces (a face is a mesh its triangle) and retrieve the corresponding vertex indices.
     for (unsigned int i = 0; i < mesh->mNumFaces; i++)
@@ -112,14 +143,8 @@ aMesh aModel::processMesh(aiMesh* mesh, const aiScene* scene)
         for (unsigned int j = 0; j < face.mNumIndices; j++)
             indices.push_back(face.mIndices[j]);
     }
-    // process materials
-    aiMaterial* material = scene->mMaterials[mesh->mMaterialIndex];
-    // we assume a convention for sampler names in the shaders. Each diffuse texture should be named
-    // as 'texture_diffuseN' where N is a sequential number ranging from 1 to MAX_SAMPLER_NUMBER. 
-    // Same applies to other texture as the following list summarizes:
-    // diffuse: texture_diffuseN
-    // specular: texture_specularN
-    // normal: texture_normalN
+
+
 
     // 1. diffuse maps
     std::vector<aTexture> diffuseMaps = loadMaterialTextures(material, aiTextureType_DIFFUSE, "texture_diffuse");

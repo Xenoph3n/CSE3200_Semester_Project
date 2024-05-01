@@ -167,8 +167,11 @@ int main()
     // Mesh quad(vertz, ind, tex);
     // Mesh cube(cubeVerts, cubeInd, tex);
 
-    aModel ourModel("./models/stadium/blue_windows.obj", false);
-    aModel staidum("./models/stadium/blue_bottom.obj", false);
+//     aModel ourModel("./models/stadium/blue_windows.obj", false);
+//     aModel staidum("./stadium/blue_1/chairs.obj", false);
+    // aModel strad("./models/strad/strad.gltf", false);
+    aModel mega_cube("./models/cube/mega_cube.gltf", false);
+    
     Mesh light(cubeVerts, cubeInd, tex, false);
 
     // render loop
@@ -209,8 +212,15 @@ int main()
         model = glm::scale(model, glm::vec3(1.0f, 1.0f, 1.0f));	// it's a bit too big for our scene, so scale it down
         ourShader.setMat4("model", glm::translate(model, glm::vec3(0.0f,1.0f,0.0f)));
         ourShader.setVec4("lightColor", lightColor);
-        ourModel.Draw(ourShader);
-        staidum.Draw(ourShader);
+        // ourModel.Draw(ourShader);
+        // staidum.Draw(ourShader);
+        // strad.Draw(ourShader);
+        mega_cube.Draw(ourShader);
+        for (aMesh mesh : mega_cube.meshes)
+        {
+            std::cout << "Color (" << mesh.vertices[0].Color.x  << "," << mesh.vertices[0].Color.y << ","<< mesh.vertices[0].Color.z << "," << mesh.vertices[0].Color.w << ")" << "\n";
+        }
+        
         
         glfwSwapBuffers(window);
         glfwPollEvents();
@@ -235,6 +245,9 @@ void processInput(GLFWwindow *window)
         camera.ProcessKeyboard(LEFT, deltaTime);
     if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
         camera.ProcessKeyboard(RIGHT, deltaTime);
+    if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS) 
+        camera.ProcessKeyboard(UP, deltaTime);
+    
     if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS)
         camera.MovementSpeed += 1.0f;
     if (glfwGetKey(window, GLFW_KEY_RIGHT_SHIFT) == GLFW_PRESS)
