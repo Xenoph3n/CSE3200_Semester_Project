@@ -57,6 +57,9 @@
     <ClCompile Include="aCamera.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+     <ClCompile Include="Circle.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="EBO.h">
@@ -84,6 +87,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="aCamera.h">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+     <ClCompile Include="Circle.h">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

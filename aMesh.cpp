@@ -84,6 +84,7 @@ void aMesh::SetupMesh()
     glEnableVertexAttribArray(3);
     glVertexAttribPointer(3, 4, GL_FLOAT, GL_FALSE, sizeof(aVertex), (void*)offsetof(aVertex, Color));
     
+    // we will hook this up later
     // // vertex tangent
     // glEnableVertexAttribArray(3);
     // glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, sizeof(aVertex), (void*)offsetof(aVertex, Tangent));

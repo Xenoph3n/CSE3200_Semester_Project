@@ -16,6 +16,7 @@
 #include "aModel.h"
 #include "Mesh.h"
 #include "Texture.h"
+#include "Circle.h"
 
 #include <iostream>
 
@@ -167,12 +168,12 @@ int main()
     // Mesh quad(vertz, ind, tex);
     // Mesh cube(cubeVerts, cubeInd, tex);
 
-//     aModel ourModel("./models/stadium/blue_windows.obj", false);
-//     aModel staidum("./stadium/blue_1/chairs.obj", false);
-    // aModel strad("./models/strad/strad.gltf", false);
     aModel mega_cube("./models/cube/mega_cube.gltf", false);
     
     Mesh light(cubeVerts, cubeInd, tex, false);
+
+    Circle circle;
+    circle.calculate(glm::vec3(0.0f, 0.0f, 0.0f), 30.0f, 10.0f);
 
     // render loop
     // -----------
@@ -216,10 +217,10 @@ int main()
         // staidum.Draw(ourShader);
         // strad.Draw(ourShader);
         mega_cube.Draw(ourShader);
-        for (aMesh mesh : mega_cube.meshes)
-        {
-            std::cout << "Color (" << mesh.vertices[0].Color.x  << "," << mesh.vertices[0].Color.y << ","<< mesh.vertices[0].Color.z << "," << mesh.vertices[0].Color.w << ")" << "\n";
-        }
+        // for (aMesh mesh : mega_cube.meshes)
+        // {
+        //     std::cout << "Color (" << mesh.vertices[0].Color.x  << "," << mesh.vertices[0].Color.y << ","<< mesh.vertices[0].Color.z << "," << mesh.vertices[0].Color.w << ")" << "\n";
+        // }
         
         
         glfwSwapBuffers(window);

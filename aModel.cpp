@@ -126,7 +126,7 @@ aMesh aModel::processMesh(aiMesh* mesh, const aiScene* scene)
         material->Get(AI_MATKEY_COLOR_DIFFUSE, color);
         vertex.Color.x = color.r;
 
-        std::cout << vertex.Color.x;
+        // std::cout << vertex.Color.x;
 
         vertex.Color.y = color.g;
         vertex.Color.z = color.b;
