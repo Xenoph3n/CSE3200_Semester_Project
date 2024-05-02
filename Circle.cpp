@@ -6,7 +6,7 @@ void Circle::calculate(glm::vec3 center_position, float angle_in_degrees, float 
     int number_of_sections_per_quadrant = number_of_sections / 4;
 
     glm::vec3 positions[number_of_sections + 1];
-    unsigned int indices[number_of_sections * number_of_sections_per_quadrant];
+    unsigned int ind[number_of_sections * number_of_sections_per_quadrant];
 
     std::cout << number_of_sections << "\n";
 
@@ -38,9 +38,11 @@ void Circle::calculate(glm::vec3 center_position, float angle_in_degrees, float 
         glm::vec3 quad_3 = glm::vec3(center_position.x - positions[i].x, center_position.y - positions[i].y, 0.0f);
         glm::vec3 quad_4 = glm::vec3(center_position.x - positions[i].x, positions[i].y, 0.0f);
 
-        positions[number_of_sections_per_quadrant + i] = quad_2;
+
+        positions[number_of_sections_per_quadrant * 2 - i] = quad_2;
+        positions[number_of_sections_per_quadrant * 4 - i] = quad_4;
+
         positions[number_of_sections_per_quadrant * 2 + i] = quad_3;
-        positions[number_of_sections_per_quadrant * 3 + i] = quad_4;
         std::cout << "hello..." << "\n";    
     }
 
@@ -54,22 +56,61 @@ void Circle::calculate(glm::vec3 center_position, float angle_in_degrees, float 
 
     positions[number_of_sections] = center_position;
 
-    for (int i = 0; i < number_of_sections + 1; i++) {
-        std::cout << "(" << positions[i].x << "," << positions[i].y << "," << positions[i].z << ")" << "\n";
-    }
+    // for (int i = 0; i < number_of_sections + 1; i++) {
+    //     std::cout << "(" << positions[i].x << "," << positions[i].y << "," << positions[i].z << ")" << "\n";
+    // }
 
     int count = 0;
     for (int i = 0; i < number_of_sections * number_of_sections_per_quadrant; i+=number_of_sections_per_quadrant) {
-        indices[i] = number_of_sections;
-        
+        // ind[i] = number_of_sections;
+        indices.push_back(number_of_sections);
+
         if (count + 1 != number_of_sections) {
-            indices[i + 1 ] = count;
-            indices[i + 2] = count + 1; 
+            indices.push_back(count);
+            indices.push_back(count + 1);
+            // ind[i + 1] = count;
+            // ind[i + 2] = count + 1; 
         } else {
-            indices[i + 1 ] = count;
-            indices[i + 2] = 0; 
+            indices.push_back(count);
+            indices.push_back(0);
+        
+            // ind[i + 1 ] = count;
+            // ind[i + 2] = 0; 
         }
+
         count +=1;
     }
+
+    // for (int i = 0; i < number_of_sections * number_of_sections_per_quadrant; i++) {
+    //     std::cout << indices.at(i) << "\n";
+    // }
+
+    for (int i = 0; i < number_of_sections; i++) {
+        Vertex vertex;
+
+        vertex.position = positions[i];
+        vertex.color = glm::vec4(1.0f, 0.0f, 0.0f, 1.0f);
+        vertex.normal = glm::vec3(0.0f, 1.0f, 0.0f);
+        vertex.texUV = glm::vec2(positions[i].x, positions[i].y);
+        // std::cout << "(" << positions[i].x << "," << positions[i].y << "," << positions[i].z << ")" << "\n";
+        // std::cout << "(" << vertex.position.x << "," << vertex.position.y << "," << vertex.position.z << ")" << "\n";
+        // std::cout << "(" << vertex.normal.x << "," << vertex.normal.y << "," << vertex.normal.z << ")" << "\n";
+        // std::cout << "(" << vertex.color.x << "," << vertex.color.y << "," << vertex.color.z << ")" << "\n";
+        // std::cout << "(" << vertex.texUV.x << "," << vertex.texUV.y << ")" << "\n";
+
+        vertices.push_back(vertex);
+    }
+
     
+    for (int i = 0; i < number_of_sections; i++) {
+        std::cout << "(" << vertices[i].position.x << "," << vertices[i].position.y << "," << vertices[i].position.z << ")" << "\n";
+
+    }
+
+	// glm::vec3 position;
+	// glm::vec3 normal; --> up vector
+	// glm::vec3 color; --> random color
+	// glm::vec2 texUV; --> just the x and y for position
+
+
 }
