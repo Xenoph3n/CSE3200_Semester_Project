@@ -90,8 +90,8 @@ GLuint indices[] =
 };
 
 // settings
-const unsigned int SCR_WIDTH = 1200;
-const unsigned int SCR_HEIGHT = 1200;
+const unsigned int SCR_WIDTH = 1920;
+const unsigned int SCR_HEIGHT = 1080;
 
 // camera
 aCamera camera(glm::vec3(0.0f, 0.0f, 3.0f));
@@ -173,7 +173,7 @@ int main()
     Mesh light(cubeVerts, cubeInd, tex, false);
 
     Circle circle;
-    circle.calculate(glm::vec3(0.0f, 0.0f, 0.0f), 30.0f, 10.0f);
+    circle.calculate(glm::vec3(0.0f, 0.0f, 0.0f), 1.0f, 10.0f);
 
     Mesh plane(circle.vertices, circle.indices, tex, false);
 

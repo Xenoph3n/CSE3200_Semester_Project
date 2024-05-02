@@ -60,7 +60,7 @@ void Circle::calculate(glm::vec3 center_position, float angle_in_degrees, float 
     //     std::cout << "(" << positions[i].x << "," << positions[i].y << "," << positions[i].z << ")" << "\n";
     // }
 
-    int count = 0;
+    unsigned int count = 0;
     for (int i = 0; i < number_of_sections * number_of_sections_per_quadrant; i+=number_of_sections_per_quadrant) {
         // ind[i] = number_of_sections;
         indices.push_back(number_of_sections);
@@ -82,7 +82,7 @@ void Circle::calculate(glm::vec3 center_position, float angle_in_degrees, float 
     }
 
     // for (int i = 0; i < number_of_sections * number_of_sections_per_quadrant; i++) {
-    //     std::cout << indices.at(i) << "\n";
+    //     std::cout << "Index " << indices.at(i) << "\n";
     // }
 
     for (int i = 0; i < number_of_sections; i++) {
