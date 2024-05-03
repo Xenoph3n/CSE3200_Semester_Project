@@ -242,7 +242,7 @@ int main()
                         SCR_WIDTH, 
                         SCR_HEIGHT,
                         glm::vec3(1.0f, 1.0f, 1.0f),
-                        glm::vec3(100.0f, 0.0f, -50.0f)   
+                        glm::vec3(50.0f, 0.0f, -50.0f)   
                         );
 
         
@@ -251,7 +251,7 @@ int main()
                         SCR_WIDTH, 
                         SCR_HEIGHT,
                         glm::vec3(1.0f, 1.0f, 1.0f),
-                        glm::vec3(200.0f, 0.0f, -50.0f)   
+                        glm::vec3(110.0f, 0.0f, -50.0f)   
                         );
         // x++;
 
