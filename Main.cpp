@@ -17,6 +17,8 @@
 #include "Mesh.h"
 #include "Texture.h"
 #include "Circle.h"
+#include "Render.h"
+
 
 #include <iostream>
 
@@ -52,27 +54,27 @@ float rectangleVertices2[] =
 };
 
 Vertex miniSreenVertices[] = {
-	Vertex{glm::vec3(-0.5f, 0.5f,  0.0f), glm::vec3(0.0f, 1.0f, 0.0f), glm::vec3(1.0f, 1.0f, 1.0f), glm::vec2(0.0f, 0.0f)},
-	Vertex{glm::vec3(-0.5f, -0.5f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f), glm::vec3(1.0f, 1.0f, 1.0f), glm::vec2(0.0f, 1.0f)},
-	Vertex{glm::vec3( 0.5f, -0.5f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f), glm::vec3(1.0f, 1.0f, 1.0f), glm::vec2(1.0f, 1.0f)},
-	Vertex{glm::vec3( 0.5f, 0.5f,  0.0f), glm::vec3(0.0f, 1.0f, 0.0f), glm::vec3(1.0f, 1.0f, 1.0f), glm::vec2(1.0f, 0.0f)}
+	Vertex{glm::vec3(-0.5f, 0.5f,  0.0f), glm::vec3(0.0f, 1.0f, 0.0f), glm::vec4(1.0f, 1.0f, 1.0f, 1.0f), glm::vec2(0.0f, 0.0f)},
+	Vertex{glm::vec3(-0.5f, -0.5f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f), glm::vec4(1.0f, 1.0f, 1.0f, 1.0f), glm::vec2(0.0f, 1.0f)},
+	Vertex{glm::vec3( 0.5f, -0.5f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f), glm::vec4(1.0f, 1.0f, 1.0f, 1.0f), glm::vec2(1.0f, 1.0f)},
+	Vertex{glm::vec3( 0.5f, 0.5f,  0.0f), glm::vec3(0.0f, 1.0f, 0.0f), glm::vec4(1.0f, 1.0f, 1.0f, 1.0f), glm::vec2(1.0f, 0.0f)}
 };
 
 Vertex quadVertices[] = {
-	Vertex{glm::vec3(-1.0f, 0.0f,  1.0f), glm::vec3(0.0f, 1.0f, 0.0f), glm::vec3(1.0f, 1.0f, 1.0f), glm::vec2(0.0f, 0.0f)},
-	Vertex{glm::vec3(-1.0f, 0.0f, -1.0f), glm::vec3(0.0f, 1.0f, 0.0f), glm::vec3(1.0f, 1.0f, 1.0f), glm::vec2(0.0f, 1.0f)},
-	Vertex{glm::vec3( 1.0f, 0.0f, -1.0f), glm::vec3(0.0f, 1.0f, 0.0f), glm::vec3(1.0f, 1.0f, 1.0f), glm::vec2(1.0f, 1.0f)},
-	Vertex{glm::vec3( 1.0f, 0.0f,  1.0f), glm::vec3(0.0f, 1.0f, 0.0f), glm::vec3(1.0f, 1.0f, 1.0f), glm::vec2(1.0f, 0.0f)}
+	Vertex{glm::vec3(-1.0f, 0.0f,  1.0f), glm::vec3(0.0f, 1.0f, 0.0f), glm::vec4(1.0f, 1.0f, 1.0f, 1.0f), glm::vec2(0.0f, 0.0f)},
+	Vertex{glm::vec3(-1.0f, 0.0f, -1.0f), glm::vec3(0.0f, 1.0f, 0.0f), glm::vec4(1.0f, 1.0f, 1.0f, 1.0f), glm::vec2(0.0f, 1.0f)},
+	Vertex{glm::vec3( 1.0f, 0.0f, -1.0f), glm::vec3(0.0f, 1.0f, 0.0f), glm::vec4(1.0f, 1.0f, 1.0f, 1.0f), glm::vec2(1.0f, 1.0f)},
+	Vertex{glm::vec3( 1.0f, 0.0f,  1.0f), glm::vec3(0.0f, 1.0f, 0.0f), glm::vec4(1.0f, 1.0f, 1.0f, 1.0f), glm::vec2(1.0f, 0.0f)}
 };
 
 
 // Vertices coordinates
 Vertex cubeVertices[] =
 { //               COORDINATES           /            COLORS          /           NORMALS         /       TEXTURE COORDINATES    //
-	Vertex{glm::vec3(-1.0f, 0.0f,  1.0f), glm::vec3(0.0f, 1.0f, 0.0f), glm::vec3(1.0f, 1.0f, 1.0f), glm::vec2(0.0f, 0.0f)},
-	Vertex{glm::vec3(-1.0f, 0.0f, -1.0f), glm::vec3(0.0f, 1.0f, 0.0f), glm::vec3(1.0f, 1.0f, 1.0f), glm::vec2(0.0f, 1.0f)},
-	Vertex{glm::vec3( 1.0f, 0.0f, -1.0f), glm::vec3(0.0f, 1.0f, 0.0f), glm::vec3(1.0f, 1.0f, 1.0f), glm::vec2(1.0f, 1.0f)},
-	Vertex{glm::vec3( 1.0f, 0.0f,  1.0f), glm::vec3(0.0f, 1.0f, 0.0f), glm::vec3(1.0f, 1.0f, 1.0f), glm::vec2(1.0f, 0.0f)}
+	Vertex{glm::vec3(-1.0f, 0.0f,  1.0f), glm::vec3(0.0f, 1.0f, 0.0f), glm::vec4(1.0f, 1.0f, 1.0f, 1.0f), glm::vec2(0.0f, 0.0f)},
+	Vertex{glm::vec3(-1.0f, 0.0f, -1.0f), glm::vec3(0.0f, 1.0f, 0.0f), glm::vec4(1.0f, 1.0f, 1.0f, 1.0f), glm::vec2(0.0f, 1.0f)},
+	Vertex{glm::vec3( 1.0f, 0.0f, -1.0f), glm::vec3(0.0f, 1.0f, 0.0f), glm::vec4(1.0f, 1.0f, 1.0f, 1.0f), glm::vec2(1.0f, 1.0f)},
+	Vertex{glm::vec3( 1.0f, 0.0f,  1.0f), glm::vec3(0.0f, 1.0f, 0.0f), glm::vec4(1.0f, 1.0f, 1.0f, 1.0f), glm::vec2(1.0f, 0.0f)}
 };
 
 // Indices for vertices order
@@ -102,6 +104,8 @@ bool firstMouse = true;
 // timing
 float deltaTime = 0.0f;
 float lastFrame = 0.0f;
+
+
 
 int main()
 {
@@ -146,7 +150,9 @@ int main()
     glEnable(GL_DEPTH);
 
     Shader ourShader("./model.vert", "./model.frag");
+    Shader planeShader("./plane.vert", "./plane.frag");
     Shader lightShader("./light.vert", "./light.frag");
+
     GLuint tex_id_1;
     GLuint text_id_2;
 
@@ -173,9 +179,13 @@ int main()
     Mesh light(cubeVerts, cubeInd, tex, false);
 
     Circle circle;
-    circle.calculate(glm::vec3(0.0f, 0.0f, 0.0f), 1.0f, 10.0f);
+    circle.calculate(glm::vec3(0.0f, 0.0f, 0.0f), 1.0f, 50.0f, glm::vec4(1.0f, 0.0f, 0.0f, 1.0f));
 
     Mesh plane(circle.vertices, circle.indices, tex, false);
+
+    Render render;
+    render.get_file_list("./stadium/blue_1");
+
 
     // render loop
     // -----------
@@ -191,13 +201,13 @@ int main()
         glClearColor(0.05f, 0.05f, 0.25f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-        glm::mat4 projection = glm::perspective(glm::radians(camera.Zoom), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f);
+        glm::mat4 projection = glm::perspective(glm::radians(camera.Zoom), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 2000.0f);
         glm::mat4 view = camera.GetViewMatrix();
 
         glm::mat4 model = glm::mat4(1.0f);
         model = glm::translate(model, glm::vec3(0.0f, 0.0f, 0.0f)); // translate it down so it's at the center of the scene
 
-        glm::vec3 lightColor = glm::vec3(1.0f, 1.0f, 1.0f);
+        glm::vec3 lightColor = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
 
         lightShader.Activate();
 
@@ -206,20 +216,29 @@ int main()
         lightShader.setMat4("model", glm::translate(model, glm::vec3(-10.0f, 1.0f, 0.0f)));
         lightShader.setVec4("lightColor", lightColor);
         lightShader.setVec3("camPosition", camera.Position);
+
         light.Draw(lightShader);
 
-        ourShader.Activate();
+        render.render(ourShader, camera, SCR_WIDTH, SCR_HEIGHT);
+        // ourShader.Activate();
         
-        ourShader.setMat4("projection", projection);
-        ourShader.setMat4("view", view);
+        // ourShader.setMat4("projection", projection);
+        // ourShader.setMat4("view", view);
+        // model = glm::scale(model, glm::vec3(1.0f, 1.0f, 1.0f));	// it's a bit too big for our scene, so scale it down
+        // ourShader.setMat4("model", glm::translate(model, glm::vec3(0.0f,2.0f,0.0f)));
+        // ourShader.setVec4("lightColor", lightColor);
+       
+        // mega_cube.Draw(ourShader);
+
+        planeShader.Activate();
+
+        planeShader.setMat4("projection", projection);
+        planeShader.setMat4("view", view);
         model = glm::scale(model, glm::vec3(1.0f, 1.0f, 1.0f));	// it's a bit too big for our scene, so scale it down
-        ourShader.setMat4("model", glm::translate(model, glm::vec3(0.0f,0.0f,0.0f)));
-        ourShader.setVec4("lightColor", lightColor);
-        // ourModel.Draw(ourShader);
-        // staidum.Draw(ourShader);
-        // strad.Draw(ourShader);
-        mega_cube.Draw(ourShader);
-        plane.Draw(ourShader);
+        planeShader.setMat4("model", glm::translate(model, glm::vec3(0.0f,-20.0f,0.0f)));
+        planeShader.setVec4("lightColor", lightColor);
+       
+        plane.Draw(planeShader);
         // for (aMesh mesh : mega_cube.meshes)
         // {
         //     std::cout << "Color (" << mesh.vertices[0].Color.x  << "," << mesh.vertices[0].Color.y << ","<< mesh.vertices[0].Color.z << "," << mesh.vertices[0].Color.w << ")" << "\n";

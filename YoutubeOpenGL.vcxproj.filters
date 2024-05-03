@@ -60,6 +60,9 @@
      <ClCompile Include="Circle.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Render.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="EBO.h">
@@ -83,18 +86,21 @@
     <ClInclude Include="aModel.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClCompile Include="Shader.h">
+    <ClInclude Include="Shader.h">
       <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="aCamera.h">
+    </ClInclude>
+    <ClInclude Include="aCamera.h">
       <Filter>Source Files</Filter>
-    </ClCompile>
-     <ClCompile Include="Circle.h">
+    </ClInclude>
+     <ClInclude Include="Circle.h">
       <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Vertex.h">
+    </ClInclude>
+    <ClInclude Include="Render.h">
       <Filter>Source Files</Filter>
-    </ClCompile>
+    </ClInclude>
+    <ClInclude Include="Vertex.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="default.vert">
@@ -113,6 +119,12 @@
       <Filter>Resource Files\Shaders</Filter>
     </None>
     <None Include="model.vert">
+      <Filter>Resource Files\Shaders</Filter>
+    </None>
+    <None Include="plane.frag">
+      <Filter>Resource Files\Shaders</Filter>
+    </None>
+    <None Include="plane.vert">
       <Filter>Resource Files\Shaders</Filter>
     </None>
   </ItemGroup>
