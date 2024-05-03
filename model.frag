@@ -42,5 +42,5 @@ vec4 direcLight()
 
 void main()
 {    
-    FragColor = color;
+    FragColor = direcLight();
 }

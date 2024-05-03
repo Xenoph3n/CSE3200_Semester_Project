@@ -179,14 +179,23 @@ int main()
     Mesh light(cubeVerts, cubeInd, tex, false);
 
     Circle circle;
-    circle.calculate(glm::vec3(0.0f, 0.0f, 0.0f), 1.0f, 50.0f, glm::vec4(1.0f, 0.0f, 0.0f, 1.0f));
+    circle.calculate(glm::vec3(0.0f, 0.0f, 0.0f), 30.0f, 50.0f, glm::vec4(1.0f, 0.0f, 0.0f, 1.0f));
 
     Mesh plane(circle.vertices, circle.indices, tex, false);
 
     Render render;
     render.get_file_list("./stadium/blue_1");
 
+    Render render2;
+    render2.get_file_list("./stadium/blue_2");
 
+    Render render3;
+    render3.get_file_list("./stadium/blue_3");
+
+    std::cout << glGetString(GL_VENDOR) << "\n";
+
+    std::cout << glGetString(GL_RENDERER) << "\n";
+    // int x = 0;
     // render loop
     // -----------
     while (!glfwWindowShouldClose(window))
@@ -219,7 +228,36 @@ int main()
 
         light.Draw(lightShader);
 
-        render.render(ourShader, camera, SCR_WIDTH, SCR_HEIGHT);
+        render.render(  ourShader, 
+                        camera, 
+                        SCR_WIDTH, 
+                        SCR_HEIGHT,
+                        glm::vec3(1.0f, 1.0f, 1.0f),
+                        glm::vec3(0.0f, 0.0f, -50.0f)   
+                        );
+
+        
+        render2.render(  ourShader, 
+                        camera, 
+                        SCR_WIDTH, 
+                        SCR_HEIGHT,
+                        glm::vec3(1.0f, 1.0f, 1.0f),
+                        glm::vec3(100.0f, 0.0f, -50.0f)   
+                        );
+
+        
+        render3.render(  ourShader, 
+                        camera, 
+                        SCR_WIDTH, 
+                        SCR_HEIGHT,
+                        glm::vec3(1.0f, 1.0f, 1.0f),
+                        glm::vec3(200.0f, 0.0f, -50.0f)   
+                        );
+        // x++;
+
+        // if (x == circle.vertices.size() - 1) {
+        //     x = 0;
+        // }
         // ourShader.Activate();
         
         // ourShader.setMat4("projection", projection);
