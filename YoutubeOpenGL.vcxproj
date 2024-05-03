@@ -185,6 +185,8 @@
     <ClInclude Include="VAO.h" />
     <ClInclude Include="VBO.h" />
     <ClInclude Include="Circle.h" />
+    <ClInclude Include="Vertex.h" />
+
 
   </ItemGroup>
   <ItemGroup>

@@ -90,8 +90,8 @@ GLuint indices[] =
 };
 
 // settings
-const unsigned int SCR_WIDTH = 1200;
-const unsigned int SCR_HEIGHT = 1200;
+const unsigned int SCR_WIDTH = 1920;
+const unsigned int SCR_HEIGHT = 1080;
 
 // camera
 aCamera camera(glm::vec3(0.0f, 0.0f, 3.0f));
@@ -173,7 +173,9 @@ int main()
     Mesh light(cubeVerts, cubeInd, tex, false);
 
     Circle circle;
-    circle.calculate(glm::vec3(0.0f, 0.0f, 0.0f), 30.0f, 10.0f);
+    circle.calculate(glm::vec3(0.0f, 0.0f, 0.0f), 1.0f, 10.0f);
+
+    Mesh plane(circle.vertices, circle.indices, tex, false);
 
     // render loop
     // -----------
@@ -211,12 +213,13 @@ int main()
         ourShader.setMat4("projection", projection);
         ourShader.setMat4("view", view);
         model = glm::scale(model, glm::vec3(1.0f, 1.0f, 1.0f));	// it's a bit too big for our scene, so scale it down
-        ourShader.setMat4("model", glm::translate(model, glm::vec3(0.0f,1.0f,0.0f)));
+        ourShader.setMat4("model", glm::translate(model, glm::vec3(0.0f,0.0f,0.0f)));
         ourShader.setVec4("lightColor", lightColor);
         // ourModel.Draw(ourShader);
         // staidum.Draw(ourShader);
         // strad.Draw(ourShader);
         mega_cube.Draw(ourShader);
+        plane.Draw(ourShader);
         // for (aMesh mesh : mega_cube.meshes)
         // {
         //     std::cout << "Color (" << mesh.vertices[0].Color.x  << "," << mesh.vertices[0].Color.y << ","<< mesh.vertices[0].Color.z << "," << mesh.vertices[0].Color.w << ")" << "\n";

@@ -92,6 +92,9 @@
      <ClCompile Include="Circle.h">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Vertex.h">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="default.vert">
