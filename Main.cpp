@@ -168,7 +168,7 @@ int main()
     // Mesh quad(vertz, ind, tex);
     // Mesh cube(cubeVerts, cubeInd, tex);
 
-    aModel mega_cube("./models/cube/mega_cube.gltf", false);
+    aModel mega_cube("./stadium/blue_1/mid_section.obj", false);
     
     Mesh light(cubeVerts, cubeInd, tex, false);
 

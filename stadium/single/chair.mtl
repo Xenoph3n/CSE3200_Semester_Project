@@ -1,10 +1,10 @@
-# Blender 4.0.2 MTL File: 'blue_1.blend'
+# Blender 4.0.2 MTL File: 'blue_2.blend'
 # www.blender.org
 
-newmtl Material.011
+newmtl Material.018
 Ns 250.000000
 Ka 1.000000 1.000000 1.000000
-Kd 0.800266 0.000000 0.003762
+Kd 0.800000 0.000000 0.004000
 Ks 0.500000 0.500000 0.500000
 Ke 0.000000 0.000000 0.000000
 Ni 1.450000
