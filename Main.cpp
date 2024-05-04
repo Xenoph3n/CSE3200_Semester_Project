@@ -277,11 +277,6 @@ int main()
         planeShader.setVec4("lightColor", lightColor);
        
         plane.Draw(planeShader);
-        // for (aMesh mesh : mega_cube.meshes)
-        // {
-        //     std::cout << "Color (" << mesh.vertices[0].Color.x  << "," << mesh.vertices[0].Color.y << ","<< mesh.vertices[0].Color.z << "," << mesh.vertices[0].Color.w << ")" << "\n";
-        // }
-        
         
         glfwSwapBuffers(window);
         glfwPollEvents();
