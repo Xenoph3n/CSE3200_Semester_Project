@@ -147,7 +147,6 @@ int main()
     stbi_set_flip_vertically_on_load(true);
 
     glEnable(GL_DEPTH_TEST);
-    glEnable(GL_DEPTH);
 
     Shader ourShader("./model.vert", "./model.frag");
     Shader planeShader("./plane.vert", "./plane.frag");
@@ -195,12 +194,38 @@ int main()
     std::cout << glGetString(GL_VENDOR) << "\n";
 
     std::cout << glGetString(GL_RENDERER) << "\n";
+    
+    ourShader.Activate();
+
+    render.render(  ourShader, 
+                camera, 
+                SCR_WIDTH, 
+                SCR_HEIGHT,
+                glm::vec3(1.0f, 1.0f, 1.0f),
+                glm::vec3(0.0f, 0.0f, -50.0f)   
+                );
+
+    render2.render(  ourShader, 
+                        camera, 
+                        SCR_WIDTH, 
+                        SCR_HEIGHT,
+                        glm::vec3(1.0f, 1.0f, 1.0f),
+                        glm::vec3(50.0f, 0.0f, -50.0f)   
+                        );
+
+        render3.render(  ourShader, 
+                        camera, 
+                        SCR_WIDTH, 
+                        SCR_HEIGHT,
+                        glm::vec3(1.0f, 1.0f, 1.0f),
+                        glm::vec3(110.0f, 0.0f, -50.0f)   
+                        );
     // int x = 0;
     // render loop
     // -----------
     while (!glfwWindowShouldClose(window))
     {
-        glDisable(GL_CLIP_DISTANCE0);
+        // glDisable(GL_CLIP_DISTANCE0);
         float currentFrame = static_cast<float>(glfwGetTime());
         deltaTime = currentFrame - lastFrame;
         lastFrame = currentFrame;
@@ -228,31 +253,18 @@ int main()
 
         light.Draw(lightShader);
 
-        render.render(  ourShader, 
-                        camera, 
-                        SCR_WIDTH, 
-                        SCR_HEIGHT,
-                        glm::vec3(1.0f, 1.0f, 1.0f),
-                        glm::vec3(0.0f, 0.0f, -50.0f)   
-                        );
+        ourShader.Activate();
+
+
+        render.draw(ourShader, camera, SCR_WIDTH, SCR_HEIGHT, glm::mat4(1.0f), glm::vec3(1.0f, 1.0f, 1.0f), glm::vec3(0.0f, 0.0f, -50.0f));
+
+        ourShader.Activate();
+        render2.draw(ourShader, camera, SCR_WIDTH, SCR_HEIGHT, glm::mat4(1.0f), glm::vec3(1.0f, 1.0f, 1.0f), glm::vec3(50.0f, 0.0f, -50.0f));
+
+        ourShader.Activate();
+        render3.draw(ourShader, camera, SCR_WIDTH, SCR_HEIGHT,  glm::mat4(1.0f), glm::vec3(1.0f, 1.0f, 1.0f), glm::vec3(110.0f, 0.0f, -50.0f));
 
         
-        render2.render(  ourShader, 
-                        camera, 
-                        SCR_WIDTH, 
-                        SCR_HEIGHT,
-                        glm::vec3(1.0f, 1.0f, 1.0f),
-                        glm::vec3(50.0f, 0.0f, -50.0f)   
-                        );
-
-        
-        render3.render(  ourShader, 
-                        camera, 
-                        SCR_WIDTH, 
-                        SCR_HEIGHT,
-                        glm::vec3(1.0f, 1.0f, 1.0f),
-                        glm::vec3(110.0f, 0.0f, -50.0f)   
-                        );
         // x++;
 
         // if (x == circle.vertices.size() - 1) {
