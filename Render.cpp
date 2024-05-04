@@ -58,7 +58,32 @@ void Render::render_model(Shader &shader, std::string file_path, glm::mat4 proje
     shader.setMat4("model", glm::translate(model, translation));
     shader.setVec4("lightColor", light_color);
     
-    object.Draw(shader);
+    for (aMesh mesh :  object.meshes) {
+        meshes.push_back(mesh);
+    }
+
+    // meshes.push_back(object);
+    // object.Draw(shader);
+}
+
+void Render::draw(Shader &shader, aCamera &camera, float screen_height, float screen_width, glm::mat4 model, glm::vec3 scale, glm::vec3 translation) {
+    for (unsigned int i = 0; i < meshes.size(); i++) {
+
+        shader.Activate();
+
+        // glm::mat4 projection = glm::perspective(glm::radians(camera.Zoom), (float)screen_width / (float) screen_height, 0.1f, 2000.0f);
+        glm::mat4 view = camera.GetViewMatrix();
+        model = glm::scale(model, scale);	
+        shader.setMat4("model", glm::translate(model, translation));    
+        // shader.setMat4("projection", projection);
+        shader.setMat4("view", view);
+
+        meshes[i].Draw(shader);
+
+        // for (unsigned int x = 0; x < meshes[i].vertices.size(); x++) {
+        //     std::cout << meshes[i].vertices[x].Position.x << "," << meshes[x].vertices[x].Position.y << "," << meshes[i].vertices[x].Position.z << ")" << "\n";
+        // }
+    }
 }
 
 bool Render::endsWith(const std::string& str, const std::string& suffix) {

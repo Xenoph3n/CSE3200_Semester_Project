@@ -63,6 +63,9 @@
     <ClCompile Include="Render.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Grass.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="EBO.h">
@@ -101,6 +104,9 @@
     <ClInclude Include="Vertex.h">
       <Filter>Source Files</Filter>
     </ClInclude>
+    <ClInclude Include="Grass.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="default.vert">
@@ -125,6 +131,18 @@
       <Filter>Resource Files\Shaders</Filter>
     </None>
     <None Include="plane.vert">
+      <Filter>Resource Files\Shaders</Filter>
+    </None>
+      <None Include="shiny.frag">
+      <Filter>Resource Files\Shaders</Filter>
+    </None>
+    <None Include="shiny.vert">
+      <Filter>Resource Files\Shaders</Filter>
+    </None>
+      <None Include="grass.frag">
+      <Filter>Resource Files\Shaders</Filter>
+    </None>
+    <None Include="grass.vert">
       <Filter>Resource Files\Shaders</Filter>
     </None>
   </ItemGroup>

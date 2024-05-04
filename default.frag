@@ -106,5 +106,5 @@ vec4 spotLight()
 void main()
 {
 	// outputs final color
-	FragColor = spotLight();
+	FragColor = vec4(1.0, 0.0, 0.0, 1.0);
 }

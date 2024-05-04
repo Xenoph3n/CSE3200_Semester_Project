@@ -18,7 +18,7 @@
 #include "Texture.h"
 #include "Circle.h"
 #include "Render.h"
-
+#include "Grass.h"
 
 #include <iostream>
 
@@ -144,23 +144,24 @@ int main()
         return -1;
     }
 
-    stbi_set_flip_vertically_on_load(true);
+    // stbi_set_flip_vertically_on_load(true);
 
     glEnable(GL_DEPTH_TEST);
-    glEnable(GL_DEPTH);
 
     Shader ourShader("./model.vert", "./model.frag");
     Shader planeShader("./plane.vert", "./plane.frag");
     Shader lightShader("./light.vert", "./light.frag");
+    Shader shinyShader("./shiny.vert", "./shiny.frag");
+    Shader defaultShader("./default.vert", "./default.frag");
+    Shader grassShader("./grass.vert", "./grass.frag");
 
     GLuint tex_id_1;
     GLuint text_id_2;
 
     Texture textures[]
 	{
-		Texture("./resources/planks.png", "diffuse", 0, tex_id_1),
-		Texture("./resources/planksSpec.png", "specular", 1, text_id_2)
-	};
+		Texture("./stadium/single/grass.png", "diffuse", 0, tex_id_1)
+	};;
 
 	std::vector <Vertex> verts(miniSreenVertices, miniSreenVertices + sizeof(miniSreenVertices) / sizeof(Vertex));
     std::vector <Vertex> vertz(quadVertices, quadVertices + sizeof(quadVertices) / sizeof(Vertex));
@@ -168,6 +169,9 @@ int main()
 	std::vector <GLuint> ind(indices, indices + sizeof(indices) / sizeof(GLuint));
     std::vector <GLuint> cubeInd(cubeIndices, cubeIndices + sizeof(cubeIndices) / sizeof(GLuint));
     std::vector <Texture> tex(textures, textures + sizeof(textures) / sizeof(Texture));
+
+    Mesh grass(verts, ind, tex, true);
+    Grass grass_renderer;
 
 	// Mesh mesh(verts, ind, tex);
     // Mesh ground(vertz, ind, tex, true);
@@ -195,12 +199,40 @@ int main()
     std::cout << glGetString(GL_VENDOR) << "\n";
 
     std::cout << glGetString(GL_RENDERER) << "\n";
+    
+    shinyShader.Activate();
+    
+    render.render(  shinyShader, 
+                camera, 
+                SCR_WIDTH, 
+                SCR_HEIGHT,
+                glm::vec3(1.0f, 1.0f, 1.0f),
+                glm::vec3(0.0f, 0.0f, -50.0f)   
+                );
+
+    ourShader.Activate();
+
+    render2.render(  ourShader, 
+                        camera, 
+                        SCR_WIDTH, 
+                        SCR_HEIGHT,
+                        glm::vec3(1.0f, 1.0f, 1.0f),
+                        glm::vec3(50.0f, 0.0f, -50.0f)   
+                        );
+
+    render3.render(  ourShader, 
+                    camera, 
+                    SCR_WIDTH, 
+                    SCR_HEIGHT,
+                    glm::vec3(1.0f, 1.0f, 1.0f),
+                    glm::vec3(110.0f, 0.0f, -50.0f)   
+                    );
     // int x = 0;
     // render loop
     // -----------
     while (!glfwWindowShouldClose(window))
     {
-        glDisable(GL_CLIP_DISTANCE0);
+        // glDisable(GL_CLIP_DISTANCE0);
         float currentFrame = static_cast<float>(glfwGetTime());
         deltaTime = currentFrame - lastFrame;
         lastFrame = currentFrame;
@@ -228,31 +260,43 @@ int main()
 
         light.Draw(lightShader);
 
-        render.render(  ourShader, 
-                        camera, 
-                        SCR_WIDTH, 
-                        SCR_HEIGHT,
-                        glm::vec3(1.0f, 1.0f, 1.0f),
-                        glm::vec3(0.0f, 0.0f, -50.0f)   
-                        );
+        shinyShader.Activate();
+        shinyShader.setVec3("camPosition", camera.Position);
+        shinyShader.setVec3("light.position", camera.Position);
+        shinyShader.setFloat("light.cutOff", glm::cos(glm::radians(12.5f)));
+        shinyShader.setFloat("light.outerCutOff", glm::cos(glm::radians(17.5f)));
+        shinyShader.setVec3("light.direction", camera.Front);
 
-        
-        render2.render(  ourShader, 
-                        camera, 
-                        SCR_WIDTH, 
-                        SCR_HEIGHT,
-                        glm::vec3(1.0f, 1.0f, 1.0f),
-                        glm::vec3(50.0f, 0.0f, -50.0f)   
-                        );
+        // light properties
+        shinyShader.setVec3("light.ambient", glm::vec3(0.1f, 0.1f, 0.1f));
+        shinyShader.setVec3("light.diffuse", glm::vec3(0.8f, 0.8f, 0.8f));
+        shinyShader.setVec3("light.specular", glm::vec3(1.0f, 1.0f, 1.0f));
+        shinyShader.setFloat("light.constant", 1.0f);
+        shinyShader.setFloat("light.linear", 0.07f);
+        shinyShader.setFloat("light.quadratic", 0.017f);
 
-        
-        render3.render(  ourShader, 
-                        camera, 
-                        SCR_WIDTH, 
-                        SCR_HEIGHT,
-                        glm::vec3(1.0f, 1.0f, 1.0f),
-                        glm::vec3(110.0f, 0.0f, -50.0f)   
-                        );
+        // material properties
+        shinyShader.setFloat("material.shininess", 32.0f);
+
+        render.draw(shinyShader, camera, SCR_WIDTH, SCR_HEIGHT, glm::mat4(1.0f), glm::vec3(1.0f, 1.0f, 1.0f), glm::vec3(0.0f, 0.0f, -50.0f));
+
+        ourShader.Activate();
+
+        ourShader.Activate();
+        render2.draw(ourShader, camera, SCR_WIDTH, SCR_HEIGHT, glm::mat4(1.0f), glm::vec3(1.0f, 1.0f, 1.0f), glm::vec3(50.0f, 0.0f, -50.0f));
+
+        ourShader.Activate();
+        render3.draw(ourShader, camera, SCR_WIDTH, SCR_HEIGHT,  glm::mat4(1.0f), glm::vec3(1.0f, 1.0f, 1.0f), glm::vec3(110.0f, 0.0f, -50.0f));
+
+        grassShader.Activate();
+        grassShader.setMat4("projection", projection);
+        grassShader.setMat4("view", view);
+        grass_renderer.DrawGrid(
+            grass, 
+            grassShader,
+            glm::vec3(0.0f, 20.0f, 0.0f),
+            model
+        );
         // x++;
 
         // if (x == circle.vertices.size() - 1) {
