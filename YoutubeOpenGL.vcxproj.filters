@@ -145,5 +145,23 @@
     <None Include="grass.vert">
       <Filter>Resource Files\Shaders</Filter>
     </None>
+      <None Include="shadow.frag">
+      <Filter>Resource Files\Shaders</Filter>
+    </None>
+    <None Include="shadow.vert">
+      <Filter>Resource Files\Shaders</Filter>
+    </None>
+    <None Include="dept.frag">
+      <Filter>Resource Files\Shaders</Filter>
+    </None>
+    <None Include="dept.vert">
+      <Filter>Resource Files\Shaders</Filter>
+    </None>
+    <None Include="debug.frag">
+      <Filter>Resource Files\Shaders</Filter>
+    </None>
+    <None Include="debug.vert">
+      <Filter>Resource Files\Shaders</Filter>
+    </None>
   </ItemGroup>
 </Project>

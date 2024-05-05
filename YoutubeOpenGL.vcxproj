@@ -204,6 +204,12 @@
     <None Include="shiny.vert" />
     <None Include="grass.frag" />
     <None Include="grass.vert" />
+    <None Include="shadow.frag" />
+    <None Include="shadow.vert" />
+    <None Include="dept.frag" />
+    <None Include="dept.vert" />
+    <None Include="debug.frag" />
+    <None Include="debug.vert" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
