@@ -4,6 +4,9 @@
 #include <glm/glm.hpp>
 #include "Mesh.h"
 #include "Shader.h"
+#include <stdlib.h>
+#include <stdio.h>
+#include <time.h>
 
 class Grass {
     public:

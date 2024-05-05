@@ -37,6 +37,28 @@ uniform Material material;
 uniform Light light;
 uniform vec3 camPosition;
 
+vec4 directLight() {
+
+    vec3 normal = normalize(Normal);
+    vec3 light_direction = light.direction;
+    vec3 diffuse = max(dot(normal, light_direction), 0.0f) * light.diffuse * texture(texture_diffuse1, TexCoords).rgb;
+
+    vec3 view_direction = normalize(light.position - crntPos);
+    vec3 halfway = normalize(light_direction + view_direction);
+
+    vec3 reflection_direction = reflect(-light_direction, normal);
+    
+    float spec_amount = pow(max(dot(halfway, reflection_direction), 0.0f), material.shininess);
+    
+    vec3 specular = light.specular * spec_amount * texture(texture_specular1, TexCoords).rgb;
+
+    vec3 ambient = light.ambient * texture(texture_diffuse1, TexCoords).rgb;
+
+    vec3 result = ambient + diffuse + specular;
+
+    return vec4(result, 1.0);
+}
+
 vec4 flashLight() {
 
     vec3 ambient = light.ambient * texture(texture_diffuse1, TexCoords).rgb;
@@ -72,5 +94,5 @@ vec4 flashLight() {
 }
 void main()
 {    
-    FragColor = flashLight();
+    FragColor = directLight();
 }

@@ -262,10 +262,10 @@ int main()
 
         shinyShader.Activate();
         shinyShader.setVec3("camPosition", camera.Position);
-        shinyShader.setVec3("light.position", camera.Position);
+        shinyShader.setVec3("light.position", glm::vec3(0.0f,-20.0f,0.0f));
         shinyShader.setFloat("light.cutOff", glm::cos(glm::radians(12.5f)));
         shinyShader.setFloat("light.outerCutOff", glm::cos(glm::radians(17.5f)));
-        shinyShader.setVec3("light.direction", camera.Front);
+        shinyShader.setVec3("light.direction", glm::vec3(-1.0f, 1.0f, 0.0f));
 
         // light properties
         shinyShader.setVec3("light.ambient", glm::vec3(0.1f, 0.1f, 0.1f));
