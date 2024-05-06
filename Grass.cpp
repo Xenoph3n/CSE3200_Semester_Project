@@ -15,7 +15,7 @@ void Grass::DrawSingle(Mesh grass, Shader &shader, glm::vec3 position, glm::mat4
         /* generate secret number between 1 and 10: */
         randomNumber = rand() % 30 + 1;
         
-        std::cout << randomNumber << "\n";
+        // std::cout << randomNumber << "\n";
 
         model = glm::rotate(model, glm::radians((float) randomNumber), glm::vec3(0.0f, -1.0f, 0.0f));
         shader.setMat4("model", model);
@@ -32,9 +32,8 @@ void Grass::DrawSingle(Mesh grass, Shader &shader, glm::vec3 position, glm::mat4
         /* generate secret number between 1 and 10: */
         randomNumber = rand() % 60 + 30;
 
-        std::cout << randomNumber << "\n";
+        // std::cout << randomNumber << "\n";
         
-
         model = glm::rotate(model, glm::radians((float) randomNumber), glm::vec3(0.0f, -1.0f, 0.0f));
         shader.setMat4("model", model);
         grass.Draw(shader, false);
@@ -44,12 +43,12 @@ void Grass::DrawSingle(Mesh grass, Shader &shader, glm::vec3 position, glm::mat4
         grass.Draw(shader, false);
 
         /* initialize random seed: */
-        srand (time(NULL));
+        // srand (time(NULL));
 
         /* generate secret number between 1 and 10: */
         randomNumber = rand() % 90 + 60;
         
-        std::cout << randomNumber << "\n";
+        // std::cout << randomNumber << "\n";
 
         model = glm::rotate(model, glm::radians((float) randomNumber), glm::vec3(0.0f, -1.0f, 0.0f));
         shader.setMat4("model", model);
@@ -66,7 +65,7 @@ void Grass::DrawGrid(Mesh grass, Shader &shader, glm::vec3 position, glm::mat4 m
         for (int j = 0; j < 10; j++) {
             srand (time(NULL));
             int randomNumber = rand() % 5 + 1;
-            std::cout << "Random float" << randomNumber << "\n";
+            // std::cout << "Random float" << randomNumber << "\n";
             pos.z += (float) randomNumber/10;
             DrawSingle(grass, shader, pos, model);
         }

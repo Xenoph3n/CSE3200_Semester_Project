@@ -107,7 +107,7 @@ bool firstMouse = true;
 float deltaTime = 0.0f;
 float lastFrame = 0.0f;
 
-
+bool move = false;
 
 int main()
 {
@@ -165,7 +165,7 @@ int main()
 
     Texture textures[]
 	{
-		Texture("./resources/happy_mia.png", "diffuse", 0, tex_id_1)
+		Texture("./stadium/single/grass.png", "diffuse", 0, tex_id_1)
 	};;
 
 	std::vector <Vertex> verts(miniSreenVertices, miniSreenVertices + sizeof(miniSreenVertices) / sizeof(Vertex));
@@ -184,6 +184,7 @@ int main()
     // Mesh cube(cubeVerts, cubeInd, tex);
 
     aModel mega_cube("./stadium/blue_1/mid_section.obj", false);
+    aModel player("./models/crow/scene.gltf", false);
     
     Mesh light(cubeVerts, cubeInd, tex, false);
 
@@ -261,6 +262,27 @@ int main()
 
     glm::vec3 lightPos(-20.0f, 70.0f, 0.0f);
 
+    glm::mat4 playerModel = glm::mat4(1.0f);
+    AABB aabb = player.calculateBoundingBox();
+    std::cout << player.left_most_point << "\n";
+    std::cout << player.right_most_point << "\n";
+
+    std::cout << player.top_most_point << "\n";
+    std::cout << player.bottom_most_point << "\n";
+
+    std::cout << player.front_most_point << "\n";
+    std::cout << player.back_most_point << "\n";
+
+    std::cout << "AABB Position (" << aabb.position.x << "," << aabb.position.y << "," << aabb.position.z << ") \n";
+    std::cout << "AABB Position (" << aabb.size.x << "," << aabb.size.y << "," << aabb.size.z << ") \n";
+
+    // std::cout << "Player Position (" << new_position.x << new_position.y << new_position.z << ") \n";
+
+
+    glm::mat4 mod = glm::rotate(playerModel, glm::radians(180.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+    playerModel = mod;
+    glm::vec3 previousCamPosition = camera.Position;
+
     
     // -----------
     while (!glfwWindowShouldClose(window))
@@ -326,12 +348,7 @@ int main()
         // // shinyShader.Activate();
         // // shinyShader.setVec3("camPosition", camera.Position);
         // // shinyShader.setVec3("light.position", glm::vec3(0.0f,-20.0f,0.0f));
-        // // shinyShader.setFloat("light.cutOff", glm::cos(glm::radians(12.5f)));
-        // // shinyShader.setFloat("light.outerCutOff", glm::cos(glm::radians(17.5f)));
-        // // shinyShader.setVec3("light.direction", glm::vec3(-1.0f, 1.0f, 0.0f));
-
-        // // // light properties
-        // // shinyShader.setVec3("light.ambient", glm::vec3(0.1f, 0.1f, 0.1f));
+        // // shinyShader.setFlknight_texturec3("light.ambient", glm::vec3(0.1f, 0.1f, 0.1f));
         // // shinyShader.setVec3("light.diffuse", glm::vec3(0.8f, 0.8f, 0.8f));
         // // shinyShader.setVec3("light.specular", glm::vec3(1.0f, 1.0f, 1.0f));
         // // shinyShader.setFloat("light.constant", 1.0f);
@@ -344,7 +361,7 @@ int main()
         glViewport(0, 0, SCR_WIDTH, SCR_HEIGHT);
         glClearColor(0.05f, 0.05f, 0.25f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
+        
         glm::mat4 projection = glm::perspective(glm::radians(camera.Zoom), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 2000.0f);
         glm::mat4 view = camera.GetViewMatrix();
         model = glm::translate(model, glm::vec3(0.0f, 0.0f, 0.0f)); // translate it down so it's at the center of the scene
@@ -367,28 +384,28 @@ int main()
         glActiveTexture(GL_TEXTURE1);
         glBindTexture(GL_TEXTURE_2D, depthMap);
 
-        render.draw(shadowShader, camera, SCR_WIDTH, SCR_HEIGHT, glm::mat4(1.0f), glm::vec3(1.0f, 1.0f, 1.0f), glm::vec3(0.0f, 0.0f, 0.0f));
+        // render.draw(shadowShader, camera, SCR_WIDTH, SCR_HEIGHT, glm::mat4(1.0f), glm::vec3(1.0f, 1.0f, 1.0f), glm::vec3(0.0f, 0.0f, 0.0f));
         shadowShader.setMat4("model", glm::translate(model, glm::vec3(0.0f,-50.0f,10.0f)));
         mega_cube.Draw(shadowShader);
 
-
-
         // // plane.Draw(shadowShader);
-
         // ourShader.Activate();
         // render.draw(ourShader, camera, SCR_WIDTH, SCR_HEIGHT, glm::mat4(1.0f), glm::vec3(1.0f, 1.0f, 1.0f), glm::vec3(0.0f, 0.0f, -50.0f));
+
         ourShader.Activate();
         render3.draw(ourShader, camera, SCR_WIDTH, SCR_HEIGHT,  glm::mat4(1.0f), glm::vec3(1.0f, 1.0f, 1.0f), glm::vec3(110.0f, 0.0f, -50.0f));
+        
+        
+        grassShader.Activate();
+        grassShader.setMat4("projection", projection);
+        grassShader.setMat4("view", view);
+        grass_renderer.DrawGrid(
+            grass, 
+            grassShader,
+            glm::vec3(0.0f, 20.0f, 0.0f),
+            model
+        );
 
-        // grassShader.Activate();
-        // grassShader.setMat4("projection", projection);
-        // grassShader.setMat4("view", view);
-        // grass_renderer.DrawGrid(
-        //     grass, 
-        //     grassShader,
-        //     glm::vec3(0.0f, 20.0f, 0.0f),
-        //     model
-        // );
         // x++;
 
         // if (x == circle.vertices.size() - 1) {
@@ -408,21 +425,45 @@ int main()
         planeShader.Activate();
         planeShader.setMat4("projection", projection);
         planeShader.setMat4("view", view);
-        planeShader.setMat4("model", glm::translate(model, lightPos));
-        planeShader.setVec4("lightColor", glm::vec3(1.0f, 0.0f, 0.0f));
+        // planeShader.setMat4("model", glm::translate(model, lightPos));
+        // planeShader.setVec4("lightColor", glm::vec3(1.0f, 0.0f, 0.0f));
         ground.Draw(planeShader);
 
-        model = glm::scale(model, glm::vec3(1.0f, 1.0f, 1.0f));	// it's a bit too big for our scene, so scale it down
-        planeShader.setMat4("model", glm::translate(model, glm::vec3(0.0f,-20.0f,0.0f)));
+        // playerModel = glm::scale(playerModel, glm::vec3(0.5f, 0.5f, 0.5f));	// it's a bit too big for our scene, so scale it down
+        // planeShader.setMat4("model", glm::scale(playerModel, glm::vec3(0.5f, 0.5f, 0.5f)));
         planeShader.setVec4("lightColor", glm::vec3(1.0f, 0.0f, 0.0f));
-        plane.Draw(planeShader);
-        plane.Draw(shadowShader);
+
+        // if (playerModel == glm::mat4(1.0f)) {
+        //     playerModel = glm::translate(playerModel, camera.Position + glm::vec3(0.0f, -5.0f, -10.0f));
+        // }
+
+        // if (move) {
+            glm::vec3 new_position = glm::vec3(20.0f, 20.0f, 20.0f) * camera.Front + camera.Position;
+            playerModel = glm::translate(playerModel, new_position);
+            playerModel = glm::translate(playerModel, glm::vec3(0.0f, -10.0f, 0.0f));
+            playerModel =  glm::rotate(playerModel, glm::radians(180.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+            planeShader.setMat4("model", glm::scale(playerModel, glm::vec3(0.5,0.5f, 0.5f)));
+            // previousCamPosition = camera.Position;
+
+            // std::cout << "Camera Front (" << camera.Front.x << camera.Front.y << camera.Front.z << ") \n";
+            // std::cout << "Camera Position (" << camera.Position.x << camera.Position.y << camera.Position.z << ") \n";
+            // std::cout << "Player Position (" << new_position.x << new_position.y << new_position.z << ") \n";
+
+        // }
+
+     
+        // std::cout << camera.Position.x << "," << camera.Position.y << "," << camera.Position.z << "\n";        
+        player.Draw(planeShader);
+
         debugShader.Activate();
         debugShader.setFloat("near_plane", near_plane);
         debugShader.setFloat("far_plane", far_plane);
         glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, depthMap);
         // renderQuad();
+
+        playerModel = glm::mat4(1.0f);
+        move = false;
 
         glfwSwapBuffers(window);
         glfwPollEvents();
@@ -465,33 +506,56 @@ void renderQuad()
 // ---------------------------------------------------------------------------------------------------------
 void processInput(GLFWwindow *window)
 {
-    if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
+    if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS) {
+        // move = true;
         glfwSetWindowShouldClose(window, true);
 
-    if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
+    }
+
+    if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) {
         camera.ProcessKeyboard(FORWARD, deltaTime);
-    if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
+        move = true;
+
+    }
+    if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS) {
         camera.ProcessKeyboard(BACKWARD, deltaTime);
-    if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
+        move = true;
+    }
+    if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS) {
         camera.ProcessKeyboard(LEFT, deltaTime);
-    if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
+        move = true;
+    }
+    if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) {
         camera.ProcessKeyboard(RIGHT, deltaTime);
-    if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS) 
+        move = true;
+    }
+    if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS) {
         camera.ProcessKeyboard(UP, deltaTime);
+        move = true;
+    }
     
-    if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS)
+    if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS) {
         camera.MovementSpeed += 1.0f;
-    if (glfwGetKey(window, GLFW_KEY_RIGHT_SHIFT) == GLFW_PRESS)
+        move = true;
+    }
+    if (glfwGetKey(window, GLFW_KEY_RIGHT_SHIFT) == GLFW_PRESS) {
         camera.MovementSpeed -= 1.0f;
+        // move = true;
+    }
 
     if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS) {
-        camera.first_clickz = true;
         glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-
+        camera.first_clickz = true;
+        // move = true;
     } else if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_RIGHT) == GLFW_PRESS) {
         camera.first_clickz = false;
         glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+        // move = true;
     }
+
+  
+    // std::cout << "Movement: " << move;
+
 }
 
 // glfw: whenever the window size changed (by OS or user resize) this callback function executes

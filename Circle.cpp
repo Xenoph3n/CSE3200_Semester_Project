@@ -95,11 +95,11 @@ void Circle::calculate(glm::vec3 center_position, float angle_in_degrees, float 
     }
 
     
-    for (int i = 0; i < number_of_sections; i++) {
-        std::cout << "(" << vertices[i].position.x << "," << vertices[i].position.y << "," << vertices[i].position.z << ")" << "\n";
-        // std::cout << "(" << vertices[i].color.x << "," << vertices[i].color.y << "," << vertices[i].color.z << ")" << "\n";
+    // for (int i = 0; i < number_of_sections; i++) {
+    //     std::cout << "(" << vertices[i].position.x << "," << vertices[i].position.y << "," << vertices[i].position.z << ")" << "\n";
+    //     // std::cout << "(" << vertices[i].color.x << "," << vertices[i].color.y << "," << vertices[i].color.z << ")" << "\n";
 
-    }
+    // }
 
 	// glm::vec3 position;
 	// glm::vec3 normal; --> up vector

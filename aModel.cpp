@@ -82,7 +82,29 @@ aMesh aModel::processMesh(aiMesh* mesh, const aiScene* scene)
         vector.z = mesh->mVertices[i].z;
         vertex.Position = vector;
 
+        if (vector.x > right_most_point) {
+            right_most_point = vector.x;
+        }
 
+        if (vector.x < left_most_point) {
+            left_most_point = vector.x;
+        }
+
+        if (vector.y > top_most_point) {
+            top_most_point = vector.y;
+        }
+
+        if (vector.y < bottom_most_point) {
+            bottom_most_point = vector.y;
+        }
+
+        if (vector.z > front_most_point) {
+            front_most_point = vector.z;
+        }
+
+        if (vector.z < back_most_point) {
+            back_most_point = vector.z;
+        }
         
         if (mesh->HasVertexColors(i)) {
             // std::cout << "Color Point" << mesh->mColors[i]->r;
@@ -194,6 +216,21 @@ std::vector<aTexture> aModel::loadMaterialTextures(aiMaterial* mat, aiTextureTyp
         }
     }
     return textures;
+}
+
+AABB aModel::calculateBoundingBox() {
+    glm::vec3 position = glm::vec3(left_most_point, top_most_point, back_most_point);
+    float sizeX = right_most_point - left_most_point;
+    float sizeY = top_most_point - bottom_most_point;
+    float sizeZ = front_most_point - back_most_point;
+
+    glm::vec3 size = glm::vec3(sizeX, sizeY, sizeZ);
+
+    AABB aabb;
+    aabb.position = position;
+    aabb.size = size;
+
+    return aabb;
 }
 
 
