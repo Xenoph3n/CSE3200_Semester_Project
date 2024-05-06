@@ -152,6 +152,8 @@ int main()
 
     Shader ourShader("./model.vert", "./model.frag");
     Shader planeShader("./plane.vert", "./plane.frag");
+    Shader playerShader("./plane.vert", "./plane.frag");
+
     Shader lightShader("./light.vert", "./light.frag");
     Shader shinyShader("./shiny.vert", "./shiny.frag");
     Shader defaultShader("./default.vert", "./default.frag");
@@ -185,7 +187,8 @@ int main()
 
     aModel mega_cube("./stadium/blue_1/mid_section.obj", false);
     aModel player("./models/crow/scene.gltf", false);
-    
+    aModel test("./models/crow/scene.gltf", false);
+
     Mesh light(cubeVerts, cubeInd, tex, false);
 
     Circle circle;
@@ -264,6 +267,7 @@ int main()
 
     glm::mat4 playerModel = glm::mat4(1.0f);
     AABB aabb = player.calculateBoundingBox();
+    AABB backupAABB = aabb;
     std::cout << player.left_most_point << "\n";
     std::cout << player.right_most_point << "\n";
 
@@ -274,16 +278,29 @@ int main()
     std::cout << player.back_most_point << "\n";
 
     std::cout << "AABB Position (" << aabb.position.x << "," << aabb.position.y << "," << aabb.position.z << ") \n";
-    std::cout << "AABB Position (" << aabb.size.x << "," << aabb.size.y << "," << aabb.size.z << ") \n";
+    std::cout << "AABB Size (" << aabb.size.x << "," << aabb.size.y << "," << aabb.size.z << ") \n";
+
+    AABB megaCubeAABB = mega_cube.calculateBoundingBox();
+    std::cout << mega_cube.left_most_point << "\n";
+    std::cout << mega_cube.right_most_point << "\n";
+
+    std::cout << mega_cube.top_most_point << "\n";
+    std::cout << mega_cube.bottom_most_point << "\n";
+
+    std::cout << mega_cube.front_most_point << "\n";
+    std::cout << mega_cube.back_most_point << "\n";
+
+    std::cout << "AABB Mega cube Position (" << megaCubeAABB.position.x << "," << megaCubeAABB.position.y << "," << megaCubeAABB.position.z << ") \n";
+    std::cout << "AABB Mega cube Size (" << megaCubeAABB.size.x << "," << megaCubeAABB.size.y << "," << megaCubeAABB.size.z << ") \n";
 
     // std::cout << "Player Position (" << new_position.x << new_position.y << new_position.z << ") \n";
 
+    AABB testAABB = test.calculateBoundingBox();
 
     glm::mat4 mod = glm::rotate(playerModel, glm::radians(180.0f), glm::vec3(0.0f, 1.0f, 0.0f));
     playerModel = mod;
     glm::vec3 previousCamPosition = camera.Position;
 
-    
     // -----------
     while (!glfwWindowShouldClose(window))
     {
@@ -385,8 +402,8 @@ int main()
         glBindTexture(GL_TEXTURE_2D, depthMap);
 
         // render.draw(shadowShader, camera, SCR_WIDTH, SCR_HEIGHT, glm::mat4(1.0f), glm::vec3(1.0f, 1.0f, 1.0f), glm::vec3(0.0f, 0.0f, 0.0f));
-        shadowShader.setMat4("model", glm::translate(model, glm::vec3(0.0f,-50.0f,10.0f)));
-        mega_cube.Draw(shadowShader);
+        shadowShader.setMat4("model", glm::translate(model, glm::vec3(0.0f,0.0f,0.0f)));
+      //  mega_cube.Draw(shadowShader);
 
         // // plane.Draw(shadowShader);
         // ourShader.Activate();
@@ -422,27 +439,34 @@ int main()
         // glActiveTexture(GL_TEXTURE0);
 
         
-        planeShader.Activate();
-        planeShader.setMat4("projection", projection);
-        planeShader.setMat4("view", view);
-        // planeShader.setMat4("model", glm::translate(model, lightPos));
-        // planeShader.setVec4("lightColor", glm::vec3(1.0f, 0.0f, 0.0f));
-        ground.Draw(planeShader);
+        playerShader.Activate();
+        playerShader.setMat4("projection", projection);
+        playerShader.setMat4("view", view);
+        // playerShader.setMat4("model", glm::translate(model, lightPos));
+        // playerShader.setVec4("lightColor", glm::vec3(1.0f, 0.0f, 0.0f));
+        ground.Draw(playerShader);
 
         // playerModel = glm::scale(playerModel, glm::vec3(0.5f, 0.5f, 0.5f));	// it's a bit too big for our scene, so scale it down
-        // planeShader.setMat4("model", glm::scale(playerModel, glm::vec3(0.5f, 0.5f, 0.5f)));
-        planeShader.setVec4("lightColor", glm::vec3(1.0f, 0.0f, 0.0f));
+        // playerShader.setMat4("model", glm::scale(playerModel, glm::vec3(0.5f, 0.5f, 0.5f)));
+        playerShader.setVec4("lightColor", glm::vec3(1.0f, 0.0f, 0.0f));
 
         // if (playerModel == glm::mat4(1.0f)) {
         //     playerModel = glm::translate(playerModel, camera.Position + glm::vec3(0.0f, -5.0f, -10.0f));
         // }
 
         // if (move) {
-            glm::vec3 new_position = glm::vec3(20.0f, 20.0f, 20.0f) * camera.Front + camera.Position;
+            glm::vec3 new_position = glm::vec3(20.0f, 20.0f, 20.0f) * camera.Front + camera.Position + glm::vec3(0.0f, -10.0f, 0.0f);
+            aabb.position += glm::vec3(20.0f, 20.0f, 20.0f) * camera.Front + camera.Position + glm::vec3(0.0f, -10.0f, 0.0f);
+            aabb.position = aabb.position * 0.5f;
+            // std::cout << "AABB Position (" << aabb.position.x << "," << aabb.position.y << "," << aabb.position.z << ") \n";
+
+
             playerModel = glm::translate(playerModel, new_position);
-            playerModel = glm::translate(playerModel, glm::vec3(0.0f, -10.0f, 0.0f));
+            // playerModel = glm::translate(playerModel, glm::vec3(0.0f, -10.0f, 0.0f));
             playerModel =  glm::rotate(playerModel, glm::radians(180.0f), glm::vec3(0.0f, 1.0f, 0.0f));
-            planeShader.setMat4("model", glm::scale(playerModel, glm::vec3(0.5,0.5f, 0.5f)));
+            playerShader.setMat4("model", glm::scale(playerModel, glm::vec3(0.5f,0.5f, 0.5f)));
+            testAABB.position =  testAABB.position * 0.1f;
+            std::cout << player.CheckCollision(aabb, testAABB) << "\n";
             // previousCamPosition = camera.Position;
 
             // std::cout << "Camera Front (" << camera.Front.x << camera.Front.y << camera.Front.z << ") \n";
@@ -451,9 +475,26 @@ int main()
 
         // }
 
+    
      
         // std::cout << camera.Position.x << "," << camera.Position.y << "," << camera.Position.z << "\n";        
-        player.Draw(planeShader);
+        player.Draw(playerShader);
+
+        planeShader.Activate();
+        planeShader.setMat4("projection", projection);
+        planeShader.setMat4("view", view);
+        glm::mat4 testModel = glm::mat4(1.0f);
+        testModel = glm::translate(testModel, glm::vec3(0.0f, 0.0f, 0.0f));
+        testModel = glm::scale(testModel, glm::vec3(0.1f, 0.1f, 0.1f));
+        planeShader.setMat4("model", testModel);
+        // planeShader.setMat4("model", glm::translate(model, lightPos));
+        // planeShader.setVec4("lightColor", glm::vec3(1.0f, 0.0f, 0.0f));
+        // ground.Draw(planeShader);
+
+        // playerModel = glm::scale(playerModel, glm::vec3(0.5f, 0.5f, 0.5f));	// it's a bit too big for our scene, so scale it down
+        // planeShader.setMat4("model", glm::scale(playerModel, glm::vec3(0.5f, 0.5f, 0.5f)));
+        planeShader.setVec4("lightColor", glm::vec3(1.0f, 0.0f, 0.0f));
+        test.Draw(planeShader);
 
         debugShader.Activate();
         debugShader.setFloat("near_plane", near_plane);
@@ -463,6 +504,8 @@ int main()
         // renderQuad();
 
         playerModel = glm::mat4(1.0f);
+        aabb.position = backupAABB.position;
+        testAABB.position = backupAABB.position;
         move = false;
 
         glfwSwapBuffers(window);

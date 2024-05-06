@@ -44,6 +44,8 @@ public:
     aModel(std::string const& path, bool gamma);
     void Draw(Shader& shader);
     AABB calculateBoundingBox();
+    bool CheckCollision(AABB &one, AABB &two); // AABB - AABB collision
+
     
 
 private:

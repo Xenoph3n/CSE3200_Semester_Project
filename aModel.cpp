@@ -233,6 +233,21 @@ AABB aModel::calculateBoundingBox() {
     return aabb;
 }
 
+bool aModel::CheckCollision(AABB &one, AABB &two) // AABB - AABB collision
+{
+    // collision x-axis?
+    bool collisionX = one.position.x + one.size.x >= two.position.x &&
+        two.position.x + two.size.x >= one.position.x;
+    // collision y-axis?
+    bool collisionY = one.position.y + one.size.y >= two.position.y &&
+        two.position.y + two.size.y >= one.position.y;
+
+    bool collisionZ = one.position.z + one.size.z >= two.position.z &&
+        two.position.z + two.size.z >= one.position.z;
+    // collision only if on both axes
+    return collisionX && collisionY && collisionZ;
+}  
+
 
 unsigned int TextureFromFile2(const char* path, const std::string& directory, bool gamma)
 {
