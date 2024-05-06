@@ -19,6 +19,7 @@
 #include "Circle.h"
 #include "Render.h"
 #include "Grass.h"
+#include "Shadow.h"
 
 #include <iostream>
 
@@ -107,7 +108,7 @@ bool firstMouse = true;
 float deltaTime = 0.0f;
 float lastFrame = 0.0f;
 
-bool move = false;
+bool move = true;
 
 int main()
 {
@@ -152,7 +153,7 @@ int main()
 
     Shader ourShader("./model.vert", "./model.frag");
     Shader planeShader("./plane.vert", "./plane.frag");
-    Shader playerShader("./plane.vert", "./plane.frag");
+    Shader playerShader("./player.vert", "./player.frag");
 
     Shader lightShader("./light.vert", "./light.frag");
     Shader shinyShader("./shiny.vert", "./shiny.frag");
@@ -187,7 +188,7 @@ int main()
 
     aModel mega_cube("./stadium/blue_1/mid_section.obj", false);
     aModel player("./models/crow/scene.gltf", false);
-    aModel test("./models/crow/scene.gltf", false);
+    aModel test("./stadium/blue_1/mid_section.obj", false);
 
     Mesh light(cubeVerts, cubeInd, tex, false);
 
@@ -237,31 +238,33 @@ int main()
                     glm::vec3(110.0f, 0.0f, -50.0f)   
                     );
     
-    const unsigned int SHADOW_WIDTH = 1024, SHADOW_HEIGHT = 1024;
+    Shadow shadow;
+    shadow.createDepthMap(shadowShader);
+    // const unsigned int SHADOW_WIDTH = 1024, SHADOW_HEIGHT = 1024;
 
-    unsigned int depthMapFBO;
-    glGenFramebuffers(1, &depthMapFBO);
+    // unsigned int depthMapFBO;
+    // glGenFramebuffers(1, &depthMapFBO);
 
-    unsigned int depthMap;
-    glGenTextures(1, &depthMap);
-    glBindTexture(GL_TEXTURE_2D, depthMap);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, SHADOW_WIDTH, SHADOW_HEIGHT, 0, GL_DEPTH_COMPONENT, GL_FLOAT, NULL);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
-    float borderColor[] = { 1.0, 1.0, 1.0, 1.0 };
-    glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, borderColor);
-    // attach depth texture as FBO's depth buffer
-    glBindFramebuffer(GL_FRAMEBUFFER, depthMapFBO);
-    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, depthMap, 0);
-    glDrawBuffer(GL_NONE);
-    glReadBuffer(GL_NONE);
-    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+    // unsigned int depthMap;
+    // glGenTextures(1, &depthMap);
+    // glBindTexture(GL_TEXTURE_2D, depthMap);
+    // glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, SHADOW_WIDTH, SHADOW_HEIGHT, 0, GL_DEPTH_COMPONENT, GL_FLOAT, NULL);
+    // glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    // glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    // glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
+    // glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
+    // float borderColor[] = { 1.0, 1.0, 1.0, 1.0 };
+    // glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, borderColor);
+    // // attach depth texture as FBO's depth buffer
+    // glBindFramebuffer(GL_FRAMEBUFFER, depthMapFBO);
+    // glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, depthMap, 0);
+    // glDrawBuffer(GL_NONE);
+    // glReadBuffer(GL_NONE);
+    // glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
-    shadowShader.Activate();
-    shadowShader.setInt("texture_diffuse1", 0);
-    shadowShader.setInt("shadowMap", 1);
+    // shadowShader.Activate();
+    // shadowShader.setInt("texture_diffuse1", 0);
+    // shadowShader.setInt("shadowMap", 1);
 
     glm::vec3 lightPos(-20.0f, 70.0f, 0.0f);
 
@@ -296,10 +299,12 @@ int main()
     // std::cout << "Player Position (" << new_position.x << new_position.y << new_position.z << ") \n";
 
     AABB testAABB = test.calculateBoundingBox();
+    AABB backupTestAABB = testAABB;
 
     glm::mat4 mod = glm::rotate(playerModel, glm::radians(180.0f), glm::vec3(0.0f, 1.0f, 0.0f));
     playerModel = mod;
     glm::vec3 previousCamPosition = camera.Position;
+    bool check = true;
 
     // -----------
     while (!glfwWindowShouldClose(window))
@@ -322,58 +327,36 @@ int main()
 
         // 1. render depth of scene to texture (from light's perspective)
         // --------------------------------------------------------------
-        glm::mat4 lightProjection, lightView;
-        glm::mat4 lightSpaceMatrix;
-        float near_plane = 1.0f, far_plane = 500.0f;
-        //lightProjection = glm::perspective(glm::radians(45.0f), (GLfloat)SHADOW_WIDTH / (GLfloat)SHADOW_HEIGHT, near_plane, far_plane); // note that if you use a perspective projection matrix you'll have to change the light position as the current light position isn't enough to reflect the whole scene
-        lightProjection = glm::ortho(-200.0f, 200.0f, -200.0f, 200.0f, near_plane, far_plane);
-        lightView = glm::lookAt(lightPos, glm::vec3(0.0f), glm::vec3(0.0, 1.0, 0.0));
-        lightSpaceMatrix = lightProjection * lightView;
-        // render scene from light's point of view
-        depthShader.Activate();
-        depthShader.setMat4("lightSpaceMatrix", lightSpaceMatrix);
+        // glm::mat4 lightProjection, lightView;
+        // glm::mat4 lightSpaceMatrix;
+        // float near_plane = 1.0f, far_plane = 500.0f;
+        // //lightProjection = glm::perspective(glm::radians(45.0f), (GLfloat)SHADOW_WIDTH / (GLfloat)SHADOW_HEIGHT, near_plane, far_plane); // note that if you use a perspective projection matrix you'll have to change the light position as the current light position isn't enough to reflect the whole scene
+        // lightProjection = glm::ortho(-200.0f, 200.0f, -200.0f, 200.0f, near_plane, far_plane);
+        // lightView = glm::lookAt(lightPos, glm::vec3(0.0f), glm::vec3(0.0, 1.0, 0.0));
+        // lightSpaceMatrix = lightProjection * lightView;
+        // // render scene from light's point of view
+        // depthShader.Activate();
+        // depthShader.setMat4("lightSpaceMatrix", lightSpaceMatrix);
 
-        glViewport(0, 0, SHADOW_WIDTH, SHADOW_HEIGHT);
-        glBindFramebuffer(GL_FRAMEBUFFER, depthMapFBO);
-        glClear(GL_DEPTH_BUFFER_BIT);
+        
+        // glViewport(0, 0, SHADOW_WIDTH, SHADOW_HEIGHT);
+        // glBindFramebuffer(GL_FRAMEBUFFER, depthMapFBO);
+        // glClear(GL_DEPTH_BUFFER_BIT);
+
+        shadow.setUpDepthMap(lightPos, depthShader);
         
         depthShader.setMat4("model", glm::translate(model, glm::vec3(0.0f,0.0f,5.0f)));
         // render sceneL
-        render.draw(depthShader, camera, SHADOW_WIDTH, SHADOW_HEIGHT, glm::mat4(1.0f), glm::vec3(1.0f, 1.0f, 1.0f), glm::vec3(0.0f, 0.0f, 0.0f));
+        render.draw(depthShader, camera, shadow.SHADOW_WIDTH, shadow.SHADOW_HEIGHT, glm::mat4(1.0f), glm::vec3(1.0f, 1.0f, 1.0f), glm::vec3(0.0f, 0.0f, 0.0f));
         // plane.Draw(depthShader);
         depthShader.setMat4("model", glm::translate(model, glm::vec3(0.0f,-50.0f,10.0f)));
 
         mega_cube.Draw(depthShader);
 
-        glBindFramebuffer(GL_FRAMEBUFFER, 0);
+        // glBindFramebuffer(GL_FRAMEBUFFER, 0);
+        shadow.unBindFrameBuffer();
 
         // /* --------------------------------------  ---------------------------------------- */
-
-        // // glm::vec3 lightColor = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
-
-        
-        // // lightShader.Activate();
-
-        // // lightShader.setMat4("projection", projection);
-        // // lightShader.setMat4("view", view);
-        // // lightShader.setMat4("model", glm::translate(model, glm::vec3(-10.0f, 1.0f, 0.0f)));
-        // // lightShader.setVec4("lightColor", lightColor);
-        // // lightShader.setVec3("camPosition", camera.Position);
-
-        // // light.Draw(lightShader);
-
-        // // shinyShader.Activate();
-        // // shinyShader.setVec3("camPosition", camera.Position);
-        // // shinyShader.setVec3("light.position", glm::vec3(0.0f,-20.0f,0.0f));
-        // // shinyShader.setFlknight_texturec3("light.ambient", glm::vec3(0.1f, 0.1f, 0.1f));
-        // // shinyShader.setVec3("light.diffuse", glm::vec3(0.8f, 0.8f, 0.8f));
-        // // shinyShader.setVec3("light.specular", glm::vec3(1.0f, 1.0f, 1.0f));
-        // // shinyShader.setFloat("light.constant", 1.0f);
-        // // shinyShader.setFloat("light.linear", 0.07f);
-        // // shinyShader.setFloat("light.quadratic", 0.017f);
-
-        // // // material properties
-        // // shinyShader.setFloat("material.shininess", 32.0f);
 
         glViewport(0, 0, SCR_WIDTH, SCR_HEIGHT);
         glClearColor(0.05f, 0.05f, 0.25f, 1.0f);
@@ -383,103 +366,41 @@ int main()
         glm::mat4 view = camera.GetViewMatrix();
         model = glm::translate(model, glm::vec3(0.0f, 0.0f, 0.0f)); // translate it down so it's at the center of the scene
 
-
-        // // glm::mat4 model = glm::mat4(1.0f);
-        // model = glm::translate(model, glm::vec3(0.0f, 0.0f, 0.0f)); // translate it down so it's at the center of the scene
-
+        shadow.setUpShadowShader(
+            shadowShader,
+            camera,
+            lightPos,
+            projection,
+            view
+        );
+        
+        shadowShader.setMat4("model", glm::translate(model, glm::vec3(0.0f,-50.0f,10.0f)));
+        mega_cube.Draw(shadowShader);
 
         shadowShader.Activate();
-        // glm::mat4 projection = glm::perspective(glm::radians(camera.Zoom), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 1000.0f);
-        // glm::mat4 view = camera.GetViewMatrix();
-        shadowShader.setMat4("projection", projection);
-        shadowShader.setMat4("view", view);
-        // set light uniforms
-        shadowShader.setVec3("viewPos", camera.Position);
-        shadowShader.setVec3("lightPos", lightPos);
-        shadowShader.setMat4("lightSpaceMatrix", lightSpaceMatrix);
-        // glActiveTexture(GL_TEXTURE0);
-        glActiveTexture(GL_TEXTURE1);
-        glBindTexture(GL_TEXTURE_2D, depthMap);
-
-        // render.draw(shadowShader, camera, SCR_WIDTH, SCR_HEIGHT, glm::mat4(1.0f), glm::vec3(1.0f, 1.0f, 1.0f), glm::vec3(0.0f, 0.0f, 0.0f));
-        shadowShader.setMat4("model", glm::translate(model, glm::vec3(0.0f,0.0f,0.0f)));
-      //  mega_cube.Draw(shadowShader);
-
-        // // plane.Draw(shadowShader);
-        // ourShader.Activate();
-        // render.draw(ourShader, camera, SCR_WIDTH, SCR_HEIGHT, glm::mat4(1.0f), glm::vec3(1.0f, 1.0f, 1.0f), glm::vec3(0.0f, 0.0f, -50.0f));
+        shadowShader.setMat4("model", glm::translate(model, glm::vec3(0.0f,0.0f,5.0f)));
+        render.draw(shadowShader, camera, SCR_WIDTH, SCR_HEIGHT, glm::mat4(1.0f), glm::vec3(1.0f, 1.0f, 1.0f), glm::vec3(0.0f, 0.0f, 0.0f));
 
         ourShader.Activate();
-        render3.draw(ourShader, camera, SCR_WIDTH, SCR_HEIGHT,  glm::mat4(1.0f), glm::vec3(1.0f, 1.0f, 1.0f), glm::vec3(110.0f, 0.0f, -50.0f));
-        
-        
-        grassShader.Activate();
-        grassShader.setMat4("projection", projection);
-        grassShader.setMat4("view", view);
-        grass_renderer.DrawGrid(
-            grass, 
-            grassShader,
-            glm::vec3(0.0f, 20.0f, 0.0f),
-            model
-        );
+        render3.draw(ourShader, camera, SCR_WIDTH, SCR_HEIGHT,  glm::mat4(1.0f), glm::vec3(1.0f, 1.0f, 1.0f), glm::vec3(110.0f, 0.0f, 0.0f));
 
-        // x++;
-
-        // if (x == circle.vertices.size() - 1) {
-        //     x = 0;
-        // }
-        // ourShader.Activate();
-        
-        // ourShader.setMat4("projection", projection);
-        // ourShader.setMat4("view", view);
-        // model = glm::scale(model, glm::vec3(1.0f, 1.0f, 1.0f));	// it's a bit too big for our scene, so scale it down
-        // shadowShader.setMat4("model", glm::translate(model, glm::vec3(0.0f,-20.0f,0.0f)));
-        // ourShader.setVec4("lightColor", lightColor);
-       
-        // glActiveTexture(GL_TEXTURE0);
-
-        
-        playerShader.Activate();
-        playerShader.setMat4("projection", projection);
-        playerShader.setMat4("view", view);
-        // playerShader.setMat4("model", glm::translate(model, lightPos));
-        // playerShader.setVec4("lightColor", glm::vec3(1.0f, 0.0f, 0.0f));
-        ground.Draw(playerShader);
-
-        // playerModel = glm::scale(playerModel, glm::vec3(0.5f, 0.5f, 0.5f));	// it's a bit too big for our scene, so scale it down
-        // playerShader.setMat4("model", glm::scale(playerModel, glm::vec3(0.5f, 0.5f, 0.5f)));
-        playerShader.setVec4("lightColor", glm::vec3(1.0f, 0.0f, 0.0f));
-
-        // if (playerModel == glm::mat4(1.0f)) {
-        //     playerModel = glm::translate(playerModel, camera.Position + glm::vec3(0.0f, -5.0f, -10.0f));
-        // }
-
-        // if (move) {
+        if (move) {
             glm::vec3 new_position = glm::vec3(20.0f, 20.0f, 20.0f) * camera.Front + camera.Position + glm::vec3(0.0f, -10.0f, 0.0f);
             aabb.position += glm::vec3(20.0f, 20.0f, 20.0f) * camera.Front + camera.Position + glm::vec3(0.0f, -10.0f, 0.0f);
-            aabb.position = aabb.position * 0.5f;
-            // std::cout << "AABB Position (" << aabb.position.x << "," << aabb.position.y << "," << aabb.position.z << ") \n";
-
+            // aabb.position = aabb.position * 0.5f;
 
             playerModel = glm::translate(playerModel, new_position);
-            // playerModel = glm::translate(playerModel, glm::vec3(0.0f, -10.0f, 0.0f));
-            playerModel =  glm::rotate(playerModel, glm::radians(180.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+            playerModel = glm::translate(playerModel, glm::vec3(0.0f, -10.0f, 0.0f));
+            //playerModel =  glm::rotate(playerModel, glm::radians(180.0f), glm::vec3(0.0f, 1.0f, 0.0f));
             // playerModel = glm::scale(playerModel, glm::vec3(0.5f,0.5f, 0.5f);
             playerShader.setMat4("model", playerModel);
             std::cout << player.CheckCollision(aabb, testAABB) << "\n";
-            // previousCamPosition = camera.Position;
+            previousCamPosition = camera.Position;
+        }
 
-            // std::cout << "Camera Front (" << camera.Front.x << camera.Front.y << camera.Front.z << ") \n";
-            // std::cout << "Camera Position (" << camera.Position.x << camera.Position.y << camera.Position.z << ") \n";
-            // std::cout << "Player Position (" << new_position.x << new_position.y << new_position.z << ") \n";
-
-        // }
-
-    
-     
-        // std::cout << camera.Position.x << "," << camera.Position.y << "," << camera.Position.z << "\n";        
-        player.generateBoundingBoxMesh().Draw(playerShader);
         player.Draw(playerShader);
+        playerShader.setMat4("model", glm::mat4(1.0f));
+        player.generateBoundingBoxMesh(aabb, glm::vec4(0.0f, 1.0f, 0.0f, 1.0f)).Draw(playerShader);
 
         planeShader.Activate();
         planeShader.setMat4("projection", projection);
@@ -489,38 +410,28 @@ int main()
         // testModel = glm::scale(testModel, glm::vec3(0.1f, 0.1f, 0.1f));
         planeShader.setMat4("model", glm::translate(testModel, glm::vec3(0.0f, 0.0f, 0.0f)));
 
-        
-        // planeShader.setMat4("model", glm::translate(model, lightPos));
-        // planeShader.setVec4("lightColor", glm::vec3(1.0f, 0.0f, 0.0f));
-        // ground.Draw(planeShader);
-
-        // playerModel = glm::scale(playerModel, glm::vec3(0.5f, 0.5f, 0.5f));	// it's a bit too big for our scene, so scale it down
         // planeShader.setMat4("model", glm::scale(playerModel, glm::vec3(0.5f, 0.5f, 0.5f)));
         planeShader.setVec4("lightColor", glm::vec3(1.0f, 0.0f, 0.0f));
-        test.generateBoundingBoxMesh().Draw(planeShader);
-        
-        // for (Vertex vertex : test.generateBoundingBoxMesh().vertices) {
-        //     std::cout << "Generated vertices (" << vertex.position.x << "," << vertex.position.y << "," << vertex.position.z << ") \n";
+        //test.generateBoundingBoxMesh(testAABB, glm::vec4(0.0f, 0.0f, 1.0f, 1.0f)).Draw(planeShader);
+   
+        //test.Draw(planeShader);
+        shadow.debug(debugShader, false);
+     
 
-        // }
-
-
-
-
-        test.Draw(planeShader);
-
-        debugShader.Activate();
-        debugShader.setFloat("near_plane", near_plane);
-        debugShader.setFloat("far_plane", far_plane);
-        glActiveTexture(GL_TEXTURE0);
-        glBindTexture(GL_TEXTURE_2D, depthMap);
-        // renderQuad();
-
-        playerModel = glm::mat4(1.0f);
-        aabb.position = backupAABB.position;
-        testAABB.position = backupAABB.position;
-        move = false;
-
+        // DEBUG CODE FOR AABB
+        if (move) {
+            playerModel = glm::mat4(1.0f);
+            aabb.position = backupAABB.position;
+            testAABB.position = backupTestAABB.position;
+            check = true;
+        } else if (!move) {
+            if (check) {
+                aabb.position += glm::vec3(20.0f, 20.0f, 20.0f) * camera.Front + camera.Position + glm::vec3(0.0f, -10.0f, 0.0f);
+                aabb.position = aabb.position * 0.5f;
+                check = false;
+            }
+        }
+      
         glfwSwapBuffers(window);
         glfwPollEvents();
     }
@@ -529,89 +440,61 @@ int main()
     return 0;
 }
 
-unsigned int quadVAO = 0;
-unsigned int quadVBO;
-void renderQuad()
-{
-    if (quadVAO == 0)
-    {
-        float quadVertices[] = {
-            // positions        // texture Coords
-            -1.0f,  1.0f, 0.0f, 0.0f, 1.0f,
-            -1.0f, -1.0f, 0.0f, 0.0f, 0.0f,
-             1.0f,  1.0f, 0.0f, 1.0f, 1.0f,
-             1.0f, -1.0f, 0.0f, 1.0f, 0.0f,
-        };
-        // setup plane VAO
-        glGenVertexArrays(1, &quadVAO);
-        glGenBuffers(1, &quadVBO);
-        glBindVertexArray(quadVAO);
-        glBindBuffer(GL_ARRAY_BUFFER, quadVBO);
-        glBufferData(GL_ARRAY_BUFFER, sizeof(quadVertices), &quadVertices, GL_STATIC_DRAW);
-        glEnableVertexAttribArray(0);
-        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
-        glEnableVertexAttribArray(1);
-        glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
-    }
-    glBindVertexArray(quadVAO);
-    glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
-    glBindVertexArray(0);
-}
+
 
 // process all input: query GLFW whether relevant keys are pressed/released this frame and react accordingly
 // ---------------------------------------------------------------------------------------------------------
 void processInput(GLFWwindow *window)
 {
     if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS) {
-        // move = true;
         glfwSetWindowShouldClose(window, true);
-
     }
 
     if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) {
         camera.ProcessKeyboard(FORWARD, deltaTime);
-        move = true;
-
+   
     }
     if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS) {
         camera.ProcessKeyboard(BACKWARD, deltaTime);
-        move = true;
+      
     }
     if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS) {
         camera.ProcessKeyboard(LEFT, deltaTime);
-        move = true;
+    
     }
     if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) {
         camera.ProcessKeyboard(RIGHT, deltaTime);
-        move = true;
+     
     }
     if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS) {
         camera.ProcessKeyboard(UP, deltaTime);
-        move = true;
     }
     
     if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS) {
         camera.MovementSpeed += 1.0f;
-        move = true;
     }
+ 
     if (glfwGetKey(window, GLFW_KEY_RIGHT_SHIFT) == GLFW_PRESS) {
         camera.MovementSpeed -= 1.0f;
-        // move = true;
+    }
+
+    if (glfwGetKey(window, GLFW_KEY_LEFT_CONTROL) == GLFW_PRESS) {
+        move = false;
+    }
+
+    if (glfwGetKey(window, GLFW_KEY_RIGHT_CONTROL) == GLFW_PRESS) {
+        move = true;
     }
 
     if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS) {
         glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
         camera.first_clickz = true;
-        // move = true;
     } else if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_RIGHT) == GLFW_PRESS) {
         camera.first_clickz = false;
         glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
-        // move = true;
     }
 
-  
-    // std::cout << "Movement: " << move;
-
+ 
 }
 
 // glfw: whenever the window size changed (by OS or user resize) this callback function executes
@@ -650,3 +533,51 @@ void scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
 {
     camera.ProcessMouseScroll(static_cast<float>(yoffset));
 }
+
+
+// DON'T REMOVE THIS - SHIVESH
+        
+        // grassShader.Activate();
+        // grassShader.setMat4("projection", projection);
+        // grassShader.setMat4("view", view);
+        // grass_renderer.DrawGrid(
+        //     grass, 
+        //     grassShader,
+        //     glm::vec3(0.0f, 20.0f, 0.0f),
+        //     model
+        // );
+
+        // std::cout << "Camera Front (" << camera.Front.x << camera.Front.y << camera.Front.z << ") \n";
+        //     std::cout << "Player Size (" << aabb.size.x << "," << aabb.size.y << "," << aabb.size.z << ") \n";
+        //     std::cout << "Test Size (" << testAABB.size.x << "," << testAABB.size.y << "," << testAABB.size.z << ") \n";
+
+        //     std::cout << "Player Position (" << aabb.position.x << "," << aabb.position.y << "," << aabb.position.z << ") \n";
+        //     std::cout << "Test Position (" << testAABB.position.x << "," << testAABB.position.y << "," << testAABB.position.z << ") \n";
+
+
+// SHINY SHADER STUFF
+ // // glm::vec3 lightColor = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
+
+        
+        // // lightShader.Activate();
+
+        // // lightShader.setMat4("projection", projection);
+        // // lightShader.setMat4("view", view);
+        // // lightShader.setMat4("model", glm::translate(model, glm::vec3(-10.0f, 1.0f, 0.0f)));
+        // // lightShader.setVec4("lightColor", lightColor);
+        // // lightShader.setVec3("camPosition", camera.Position);
+
+        // // light.Draw(lightShader);
+
+        // // shinyShader.Activate();
+        // // shinyShader.setVec3("camPosition", camera.Position);
+        // // shinyShader.setVec3("light.position", glm::vec3(0.0f,-20.0f,0.0f));
+        // // shinyShader.setFlknight_texturec3("light.ambient", glm::vec3(0.1f, 0.1f, 0.1f));
+        // // shinyShader.setVec3("light.diffuse", glm::vec3(0.8f, 0.8f, 0.8f));
+        // // shinyShader.setVec3("light.specular", glm::vec3(1.0f, 1.0f, 1.0f));
+        // // shinyShader.setFloat("light.constant", 1.0f);
+        // // shinyShader.setFloat("light.linear", 0.07f);
+        // // shinyShader.setFloat("light.quadratic", 0.017f);
+
+        // // // material properties
+        // // shinyShader.setFloat("material.shininess", 32.0f);

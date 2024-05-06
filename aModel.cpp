@@ -230,6 +230,8 @@ AABB aModel::calculateBoundingBox() {
     aabb.position = position;
     aabb.size = size;
 
+    modelAABB = aabb;
+
     return aabb;
 }
 
@@ -239,8 +241,8 @@ bool aModel::CheckCollision(AABB &one, AABB &two) // AABB - AABB collision
     bool collisionX = one.position.x + one.size.x >= two.position.x &&
         two.position.x + two.size.x >= one.position.x;
     // collision y-axis?
-    bool collisionY = one.position.y + one.size.y >= two.position.y &&
-        two.position.y + two.size.y >= one.position.y;
+    bool collisionY = one.position.y - one.size.y <= two.position.y &&
+        two.position.y - two.size.y <= one.position.y;
 
     bool collisionZ = one.position.z + one.size.z >= two.position.z &&
         two.position.z + two.size.z >= one.position.z;
@@ -248,21 +250,21 @@ bool aModel::CheckCollision(AABB &one, AABB &two) // AABB - AABB collision
     return collisionX && collisionY && collisionZ;
 }  
 
-Mesh aModel::generateBoundingBoxMesh() {
+Mesh aModel::generateBoundingBoxMesh(AABB aabb, glm::vec4 color) {
 
     std::vector<Vertex> vertices;
     std::vector<glm::vec3> vert;
 
-    glm::vec3 vertex_1 = glm::vec3(left_most_point, top_most_point, front_most_point);
+    glm::vec3 vertex_1 = glm::vec3(aabb.position.x, aabb.position.y, aabb.position.z + aabb.size.z);
+    glm::vec3 vertex_2 = glm::vec3(aabb.position.x + aabb.size.x, aabb.position.y, aabb.position.z + aabb.size.z);
+    // glm::vec3 vertex_2 = glm::vec3(right_most_point, top_most_point, front_most_point);
+    glm::vec3 vertex_3 = glm::vec3(aabb.position.x + aabb.size.x, aabb.position.y - aabb.size.y, aabb.position.z + aabb.size.z);
+    glm::vec3 vertex_4 = glm::vec3(aabb.position.x, aabb.position.y - aabb.size.y,  aabb.position.z + aabb.size.z);
 
-    glm::vec3 vertex_2 = glm::vec3(right_most_point, top_most_point, front_most_point);
-    glm::vec3 vertex_3 = glm::vec3(right_most_point, bottom_most_point, front_most_point);
-    glm::vec3 vertex_4 = glm::vec3(left_most_point, bottom_most_point, front_most_point);
-
-    glm::vec3 vertex_5 = glm::vec3(left_most_point, bottom_most_point, back_most_point);
-    glm::vec3 vertex_6 = glm::vec3(right_most_point, bottom_most_point, back_most_point);
-    glm::vec3 vertex_7 = glm::vec3(right_most_point, top_most_point, back_most_point);
-    glm::vec3 vertex_8 = glm::vec3(left_most_point, top_most_point, back_most_point);
+    glm::vec3 vertex_5 = glm::vec3(aabb.position.x, aabb.position.y - aabb.size.y,  aabb.position.z);
+    glm::vec3 vertex_6 = glm::vec3(aabb.position.x + aabb.size.x, aabb.position.y - aabb.size.y, aabb.position.z);
+    glm::vec3 vertex_7 = glm::vec3(aabb.position.x + aabb.size.x, aabb.position.y, aabb.position.z);
+    glm::vec3 vertex_8 = glm::vec3(aabb.position.x, aabb.position.y, aabb.position.z);
 
     vert.push_back(vertex_1);
     vert.push_back(vertex_2);
@@ -274,10 +276,18 @@ Mesh aModel::generateBoundingBoxMesh() {
     vert.push_back(vertex_8);
 
     for (glm::vec3 vect : vert) {
+        
         Vertex vertex;
         vertex.position = vect;
         vertex.normal = glm::vec3(0.0f, 1.0f, 0.0f);
-        vertex.color = glm::vec4(1.0f, 0.0f, 0.0f, 0.0f);
+
+
+        if(vect == aabb.position) {
+            vertex.color = color + glm::vec4(1.0f, 0.0f, 0.0f, 0.0f);
+        } else {
+            vertex.color = color;
+        }
+    
         vertex.texUV = glm::vec2(1.0f, 1.0f);
         vertices.push_back(vertex);
     }

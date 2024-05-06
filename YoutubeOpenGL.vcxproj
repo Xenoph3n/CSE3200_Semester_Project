@@ -175,6 +175,7 @@
     <ClCompile Include="Circle.cpp" />
     <ClCompile Include="Render.cpp" />
     <ClCompile Include="Grass.cpp" />
+    <ClCompile Include="Shadow.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="aCamera.h" />
@@ -190,6 +191,7 @@
     <ClInclude Include="Render.h" />
     <ClInclude Include="Vertex.h" />
     <ClInclude Include="Grass.h" />
+    <ClInclude Include="Shadow.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="default.frag" />
@@ -210,6 +212,8 @@
     <None Include="dept.vert" />
     <None Include="debug.frag" />
     <None Include="debug.vert" />
+    <None Include="player.frag" />
+    <None Include="player.vert" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

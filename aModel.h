@@ -35,6 +35,7 @@ public:
     float bottom_most_point = 0.0f;
     float front_most_point = 0.0f;
     float back_most_point = 0.0f;
+    AABB modelAABB;
 
     
     std::vector<aTexture> textures_loaded;	// stores all the textures loaded so far, optimization to make sure textures aren't loaded more than once.
@@ -47,7 +48,7 @@ public:
     void Draw(Shader& shader);
     AABB calculateBoundingBox();
     bool CheckCollision(AABB &one, AABB &two); // AABB - AABB collision
-    Mesh generateBoundingBoxMesh();
+    Mesh generateBoundingBoxMesh(AABB aabb, glm::vec4 color);
 
     
 

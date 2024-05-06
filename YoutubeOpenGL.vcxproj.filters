@@ -66,6 +66,9 @@
     <ClCompile Include="Grass.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Shadow.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="EBO.h">
@@ -105,6 +108,9 @@
       <Filter>Source Files</Filter>
     </ClInclude>
     <ClInclude Include="Grass.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Shadow.h">
       <Filter>Source Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -161,6 +167,12 @@
       <Filter>Resource Files\Shaders</Filter>
     </None>
     <None Include="debug.vert">
+      <Filter>Resource Files\Shaders</Filter>
+    </None>
+    <None Include="player.frag">
+      <Filter>Resource Files\Shaders</Filter>
+    </None>
+    <None Include="player.vert">
       <Filter>Resource Files\Shaders</Filter>
     </None>
   </ItemGroup>
