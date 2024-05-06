@@ -14,6 +14,7 @@
 
 #include "Shader.h"
 #include "aMesh.h"
+#include "Mesh.h"
 
 struct AABB {
     glm::vec3 position;
@@ -35,6 +36,7 @@ public:
     float front_most_point = 0.0f;
     float back_most_point = 0.0f;
 
+    
     std::vector<aTexture> textures_loaded;	// stores all the textures loaded so far, optimization to make sure textures aren't loaded more than once.
     std::vector<aMesh> meshes;
     std::string directory;
@@ -45,6 +47,7 @@ public:
     void Draw(Shader& shader);
     AABB calculateBoundingBox();
     bool CheckCollision(AABB &one, AABB &two); // AABB - AABB collision
+    Mesh generateBoundingBoxMesh();
 
     
 

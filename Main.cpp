@@ -464,8 +464,8 @@ int main()
             playerModel = glm::translate(playerModel, new_position);
             // playerModel = glm::translate(playerModel, glm::vec3(0.0f, -10.0f, 0.0f));
             playerModel =  glm::rotate(playerModel, glm::radians(180.0f), glm::vec3(0.0f, 1.0f, 0.0f));
-            playerShader.setMat4("model", glm::scale(playerModel, glm::vec3(0.5f,0.5f, 0.5f)));
-            testAABB.position =  testAABB.position * 0.1f;
+            // playerModel = glm::scale(playerModel, glm::vec3(0.5f,0.5f, 0.5f);
+            playerShader.setMat4("model", playerModel);
             std::cout << player.CheckCollision(aabb, testAABB) << "\n";
             // previousCamPosition = camera.Position;
 
@@ -478,15 +478,18 @@ int main()
     
      
         // std::cout << camera.Position.x << "," << camera.Position.y << "," << camera.Position.z << "\n";        
+        player.generateBoundingBoxMesh().Draw(playerShader);
         player.Draw(playerShader);
 
         planeShader.Activate();
         planeShader.setMat4("projection", projection);
         planeShader.setMat4("view", view);
         glm::mat4 testModel = glm::mat4(1.0f);
-        testModel = glm::translate(testModel, glm::vec3(0.0f, 0.0f, 0.0f));
-        testModel = glm::scale(testModel, glm::vec3(0.1f, 0.1f, 0.1f));
-        planeShader.setMat4("model", testModel);
+        // testModel = glm::translate(testModel, glm::vec3(0.0f, 0.0f, 0.0f));
+        // testModel = glm::scale(testModel, glm::vec3(0.1f, 0.1f, 0.1f));
+        planeShader.setMat4("model", glm::translate(testModel, glm::vec3(0.0f, 0.0f, 0.0f)));
+
+        
         // planeShader.setMat4("model", glm::translate(model, lightPos));
         // planeShader.setVec4("lightColor", glm::vec3(1.0f, 0.0f, 0.0f));
         // ground.Draw(planeShader);
@@ -494,6 +497,16 @@ int main()
         // playerModel = glm::scale(playerModel, glm::vec3(0.5f, 0.5f, 0.5f));	// it's a bit too big for our scene, so scale it down
         // planeShader.setMat4("model", glm::scale(playerModel, glm::vec3(0.5f, 0.5f, 0.5f)));
         planeShader.setVec4("lightColor", glm::vec3(1.0f, 0.0f, 0.0f));
+        test.generateBoundingBoxMesh().Draw(planeShader);
+        
+        // for (Vertex vertex : test.generateBoundingBoxMesh().vertices) {
+        //     std::cout << "Generated vertices (" << vertex.position.x << "," << vertex.position.y << "," << vertex.position.z << ") \n";
+
+        // }
+
+
+
+
         test.Draw(planeShader);
 
         debugShader.Activate();

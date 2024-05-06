@@ -248,6 +248,55 @@ bool aModel::CheckCollision(AABB &one, AABB &two) // AABB - AABB collision
     return collisionX && collisionY && collisionZ;
 }  
 
+Mesh aModel::generateBoundingBoxMesh() {
+
+    std::vector<Vertex> vertices;
+    std::vector<glm::vec3> vert;
+
+    glm::vec3 vertex_1 = glm::vec3(left_most_point, top_most_point, front_most_point);
+
+    glm::vec3 vertex_2 = glm::vec3(right_most_point, top_most_point, front_most_point);
+    glm::vec3 vertex_3 = glm::vec3(right_most_point, bottom_most_point, front_most_point);
+    glm::vec3 vertex_4 = glm::vec3(left_most_point, bottom_most_point, front_most_point);
+
+    glm::vec3 vertex_5 = glm::vec3(left_most_point, bottom_most_point, back_most_point);
+    glm::vec3 vertex_6 = glm::vec3(right_most_point, bottom_most_point, back_most_point);
+    glm::vec3 vertex_7 = glm::vec3(right_most_point, top_most_point, back_most_point);
+    glm::vec3 vertex_8 = glm::vec3(left_most_point, top_most_point, back_most_point);
+
+    vert.push_back(vertex_1);
+    vert.push_back(vertex_2);
+    vert.push_back(vertex_3);
+    vert.push_back(vertex_4);
+    vert.push_back(vertex_5);
+    vert.push_back(vertex_6);
+    vert.push_back(vertex_7);
+    vert.push_back(vertex_8);
+
+    for (glm::vec3 vect : vert) {
+        Vertex vertex;
+        vertex.position = vect;
+        vertex.normal = glm::vec3(0.0f, 1.0f, 0.0f);
+        vertex.color = glm::vec4(1.0f, 0.0f, 0.0f, 0.0f);
+        vertex.texUV = glm::vec2(1.0f, 1.0f);
+        vertices.push_back(vertex);
+    }
+
+    std::vector<GLuint> indices = {
+        0, 1, 2, 3,
+        0, 7, 6, 1,
+        1, 2, 5, 6,
+        6, 1, 0, 7,
+        7, 6, 5, 4,
+        4, 7, 0, 3
+    };
+
+    std::vector<Texture> textures;
+
+    return Mesh(vertices, indices, textures, false);
+    
+}
+
 
 unsigned int TextureFromFile2(const char* path, const std::string& directory, bool gamma)
 {
