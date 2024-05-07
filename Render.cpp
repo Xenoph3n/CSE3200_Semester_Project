@@ -66,15 +66,17 @@ void Render::render_model(Shader &shader, std::string file_path, glm::mat4 proje
     // object.Draw(shader);
 }
 
-void Render::draw(Shader &shader, aCamera &camera, float screen_height, float screen_width, glm::mat4 model, glm::vec3 scale, glm::vec3 translation) {
+void Render::draw(Shader &shader, aCamera &camera, float screen_height, float screen_width, glm::mat4 model, glm::vec3 scale, glm::vec3 translation, float rotation) {
     for (unsigned int i = 0; i < meshes.size(); i++) {
 
         shader.Activate();
-
+        glm::mat4 local_model = model;
         // glm::mat4 projection = glm::perspective(glm::radians(camera.Zoom), (float)screen_width / (float) screen_height, 0.1f, 2000.0f);
         glm::mat4 view = camera.GetViewMatrix();
-        model = glm::scale(model, scale);	
-        shader.setMat4("model", glm::translate(model, translation));    
+        local_model = glm::rotate(local_model, glm::radians(rotation), glm::vec3(0.0f, 1.0f, 0.0f));
+        local_model = glm::scale(local_model, scale);	
+        local_model = glm::translate(local_model, translation);
+        shader.setMat4("model", local_model);    
         // shader.setMat4("projection", projection);
         shader.setMat4("view", view);
 
