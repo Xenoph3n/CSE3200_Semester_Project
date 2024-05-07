@@ -169,14 +169,21 @@ int main()
     Texture textures[]
 	{
 		Texture("./stadium/single/grass.png", "diffuse", 0, tex_id_1)
-	};;
+	};
 
+    Texture dirt_texture[]
+	{
+		Texture("./textures/dirt.jpg", "diffuse", 0, text_id_2)
+	};
+
+    
 	std::vector <Vertex> verts(miniSreenVertices, miniSreenVertices + sizeof(miniSreenVertices) / sizeof(Vertex));
     std::vector <Vertex> vertz(quadVertices, quadVertices + sizeof(quadVertices) / sizeof(Vertex));
     std::vector <Vertex> cubeVerts(cubeVertices, cubeVertices + sizeof(cubeVertices) / sizeof(Vertex));
 	std::vector <GLuint> ind(indices, indices + sizeof(indices) / sizeof(GLuint));
     std::vector <GLuint> cubeInd(cubeIndices, cubeIndices + sizeof(cubeIndices) / sizeof(GLuint));
     std::vector <Texture> tex(textures, textures + sizeof(textures) / sizeof(Texture));
+    std::vector <Texture> dirt(dirt_texture, dirt_texture + sizeof(dirt_texture) / sizeof(Texture));
 
     Mesh grass(verts, ind, tex, true);
     Grass grass_renderer;
@@ -195,7 +202,7 @@ int main()
     Circle circle;
     circle.calculate(glm::vec3(0.0f, 0.0f, 0.0f), 30.0f, 200.0f, glm::vec4(1.0f, 0.0f, 0.0f, 1.0f));
 
-    Mesh plane(circle.vertices, circle.indices, tex, true);
+    Mesh plane(circle.vertices, circle.indices, dirt, true);
 
     Render render;
     render.get_file_list("./stadium/blue_1");
@@ -283,6 +290,7 @@ int main()
     playerModel = mod;
     glm::vec3 previousCamPosition = camera.Position;
     bool check = true;
+    grass_renderer.generateRandomNumbers(10, 10);
 
     // -----------
     while (!glfwWindowShouldClose(window))
@@ -298,6 +306,8 @@ int main()
 
         glm::mat4 model = glm::mat4(1.0f);
         model = glm::translate(model, glm::vec3(0.0f, 0.0f, 0.0f)); // translate it down so it's at the center of the scene
+        glm::mat4 projection = glm::perspective(glm::radians(camera.Zoom), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 2000.0f);
+        glm::mat4 view = camera.GetViewMatrix();
 
         glViewport(0, 0, SCR_WIDTH, SCR_HEIGHT);
         glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
@@ -308,11 +318,43 @@ int main()
         
         depthShader.setMat4("model", glm::translate(model, glm::vec3(0.0f,0.0f,5.0f)));
         // render sceneL
-        render.draw(depthShader, camera, shadow.SHADOW_WIDTH, shadow.SHADOW_HEIGHT, glm::mat4(1.0f), glm::vec3(1.0f, 1.0f, 1.0f), glm::vec3(0.0f, 0.0f, 0.0f));
-        // plane.Draw(depthShader);
         depthShader.setMat4("model", glm::translate(model, glm::vec3(0.0f,-50.0f,10.0f)));
 
-        mega_cube.Draw(depthShader);
+        render.draw(   depthShader, 
+                        camera, 
+                        SCR_WIDTH, 
+                        SCR_HEIGHT, 
+                        glm::mat4(1.0f), 
+                        glm::vec3(1.0f, 1.0f, 1.0f), 
+                        glm::vec3(circle.vertices[3].position.x - 200.0f, -34.0f, circle.vertices[3].position.z - 200.0f),
+                        270.0f
+                        );
+                        
+        orange.draw(    depthShader, 
+                        camera, 
+                        SCR_WIDTH, 
+                        SCR_HEIGHT, 
+                        glm::mat4(1.0f), 
+                        glm::vec3(1.0f, 1.0f, 1.0f), 
+                        glm::vec3(200.0f + circle.vertices[0].position.x, -31.0f, 0.0f + circle.vertices[0].position.z - 400.0f),
+                        180.0f);
+        
+        
+        green.draw(    depthShader, 
+                        camera, 
+                        SCR_WIDTH, 
+                        SCR_HEIGHT, 
+                        glm::mat4(1.0f), 
+                        glm::vec3(1.0f, 1.0f, 1.0f), 
+                        glm::vec3(circle.vertices[8].position.x + 200.0f, -40.0f, 0.0f + circle.vertices[8].position.z - 70.0f),
+                        60.0f);
+
+        depthShader.setMat4("projection", projection);
+        depthShader.setMat4("view", view);
+        glm::mat4 testModel = glm::mat4(1.0f);
+        depthShader.setMat4("model", glm::translate(testModel, glm::vec3(0.0f, -50.0f, 0.0f)));
+        depthShader.setVec4("lightColor", glm::vec3(1.0f, 0.0f, 0.0f));
+        plane.Draw(depthShader);
 
         shadow.unBindFrameBuffer();
 
@@ -322,8 +364,7 @@ int main()
         glClearColor(0.05f, 0.05f, 0.25f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         
-        glm::mat4 projection = glm::perspective(glm::radians(camera.Zoom), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 2000.0f);
-        glm::mat4 view = camera.GetViewMatrix();
+
         model = glm::translate(model, glm::vec3(0.0f, 0.0f, 0.0f)); // translate it down so it's at the center of the scene
 
         shadow.setUpShadowShader(
@@ -333,7 +374,7 @@ int main()
             projection,
             view
         );
-        
+
         // shadowShader.setMat4("model", glm::translate(model, glm::vec3(0.0f,-50.0f,10.0f)));
         // mega_cube.Draw(shadowShader);
         shadowShader.Activate();
@@ -358,7 +399,7 @@ int main()
                         180.0f);
         
         
-        green.draw(    shadowShader, 
+        green.draw(     shadowShader, 
                         camera, 
                         SCR_WIDTH, 
                         SCR_HEIGHT, 
@@ -391,21 +432,40 @@ int main()
         playerShader.setMat4("model", glm::mat4(1.0f));
         // player.generateBoundingBoxMesh(aabb, glm::vec4(0.0f, 1.0f, 0.0f, 1.0f)).Draw(playerShader);
 
-        planeShader.Activate();
-        planeShader.setMat4("projection", projection);
-        planeShader.setMat4("view", view);
-        glm::mat4 testModel = glm::mat4(1.0f);
+        shadowShader.Activate();
+        shadowShader.setMat4("projection", projection);
+        shadowShader.setMat4("view", view);
+        testModel = glm::mat4(1.0f);
         // testModel = glm::translate(testModel, glm::vec3(0.0f, 0.0f, 0.0f));
         // testModel = glm::scale(testModel, glm::vec3(0.1f, 0.1f, 0.1f));
-        planeShader.setMat4("model", glm::translate(testModel, glm::vec3(0.0f, -50.0f, 0.0f)));
+        shadowShader.setMat4("model", glm::translate(testModel, glm::vec3(0.0f, -50.0f, 0.0f)));
 
-        // planeShader.setMat4("model", glm::scale(playerModel, glm::vec3(0.5f, 0.5f, 0.5f)));
-        planeShader.setVec4("lightColor", glm::vec3(1.0f, 0.0f, 0.0f));
-        // test.generateBoundingBoxMesh(testAABB, glm::vec4(0.0f, 0.0f, 1.0f, 1.0f)).Draw(planeShader);
+        // shadowShader.setMat4("model", glm::scale(playerModel, glm::vec3(0.5f, 0.5f, 0.5f)));
+        shadowShader.setVec4("lightColor", glm::vec3(1.0f, 0.0f, 0.0f));
+        // test.generateBoundingBoxMesh(testAABB, glm::vec4(0.0f, 0.0f, 1.0f, 1.0f)).Draw(shadowShader);
 
-        //test.Draw(planeShader);
-        plane.Draw(planeShader);
+        //test.Draw(shadowShader);
+        plane.Draw(shadowShader);
         shadow.debug(debugShader, false);
+
+        grassShader.Activate();
+        grassShader.setMat4("projection", projection);
+        grassShader.setMat4("view", view);
+        grass_renderer.DrawGrid(
+            grass, 
+            grassShader,
+            glm::vec3(0.0f, 20.0f, 0.0f),
+            model
+        );
+
+        // std::cout << "Camera Front (" << camera.Front.x << camera.Front.y << camera.Front.z << ") \n";
+        //     std::cout << "Player Size (" << aabb.size.x << "," << aabb.size.y << "," << aabb.size.z << ") \n";
+        //     std::cout << "Test Size (" << testAABB.size.x << "," << testAABB.size.y << "," << testAABB.size.z << ") \n";
+
+        //     std::cout << "Player Position (" << aabb.position.x << "," << aabb.position.y << "," << aabb.position.z << ") \n";
+        //     std::cout << "Test Position (" << testAABB.position.x << "," << testAABB.position.y << "," << testAABB.position.z << ") \n";
+
+
      
         // DEBUG CODE FOR AABB
         if (move) {
@@ -526,23 +586,6 @@ void scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
 
 // DON'T REMOVE THIS - SHIVESH
         
-        // grassShader.Activate();
-        // grassShader.setMat4("projection", projection);
-        // grassShader.setMat4("view", view);
-        // grass_renderer.DrawGrid(
-        //     grass, 
-        //     grassShader,
-        //     glm::vec3(0.0f, 20.0f, 0.0f),
-        //     model
-        // );
-
-        // std::cout << "Camera Front (" << camera.Front.x << camera.Front.y << camera.Front.z << ") \n";
-        //     std::cout << "Player Size (" << aabb.size.x << "," << aabb.size.y << "," << aabb.size.z << ") \n";
-        //     std::cout << "Test Size (" << testAABB.size.x << "," << testAABB.size.y << "," << testAABB.size.z << ") \n";
-
-        //     std::cout << "Player Position (" << aabb.position.x << "," << aabb.position.y << "," << aabb.position.z << ") \n";
-        //     std::cout << "Test Position (" << testAABB.position.x << "," << testAABB.position.y << "," << testAABB.position.z << ") \n";
-
 
 // SHINY SHADER STUFF
  // // glm::vec3 lightColor = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
