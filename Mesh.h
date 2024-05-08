@@ -43,6 +43,7 @@ public:
 		Shader& shader, 
 		bool check = false,
 		bool instance = false,
+		const std::vector<glm::mat4> &models = std::vector<glm::mat4>(),
 		glm::mat4 matrix = glm::mat4(1.0f),
 		glm::vec3 translation = glm::vec3(-0.5f, 0.2f, 0.0f),
 		glm::quat rotation = glm::quat(1.0f, 0.0f, 0.0f, 0.0f),

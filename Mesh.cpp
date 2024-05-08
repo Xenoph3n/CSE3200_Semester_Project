@@ -108,6 +108,7 @@ void Mesh::Draw
 	Shader& shader, 
 	bool check,
 	bool instance,
+	const std::vector<glm::mat4> &models,
 	glm::mat4 matrix,
 	glm::vec3 translation, 
 	glm::quat rotation, 
@@ -164,7 +165,7 @@ void Mesh::Draw
 	// Draw the actual mesh
 
 	if (instance) {
-		glDrawElementsInstanced(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, 0, 90000);
+		glDrawElementsInstanced(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, 0, models.size());
 	} else {
 		glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, 0);
 	}

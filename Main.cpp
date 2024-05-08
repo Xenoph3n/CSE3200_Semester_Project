@@ -20,6 +20,7 @@
 #include "Render.h"
 #include "Grass.h"
 #include "Shadow.h"
+#include <math.h>
 
 #include <iostream>
 
@@ -210,45 +211,150 @@ int main()
     float offset = 0.0f;
     
     Grass grass_renderer;
-    glm::vec3 position = glm::vec3(0.0f, 0.0f, 0.0f);
+    glm::vec3 position = glm::vec3(0.0f, -49.0f, 0.0f);
     grassShader.Activate();
-    for (int j = 0; j < 100; j++) {
-        for(int i = 0; i < 100; i++) {
+
+    Circle circle;
+    circle.calculate(glm::vec3(0.0f, 0.0f, 0.0f), 30.0f, 200.0f, glm::vec4(1.0f, 0.0f, 0.0f, 1.0f));
+
+    int n = 350;
+
+    glm::vec4 pitch_bounds = glm::vec4(-20.0f, -20.0f, 20.0f, 20.0f);
+
+    for (int j = 0; j < n; j++) {
+        for(int i = 0; i < n; i++) {
             glm::mat4 smodel = glm::mat4(1.0f);
-            smodel = glm::translate(smodel, glm::vec3(position.x, 0.0f, position.z));
-            models.push_back(smodel);
+            glm::vec3 q1 = glm::vec3(position.x, position.y, position.z);
+            glm::vec3 q2 = glm::vec3(position.x, position.y, -position.z);
+            glm::vec3 q3 = glm::vec3(-position.x, position.y, -position.z);
+            glm::vec3 q4 =  glm::vec3(-position.x, position.y, position.z);
+            int s1;
+            int s2;
 
-            int s1 = getRandomNumber(1, 30);
-            smodel = glm::rotate(smodel, glm::radians((float) s1), glm::vec3(0.0f, -1.0f, 0.0f));
-            models.push_back(smodel);
+            if (sqrt(pow(q1.x, 2) + pow(q1.z, 2)) < (float) n / 2 && 
+                !(   q1.x > pitch_bounds.x && q1.x < pitch_bounds.z &&
+                    q1.z > pitch_bounds.y && q1.z < pitch_bounds.w
+                )
+            ) {
+                smodel = glm::translate(smodel, q1);
+                models.push_back(smodel);
 
-            smodel = glm::rotate(smodel, glm::radians((float) -s1), glm::vec3(0.0f, -1.0f, 0.0f));
-            models.push_back(smodel);
+                s1 = getRandomNumber(1, 90);
+                smodel = glm::rotate(smodel, glm::radians((float) s1), glm::vec3(0.0f, -1.0f, 0.0f));
+                models.push_back(smodel);
+
+                smodel = glm::rotate(smodel, glm::radians((float) -s1), glm::vec3(0.0f, -1.0f, 0.0f));
+                models.push_back(smodel);
+
+                s2 = getRandomNumber(1, 90);
+                smodel = glm::rotate(smodel, glm::radians((float) s2), glm::vec3(0.0f, -1.0f, 0.0f));
+                models.push_back(smodel);
+
+                smodel = glm::rotate(smodel, glm::radians((float) -s2), glm::vec3(0.0f, -1.0f, 0.0f));
+                models.push_back(smodel);
+
+            }
+
+
+            if (sqrt(pow(q2.x, 2) + pow(q2.z, 2)) < (float) n / 2 &&
+                !(   q2.x > pitch_bounds.x && q2.x < pitch_bounds.z &&
+                    q2.z > pitch_bounds.y && q2.z < pitch_bounds.w
+                )
+            ) {
+                smodel = glm::translate(glm::mat4(1.0f), q2);
+                models.push_back(smodel);
+
+                s1 = getRandomNumber(1, 90);
+                smodel = glm::rotate(smodel, glm::radians((float) s1), glm::vec3(0.0f, -1.0f, 0.0f));
+                models.push_back(smodel);
+
+                smodel = glm::rotate(smodel, glm::radians((float) -s1), glm::vec3(0.0f, -1.0f, 0.0f));
+                models.push_back(smodel);
+
+                s2 = getRandomNumber(1, 90);
+                smodel = glm::rotate(smodel, glm::radians((float) s2), glm::vec3(0.0f, -1.0f, 0.0f));
+                models.push_back(smodel);
+
+                smodel = glm::rotate(smodel, glm::radians((float) -s2), glm::vec3(0.0f, -1.0f, 0.0f));
+                models.push_back(smodel);
+            }
+
+            if (sqrt(pow(q3.x, 2) + pow(q3.z, 2)) < (float) n / 2 && 
+                !(  q3.x > pitch_bounds.x && q3.x < pitch_bounds.z &&
+                    q3.z > pitch_bounds.y && q3.z < pitch_bounds.w
+                )
+            ) {
+                smodel = glm::translate(glm::mat4(1.0f), q3);
+                models.push_back(smodel);
+
+                s1 = getRandomNumber(1, 90);
+                smodel = glm::rotate(smodel, glm::radians((float) s1), glm::vec3(0.0f, -1.0f, 0.0f));
+                models.push_back(smodel);
+
+                smodel = glm::rotate(smodel, glm::radians((float) -s1), glm::vec3(0.0f, -1.0f, 0.0f));
+                models.push_back(smodel);
+
+                s2 = getRandomNumber(1, 90);
+                smodel = glm::rotate(smodel, glm::radians((float) s2), glm::vec3(0.0f, -1.0f, 0.0f));
+                models.push_back(smodel);
+
+                smodel = glm::rotate(smodel, glm::radians((float) -s2), glm::vec3(0.0f, -1.0f, 0.0f));
+                models.push_back(smodel);
+
+            }
+
+            if (sqrt(pow(q4.x, 2) + pow(q4.z, 2)) < (float) n / 2 &&
+                !(  q4.x > pitch_bounds.x && q4.x < pitch_bounds.z &&
+                    q4.z > pitch_bounds.y && q4.z < pitch_bounds.w
+                )
+            ) {
+                smodel = glm::translate(glm::mat4(1.0f), q4);
+                models.push_back(smodel);
+
+                s1 = getRandomNumber(1, 90);
+                smodel = glm::rotate(smodel, glm::radians((float) s1), glm::vec3(0.0f, -1.0f, 0.0f));
+                models.push_back(smodel);
+
+                smodel = glm::rotate(smodel, glm::radians((float) -s1), glm::vec3(0.0f, -1.0f, 0.0f));
+                models.push_back(smodel);
+
+                s2 = getRandomNumber(1, 90);
+                smodel = glm::rotate(smodel, glm::radians((float) s2), glm::vec3(0.0f, -1.0f, 0.0f));
+                models.push_back(smodel);
+
+                smodel = glm::rotate(smodel, glm::radians((float) -s2), glm::vec3(0.0f, -1.0f, 0.0f));
+                models.push_back(smodel);
+            }
+
             
+
+
+
+
             
-            int s2 = getRandomNumber(30, 60);
-            smodel = glm::rotate(smodel, glm::radians((float) s2), glm::vec3(0.0f, -1.0f, 0.0f));
-            models.push_back(smodel);
+            // int s2 = getRandomNumber(30, 60);
+            // smodel = glm::rotate(smodel, glm::radians((float) s2), glm::vec3(0.0f, -1.0f, 0.0f));
+            // models.push_back(smodel);
 
-            smodel = glm::rotate(smodel, glm::radians((float) -s2), glm::vec3(0.0f, -1.0f, 0.0f));
-            models.push_back(smodel);
+            // smodel = glm::rotate(smodel, glm::radians((float) -s2), glm::vec3(0.0f, -1.0f, 0.0f));
+            // models.push_back(smodel);
 
-            int s3 = getRandomNumber(60, 90);   
-            smodel = glm::rotate(smodel, glm::radians((float) s3), glm::vec3(0.0f, -1.0f, 0.0f));
-            models.push_back(smodel);
+            // int s3 = getRandomNumber(60, 90);   
+            // smodel = glm::rotate(smodel, glm::radians((float) s3), glm::vec3(0.0f, -1.0f, 0.0f));
+            // models.push_back(smodel);
 
-            smodel = glm::rotate(smodel, glm::radians((float) -s3), glm::vec3(0.0f, -1.0f, 0.0f));
-            models.push_back(smodel);
+            // smodel = glm::rotate(smodel, glm::radians((float) -s3), glm::vec3(0.0f, -1.0f, 0.0f));
+            // models.push_back(smodel);
 
-            int z1 = getRandomNumber(1, 30);
-            smodel = glm::translate(smodel, glm::vec3(0.0f, 0.0f, -0.25f));
+            // int z1 = getRandomNumber(1, 30);
+            // smodel = glm::translate(smodel, glm::vec3(0.0f, 0.0f, -0.25f));
 
-            smodel = glm::rotate(smodel, glm::radians((float) z1), glm::vec3(-1.0f, 0.0f, 0.0f));
-            models.push_back(smodel);
+            // smodel = glm::rotate(smodel, glm::radians((float) z1), glm::vec3(-1.0f, 0.0f, 0.0f));
+            // models.push_back(smodel);
 
-            smodel = glm::rotate(smodel, glm::radians(90.0f), glm::vec3(0.0f, 1.0f, 1.0f));
-            smodel = glm::rotate(smodel, glm::radians((float) z1), glm::vec3(0.0f, 0.0f, 1.0f));
-            models.push_back(smodel);
+            // smodel = glm::rotate(smodel, glm::radians(90.0f), glm::vec3(0.0f, 1.0f, 1.0f));
+            // smodel = glm::rotate(smodel, glm::radians((float) z1), glm::vec3(0.0f, 0.0f, 1.0f));
+            // models.push_back(smodel);
 
             position.z += 0.5f;
         }
@@ -291,9 +397,7 @@ int main()
 
     Mesh light(cubeVerts, cubeInd, tex, false);
 
-    Circle circle;
-    circle.calculate(glm::vec3(0.0f, 0.0f, 0.0f), 30.0f, 200.0f, glm::vec4(1.0f, 0.0f, 0.0f, 1.0f));
-
+ 
     Mesh plane(circle.vertices, circle.indices, dirt, true);
 
     Render render;
@@ -552,7 +656,7 @@ int main()
         // glBindVertexArray(grass.VAO1.ID);
         // glDrawElementsInstanced(GL_TRIANGLES, static_cast<unsigned int>(grass.indices.size()), GL_UNSIGNED_INT, 0, 4);
         // glBindVertexArray(0);
-        grass.Draw(grassShader, false, true);
+        grass.Draw(grassShader, false, true, models);
 
 
         // grass_renderer.DrawGrid(
