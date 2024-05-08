@@ -219,7 +219,7 @@ int main()
 
     int n = 350;
 
-    glm::vec4 pitch_bounds = glm::vec4(-20.0f, -20.0f, 20.0f, 20.0f);
+    glm::vec4 pitch_bounds = glm::vec4(-20.0f, -20.0f, 60.0f, 60.0f);
 
     for (int j = 0; j < n; j++) {
         for(int i = 0; i < n; i++) {
