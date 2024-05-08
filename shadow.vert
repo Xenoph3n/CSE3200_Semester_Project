@@ -19,6 +19,7 @@ uniform mat4 lightSpaceMatrix;
 
 void main()
 {
+    gl_ClipDistance[0] = 0;
     vs_out.FragPos = vec3(model * vec4(aPos, 1.0));
     vs_out.Normal = transpose(inverse(mat3(model))) * aNormal;
     vs_out.TexCoords = aTexCoords;
