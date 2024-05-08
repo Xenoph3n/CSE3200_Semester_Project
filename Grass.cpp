@@ -66,18 +66,27 @@ void Grass::generateRandomNumbers(int m, int n) {
 
 void Grass::DrawGrid(Mesh grass, Shader &shader, glm::vec3 position, glm::mat4 model) {
     glm::vec3 pos = position;
+    glm::mat4 local_model = model;
     int index = 0;
-    for(int i = 0; i < 10; i++) {
-        for (int j = 0; j < 10; j++) {
-            pos.z += 0.5;
-            DrawSingle(grass, shader, pos, model, index);
-            DrawSingle(grass, shader, glm::vec3(pos.x, pos.y, pos.z + 0.3), model, index);
-
+    float offset = 0;
+    for(int i = 0; i < 2; i++) {
+        for (int j = 0; j < 2; j++) {
+            pos.z += 10.0f;
+            shader.Activate();
+            // shader.setMat4("model", local_model);
+            shader.setMat4("model[" + std::to_string(index) + "]", glm::translate(local_model, glm::vec3(offset, 0.0f, 0.0f)));
+            // shader.setVec3("offsets[" + std::to_string(index) + "]", glm::vec3(offset , 0.0f, 0.0f));   
+            // DrawSingle(grass, shader, pos, model, index);
+            // DrawSingle(grass, shader, glm::vec3(pos.x, pos.y, pos.z + 0.3), model, index);
+            // std::cout << pos.x << "\n";
             index++;
+            offset += 1.0f;
         }
         pos.z = position.z;
-        pos.x += 0.3f;
+        pos.x += 2.0f;
     }
+
+    grass.Draw(shader, false, true);
 }
 
 // Function to generate a random number

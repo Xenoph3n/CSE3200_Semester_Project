@@ -23,7 +23,6 @@ class Grass {
         void DrawSingle(Mesh grass, Shader &shader, glm::vec3 position, glm::mat4 model, int index);
         void DrawGrid(Mesh grass, Shader &shader, glm::vec3 position, glm::mat4 model);
         void generateRandomNumbers(int m, int n);
-    private:
         int getRandomNumber(int start, int stop);
         double getRandomFloat();
 };
