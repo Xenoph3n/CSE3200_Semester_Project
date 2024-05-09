@@ -217,7 +217,7 @@ int main()
     Circle circle;
     circle.calculate(glm::vec3(0.0f, 0.0f, 0.0f), 30.0f, 200.0f, glm::vec4(1.0f, 0.0f, 0.0f, 1.0f));
 
-    int n = 350;
+    int n = 10;
 
     glm::vec4 pitch_bounds = glm::vec4(-40.0f, -20.0f, 40.0f, 20.0f);
 
@@ -401,10 +401,10 @@ int main()
     Mesh plane(circle.vertices, circle.indices, dirt, true);
 
     Render render;
-    render.get_file_list("./stadium/blue_1");
+    render.get_file_list("./stadium/blue_2");
 
     Render blue_2;
-    blue_2.get_file_list("./stadium/blue_2");
+    blue_2.get_file_list("./stadium/blue_1");
 
     Render blue_3;
     blue_3.get_file_list("./stadium/blue_3");
@@ -427,6 +427,22 @@ int main()
                 glm::vec3(0.0f, 0.0f, 0.0f)   
                 );
            
+    blue_2.render(  shadowShader, 
+            camera, 
+            SCR_WIDTH, 
+            SCR_HEIGHT,
+            glm::vec3(1.0f, 1.0f, 1.0f),
+            glm::vec3(0.0f, 0.0f, 0.0f)   
+            );
+
+    blue_3.render(  shadowShader, 
+        camera, 
+        SCR_WIDTH, 
+        SCR_HEIGHT,
+        glm::vec3(1.0f, 1.0f, 1.0f),
+        glm::vec3(0.0f, 0.0f, 0.0f)   
+        );
+    
     orange.render(  shadowShader, 
                     camera, 
                     SCR_WIDTH, 
@@ -435,7 +451,7 @@ int main()
                     glm::vec3(0.0f, 0.0f, 0.0f)   
                     );
 
-      
+     
     green.render(   shadowShader, 
                     camera, 
                     SCR_WIDTH, 
@@ -512,11 +528,8 @@ int main()
         // 1. render depth of scene to texture (from light's perspective)
         shadow.setUpDepthMap(lightPos, depthShader);
         
-        depthShader.setMat4("model", glm::translate(model, glm::vec3(0.0f,0.0f,5.0f)));
-        // render sceneL
-        depthShader.setMat4("model", glm::translate(model, glm::vec3(0.0f,-50.0f,10.0f)));
-
-        render.draw(   depthShader, 
+      
+           render.draw(    depthShader, 
                         camera, 
                         SCR_WIDTH, 
                         SCR_HEIGHT, 
@@ -524,6 +537,27 @@ int main()
                         glm::vec3(1.0f, 1.0f, 1.0f), 
                         glm::vec3(circle.vertices[3].position.x - 200.0f, -34.0f, circle.vertices[3].position.z - 200.0f),
                         270.0f
+                        );
+
+        
+        blue_2.draw(   depthShader, 
+                        camera, 
+                        SCR_WIDTH, 
+                        SCR_HEIGHT, 
+                        glm::mat4(1.0f), 
+                        glm::vec3(1.0f, 1.0f, 1.0f), 
+                        glm::vec3(circle.vertices[4].position.x - 190.0f, -34.0f, circle.vertices[4].position.z - 100.0f),
+                        280.0f
+                        );
+
+        blue_3.draw(   depthShader, 
+                        camera, 
+                        SCR_WIDTH, 
+                        SCR_HEIGHT, 
+                        glm::mat4(1.0f), 
+                        glm::vec3(1.0f, 1.0f, 1.0f), 
+                        glm::vec3(circle.vertices[2].position.x - 150.0f, -34.0f, circle.vertices[2].position.z - 300.0f),
+                        260.0f
                         );
                         
         orange.draw(    depthShader, 
@@ -536,13 +570,13 @@ int main()
                         180.0f);
         
         
-        green.draw(    depthShader, 
+        green.draw(     depthShader, 
                         camera, 
                         SCR_WIDTH, 
                         SCR_HEIGHT, 
                         glm::mat4(1.0f), 
                         glm::vec3(1.0f, 1.0f, 1.0f), 
-                        glm::vec3(circle.vertices[8].position.x + 200.0f, -40.0f, 0.0f + circle.vertices[8].position.z - 70.0f),
+                        glm::vec3(circle.vertices[8].position.x + 200.0f, -43.0f, 0.0f + circle.vertices[8].position.z - 100.0f),
                         60.0f);
 
         depthShader.setMat4("projection", projection);
@@ -573,8 +607,6 @@ int main()
 
         glEnable(GL_CLIP_DISTANCE0);
 
-        // shadowShader.setMat4("model", glm::translate(model, glm::vec3(0.0f,-50.0f,10.0f)));
-        // mega_cube.Draw(shadowShader);
         shadowShader.Activate();
         shadowShader.setMat4("model",glm::mat4(1.0f));
         render.draw(    shadowShader, 
@@ -585,6 +617,27 @@ int main()
                         glm::vec3(1.0f, 1.0f, 1.0f), 
                         glm::vec3(circle.vertices[3].position.x - 200.0f, -34.0f, circle.vertices[3].position.z - 200.0f),
                         270.0f
+                        );
+
+        
+        blue_2.draw(   shadowShader, 
+                        camera, 
+                        SCR_WIDTH, 
+                        SCR_HEIGHT, 
+                        glm::mat4(1.0f), 
+                        glm::vec3(1.0f, 1.0f, 1.0f), 
+                        glm::vec3(circle.vertices[4].position.x - 190.0f, -34.0f, circle.vertices[4].position.z - 100.0f),
+                        280.0f
+                        );
+
+        blue_3.draw(   shadowShader, 
+                        camera, 
+                        SCR_WIDTH, 
+                        SCR_HEIGHT, 
+                        glm::mat4(1.0f), 
+                        glm::vec3(1.0f, 1.0f, 1.0f), 
+                        glm::vec3(circle.vertices[2].position.x - 150.0f, -34.0f, circle.vertices[2].position.z - 300.0f),
+                        260.0f
                         );
                         
         orange.draw(    shadowShader, 
@@ -603,7 +656,7 @@ int main()
                         SCR_HEIGHT, 
                         glm::mat4(1.0f), 
                         glm::vec3(1.0f, 1.0f, 1.0f), 
-                        glm::vec3(circle.vertices[8].position.x + 200.0f, -40.0f, 0.0f + circle.vertices[8].position.z - 70.0f),
+                        glm::vec3(circle.vertices[8].position.x + 200.0f, -43.0f, 0.0f + circle.vertices[8].position.z - 100.0f),
                         60.0f);
         // ourShader.Activate();
         // blue_3.draw(ourShader, camera, SCR_WIDTH, SCR_HEIGHT,  glm::mat4(1.0f), glm::vec3(1.0f, 1.0f, 1.0f), glm::vec3(110.0f, 0.0f, 0.0f));
@@ -646,7 +699,7 @@ int main()
 
         //test.Draw(shadowShader);
         plane.Draw(shadowShader);
-       // shadow.debug(debugShader, false);
+        // shadow.debug(debugShader, true);
 
         grassShader.Activate();
         grassShader.setMat4("projection", projection);

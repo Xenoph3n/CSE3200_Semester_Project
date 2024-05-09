@@ -316,6 +316,9 @@ unsigned int TextureFromFile2(const char* path, const std::string& directory, bo
     unsigned int textureID;
     glGenTextures(1, &textureID);
 
+    std::cout << "Texture: " << filename << std::endl;
+
+
     int width, height, nrComponents;
     unsigned char* data = stbi_load(filename.c_str(), &width, &height, &nrComponents, 0);
     if (data)
