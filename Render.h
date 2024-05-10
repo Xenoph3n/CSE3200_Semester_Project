@@ -14,9 +14,15 @@
 
 namespace fs = std::filesystem;
 
+
+struct Object {
+    std::vector<aMesh> meshes;
+    std::vector<float> shininess;
+};
+
 class Render {
     public:
-        std::vector<aMesh> meshes;
+        Object meshes;
         std::vector<std::string> file_paths;
         void get_file_list(const std::string folder_path);
         void render(Shader &shader, 

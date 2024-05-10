@@ -219,12 +219,12 @@ std::vector<aTexture> aModel::loadMaterialTextures(aiMaterial* mat, aiTextureTyp
 }
 
 AABB aModel::calculateBoundingBox() {
-    glm::vec3 position = glm::vec3(left_most_point, top_most_point, back_most_point);
+    glm::vec3 position = glm::vec3(left_most_point , top_most_point , back_most_point );
     float sizeX = right_most_point - left_most_point;
     float sizeY = top_most_point - bottom_most_point;
     float sizeZ = front_most_point - back_most_point;
 
-    glm::vec3 size = glm::vec3(sizeX, sizeY, sizeZ);
+    glm::vec3 size = glm::vec3(sizeX , sizeY , sizeZ ) ;
 
     AABB aabb;
     aabb.position = position;

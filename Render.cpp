@@ -57,9 +57,32 @@ void Render::render_model(Shader &shader, std::string file_path, glm::mat4 proje
     model = glm::scale(model, scale);	
     shader.setMat4("model", glm::translate(model, translation));
     shader.setVec4("lightColor", light_color);
-    
+
+    std::string WINDOW = "window";
+    std::string CHAIR = "chair";
+    std::string RAILING = "railing";
+
+    float shiny_value = 1.0f;
+    if (file_path.find(WINDOW) != std::string::npos) {
+        std::cout << "WINDOW FOUND" << "\n";
+        shiny_value = 200.0f;
+    } 
+
+    if (file_path.find(CHAIR) != std::string::npos) {
+        std::cout << "CHAIR FOUND" << "\n";
+        shiny_value = 100.0f;
+
+    }
+
+    if (file_path.find(RAILING) != std::string::npos) {
+        std::cout << "RAILING FOUND" << "\n";
+        shiny_value = 200.0f;
+
+    }
+     
     for (aMesh mesh :  object.meshes) {
-        meshes.push_back(mesh);
+        meshes.meshes.push_back(mesh);
+        meshes.shininess.push_back(shiny_value);
     }
 
     // meshes.push_back(object);
@@ -67,7 +90,7 @@ void Render::render_model(Shader &shader, std::string file_path, glm::mat4 proje
 }
 
 void Render::draw(Shader &shader, aCamera &camera, float screen_height, float screen_width, glm::mat4 model, glm::vec3 scale, glm::vec3 translation, float rotation) {
-    for (unsigned int i = 0; i < meshes.size(); i++) {
+    for (unsigned int i = 0; i < meshes.meshes.size(); i++) {
 
         shader.Activate();
         glm::mat4 local_model = model;
@@ -77,10 +100,10 @@ void Render::draw(Shader &shader, aCamera &camera, float screen_height, float sc
         local_model = glm::scale(local_model, scale);	
         local_model = glm::translate(local_model, translation);
         shader.setMat4("model", local_model);    
-        // shader.setMat4("projection", projection);
         shader.setMat4("view", view);
-
-        meshes[i].Draw(shader);
+        // std::cout << "SHININESS" << meshes.shininess[i] << "\n";
+        shader.setFloat("shininess", meshes.shininess[i]);
+        meshes.meshes[i].Draw(shader);
 
         // for (unsigned int x = 0; x < meshes[i].vertices.size(); x++) {
         //     std::cout << meshes[i].vertices[x].Position.x << "," << meshes[x].vertices[x].Position.y << "," << meshes[i].vertices[x].Position.z << ")" << "\n";

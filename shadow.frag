@@ -13,6 +13,7 @@ uniform sampler2D shadowMap;
 
 uniform vec3 lightPos;
 uniform vec3 viewPos;
+uniform float shininess;
 
 float ShadowCalculation(vec4 fragPosLightSpace)
 {
@@ -66,7 +67,7 @@ void main()
     vec3 reflectDir = reflect(-lightDir, normal);
     float spec = 0.0;
     vec3 halfwayDir = normalize(lightDir + viewDir);  
-    spec = pow(max(dot(normal, halfwayDir), 0.0), 64.0);
+    spec = pow(max(dot(normal, halfwayDir), 0.0), shininess);
     vec3 specular = spec * lightColor;    
     // calculate shadow
     float shadow = ShadowCalculation(fs_in.FragPosLightSpace);                      

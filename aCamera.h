@@ -30,6 +30,9 @@ class aCamera {
         glm::vec3 Up;
         glm::vec3 Right;
         glm::vec3 WorldUp;
+
+        bool collided = false;
+        Camera_Movement previousDirection;
         // euler Angles
         float Yaw;
         float Pitch;

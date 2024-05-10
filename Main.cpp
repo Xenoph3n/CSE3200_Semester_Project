@@ -503,7 +503,7 @@ int main()
     glm::vec3 previousCamPosition = camera.Position;
     bool check = true;
     grass_renderer.generateRandomNumbers(10, 10);
-
+    glm::mat4 previousModel = glm::mat4(1.0f);
     // -----------
     while (!glfwWindowShouldClose(window))
     {
@@ -662,20 +662,38 @@ int main()
         // blue_3.draw(ourShader, camera, SCR_WIDTH, SCR_HEIGHT,  glm::mat4(1.0f), glm::vec3(1.0f, 1.0f, 1.0f), glm::vec3(110.0f, 0.0f, 0.0f));
 
         if (move) {
-            glm::vec3 new_position = glm::vec3(20.0f, 20.0f, 20.0f) * camera.Front + camera.Position + glm::vec3(0.0f, -10.0f, 0.0f);
+            glm::vec3 movement = glm::vec3(20.0f, 20.0f, 20.0f);
+            glm::vec3 new_position = movement * camera.Front + camera.Position + glm::vec3(0.0f, -10.0f, 0.0f);
+            AABB old_aabb = aabb;
+            aabb.position *= 0.5f;
+            aabb.size *= 0.5f;
             aabb.position += glm::vec3(20.0f, 20.0f, 20.0f) * camera.Front + camera.Position + glm::vec3(0.0f, -10.0f, 0.0f);
-            // aabb.position = aabb.position * 0.5f;
-
-            playerModel = glm::translate(playerModel, new_position);
-            playerModel = glm::translate(playerModel, glm::vec3(0.0f, -10.0f, 0.0f));
-            //playerModel =  glm::rotate(playerModel, glm::radians(180.0f), glm::vec3(0.0f, 1.0f, 0.0f));
-            // playerModel = glm::scale(playerModel, glm::vec3(0.5f,0.5f, 0.5f);
+        
+            
+            // playerModel =  glm::rotate(playerModel, glm::radians(180.0f), glm::vec3(0.0f, 1.0f, 0.0f));
 
             playerShader.Activate();
-            playerShader.setMat4("projection", projection);
-            playerShader.setMat4("view", view);
-            playerShader.setMat4("model", playerModel);
+
+            if (player.CheckCollision(aabb, testAABB)) {
+                playerShader.setMat4("projection", projection);
+                playerShader.setMat4("view", view);
+                new_position = glm::vec3(20.0f, 20.0f, 20.0f) * camera.Front + camera.Position + glm::vec3(0.0f, -10.0f, 0.0f);
+                playerModel = glm::translate(playerModel, new_position);
+                playerModel = glm::scale(playerModel, glm::vec3(0.5f,0.5f, 0.5f));
+                playerShader.setMat4("model", playerModel);
+                camera.collided = true;
+            } else {
+                    
+                playerModel = glm::translate(playerModel, new_position);
+                playerModel = glm::scale(playerModel, glm::vec3(0.5f,0.5f, 0.5f));
+                playerShader.setMat4("projection", projection);
+                playerShader.setMat4("view", view);
+                playerShader.setMat4("model", playerModel);
+                camera.collided = false;
+            }
             // std::cout << player.CheckCollision(aabb, testAABB) << "\n";
+            // std::cout << aabb.position.x << aabb.position.y << aabb.position.z << "\n";
+            // std::cout << camera.Position.x << camera.Position.y << camera.Position.z << "\n";
             previousCamPosition = camera.Position;
         }
 
@@ -688,60 +706,45 @@ int main()
         shadowShader.setMat4("view", view);
         testModel = glm::mat4(1.0f);
         
-        // testModel = glm::translate(testModel, glm::vec3(0.0f, 0.0f, 0.0f));
+        testModel = glm::translate(testModel, glm::vec3(0.0f, 0.0f, 0.0f));
         // testModel = glm::scale(testModel, glm::vec3(0.1f, 0.1f, 0.1f));
 
         shadowShader.setMat4("model", glm::translate(testModel, glm::vec3(0.0f, -50.0f, 0.0f)));
-
-        // shadowShader.setMat4("model", glm::scale(playerModel, glm::vec3(0.5f, 0.5f, 0.5f)));
         shadowShader.setVec4("lightColor", glm::vec3(1.0f, 0.0f, 0.0f));
-        // test.generateBoundingBoxMesh(testAABB, glm::vec4(0.0f, 0.0f, 1.0f, 1.0f)).Draw(shadowShader);
-
-        //test.Draw(shadowShader);
+   
         plane.Draw(shadowShader);
         // shadow.debug(debugShader, true);
+
+        shadowShader.setMat4("model", testModel);
+        // test.generateBoundingBoxMesh(testAABB, glm::vec4(0.0f, 0.0f, 1.0f, 1.0f)).Draw(shadowShader);
+        test.Draw(shadowShader);
 
         grassShader.Activate();
         grassShader.setMat4("projection", projection);
         grassShader.setMat4("view", view);
-        // grassShader.setMat4("model", glm::translate(model, glm::vec3(0.0f, 0.0f, 0.0f)));
-
-        // glBindVertexArray(grass.VAO1.ID);
-        // glDrawElementsInstanced(GL_TRIANGLES, static_cast<unsigned int>(grass.indices.size()), GL_UNSIGNED_INT, 0, 4);
-        // glBindVertexArray(0);
         grass.Draw(grassShader, false, true, models);
 
+        previousModel = playerModel;
+        playerModel = glm::mat4(1.0f);
+        aabb.position = backupAABB.position;
+        aabb.size = backupAABB.size;
+        testAABB.position = backupTestAABB.position;
+        check = true;
 
-        // grass_renderer.DrawGrid(
-        //     grass, 
-        //     grassShader,
-        //     glm::vec3(0.0f, 20.0f, 0.0f),
-        //     model
-        // );
-
-        // grassShader.Activate();
-        // std::cout << "Camera Front (" << camera.Front.x << camera.Front.y << camera.Front.z << ") \n";
-        //     std::cout << "Player Size (" << aabb.size.x << "," << aabb.size.y << "," << aabb.size.z << ") \n";
-        //     std::cout << "Test Size (" << testAABB.size.x << "," << testAABB.size.y << "," << testAABB.size.z << ") \n";
-
-        //     std::cout << "Player Position (" << aabb.position.x << "," << aabb.position.y << "," << aabb.position.z << ") \n";
-        //     std::cout << "Test Position (" << testAABB.position.x << "," << testAABB.position.y << "," << testAABB.position.z << ") \n";
-
-
-     
         // DEBUG CODE FOR AABB
-        if (move) {
-            playerModel = glm::mat4(1.0f);
-            aabb.position = backupAABB.position;
-            testAABB.position = backupTestAABB.position;
-            check = true;
-        } else if (!move) {
-            if (check) {
-                aabb.position += glm::vec3(20.0f, 20.0f, 20.0f) * camera.Front + camera.Position + glm::vec3(0.0f, -10.0f, 0.0f);
-                aabb.position = aabb.position * 0.5f;
-                check = false;
-            }
-        }
+        // if (move) {
+        //     std::cout << "RESET";
+        //     playerModel = glm::mat4(1.0f);
+        //     aabb.position = backupAABB.position;
+        //     testAABB.position = backupTestAABB.position;
+        //     check = true;
+        // } else if (!move) {
+        //     if (check) {
+        //         aabb.position += glm::vec3(20.0f, 20.0f, 20.0f) * camera.Front + camera.Position + glm::vec3(0.0f, -10.0f, 0.0f);
+        //         aabb.position = aabb.position * 0.5f;
+        //         check = false;
+        //     }
+        // }
       
         glfwSwapBuffers(window);
         glfwPollEvents();
@@ -789,11 +792,11 @@ void processInput(GLFWwindow *window)
         camera.MovementSpeed -= 1.0f;
     }
 
-    if (glfwGetKey(window, GLFW_KEY_LEFT_CONTROL) == GLFW_PRESS) {
+    if (glfwGetKey(window, GLFW_KEY_TAB) == GLFW_PRESS) {
         move = false;
     }
 
-    if (glfwGetKey(window, GLFW_KEY_RIGHT_CONTROL) == GLFW_PRESS) {
+    if (glfwGetKey(window, GLFW_KEY_CAPS_LOCK) == GLFW_PRESS) {
         move = true;
     }
 
