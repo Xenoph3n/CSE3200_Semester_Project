@@ -52,8 +52,8 @@ void aCamera::ProcessKeyboard(Camera_Movement direction, float deltaTime)
             Position -= Right * velocity;
         }
         previousDirection = LEFT;
-
     }
+    
     if (direction == RIGHT) {
 
         if (collided && previousDirection == RIGHT) {

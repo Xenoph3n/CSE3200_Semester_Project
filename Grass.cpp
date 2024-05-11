@@ -89,6 +89,120 @@ void Grass::DrawGrid(Mesh grass, Shader &shader, glm::vec3 position, glm::mat4 m
     grass.Draw(shader, false, true);
 }
 
+void Grass::setUpModels(Shader &shader) {
+    shader.Activate();
+     for (int j = 0; j < n; j++) {
+        for(int i = 0; i < n; i++) {
+            glm::mat4 smodel = glm::mat4(1.0f);
+            glm::vec3 q1 = glm::vec3(position.x, position.y, position.z);
+            glm::vec3 q2 = glm::vec3(position.x, position.y, -position.z);
+            glm::vec3 q3 = glm::vec3(-position.x, position.y, -position.z);
+            glm::vec3 q4 =  glm::vec3(-position.x, position.y, position.z);
+            int s1;
+            int s2;
+
+            if (sqrt(pow(q1.x, 2) + pow(q1.z, 2)) < (float) n / 2 && 
+                !(   q1.x > pitch_bounds.x && q1.x < pitch_bounds.z &&
+                    q1.z > pitch_bounds.y && q1.z < pitch_bounds.w
+                )
+            ) {
+                smodel = glm::translate(smodel, q1);
+                models.push_back(smodel);
+
+                s1 = getRandomNumber(1, 90);
+                smodel = glm::rotate(smodel, glm::radians((float) s1), glm::vec3(0.0f, -1.0f, 0.0f));
+                models.push_back(smodel);
+
+                smodel = glm::rotate(smodel, glm::radians((float) -s1), glm::vec3(0.0f, -1.0f, 0.0f));
+                models.push_back(smodel);
+
+                s2 = getRandomNumber(1, 90);
+                smodel = glm::rotate(smodel, glm::radians((float) s2), glm::vec3(0.0f, -1.0f, 0.0f));
+                models.push_back(smodel);
+
+                smodel = glm::rotate(smodel, glm::radians((float) -s2), glm::vec3(0.0f, -1.0f, 0.0f));
+                models.push_back(smodel);
+
+            }
+
+            if (sqrt(pow(q2.x, 2) + pow(q2.z, 2)) < (float) n / 2 &&
+                !(   q2.x > pitch_bounds.x && q2.x < pitch_bounds.z &&
+                    q2.z > pitch_bounds.y && q2.z < pitch_bounds.w
+                )
+            ) {
+                smodel = glm::translate(glm::mat4(1.0f), q2);
+                models.push_back(smodel);
+
+                s1 = getRandomNumber(1, 90);
+                smodel = glm::rotate(smodel, glm::radians((float) s1), glm::vec3(0.0f, -1.0f, 0.0f));
+                models.push_back(smodel);
+
+                smodel = glm::rotate(smodel, glm::radians((float) -s1), glm::vec3(0.0f, -1.0f, 0.0f));
+                models.push_back(smodel);
+
+                s2 = getRandomNumber(1, 90);
+                smodel = glm::rotate(smodel, glm::radians((float) s2), glm::vec3(0.0f, -1.0f, 0.0f));
+                models.push_back(smodel);
+
+                smodel = glm::rotate(smodel, glm::radians((float) -s2), glm::vec3(0.0f, -1.0f, 0.0f));
+                models.push_back(smodel);
+            }
+
+            if (sqrt(pow(q3.x, 2) + pow(q3.z, 2)) < (float) n / 2 && 
+                !(  q3.x > pitch_bounds.x && q3.x < pitch_bounds.z &&
+                    q3.z > pitch_bounds.y && q3.z < pitch_bounds.w
+                )
+            ) {
+                smodel = glm::translate(glm::mat4(1.0f), q3);
+                models.push_back(smodel);
+
+                s1 = getRandomNumber(1, 90);
+                smodel = glm::rotate(smodel, glm::radians((float) s1), glm::vec3(0.0f, -1.0f, 0.0f));
+                models.push_back(smodel);
+
+                smodel = glm::rotate(smodel, glm::radians((float) -s1), glm::vec3(0.0f, -1.0f, 0.0f));
+                models.push_back(smodel);
+
+                s2 = getRandomNumber(1, 90);
+                smodel = glm::rotate(smodel, glm::radians((float) s2), glm::vec3(0.0f, -1.0f, 0.0f));
+                models.push_back(smodel);
+
+                smodel = glm::rotate(smodel, glm::radians((float) -s2), glm::vec3(0.0f, -1.0f, 0.0f));
+                models.push_back(smodel);
+
+            }
+
+            if (sqrt(pow(q4.x, 2) + pow(q4.z, 2)) < (float) n / 2 &&
+                !(  q4.x > pitch_bounds.x && q4.x < pitch_bounds.z &&
+                    q4.z > pitch_bounds.y && q4.z < pitch_bounds.w
+                )
+            ) {
+                smodel = glm::translate(glm::mat4(1.0f), q4);
+                models.push_back(smodel);
+
+                s1 = getRandomNumber(1, 90);
+                smodel = glm::rotate(smodel, glm::radians((float) s1), glm::vec3(0.0f, -1.0f, 0.0f));
+                models.push_back(smodel);
+
+                smodel = glm::rotate(smodel, glm::radians((float) -s1), glm::vec3(0.0f, -1.0f, 0.0f));
+                models.push_back(smodel);
+
+                s2 = getRandomNumber(1, 90);
+                smodel = glm::rotate(smodel, glm::radians((float) s2), glm::vec3(0.0f, -1.0f, 0.0f));
+                models.push_back(smodel);
+
+                smodel = glm::rotate(smodel, glm::radians((float) -s2), glm::vec3(0.0f, -1.0f, 0.0f));
+                models.push_back(smodel);
+            }
+
+            position.z += 0.5f;
+
+        }
+        position.z = 0.0f;
+        position.x += 0.5f;
+    }
+}
+
 // Function to generate a random number
 int Grass::getRandomNumber(int start, int stop) {
     // Define a random number generator engine

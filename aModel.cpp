@@ -307,6 +307,17 @@ Mesh aModel::generateBoundingBoxMesh(AABB aabb, glm::vec4 color) {
     
 }
 
+void aModel::ApplyGravity() {
+    glm::vec3 ground = glm::vec3(0.0f, -50.0f, 0.0f);
+
+    if (apply_gravity) {
+        if (position.y >= ground.y) {
+            position.y -= 0.1f;
+        }       
+    }
+   
+}
+
 
 unsigned int TextureFromFile2(const char* path, const std::string& directory, bool gamma)
 {

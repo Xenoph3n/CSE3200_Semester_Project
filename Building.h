@@ -1,5 +1,5 @@
-#ifndef RENDER_H
-#define RENDER_H
+#ifndef BUILDING_H
+#define BUILDING_H
 
 
 #include"aMesh.h"
@@ -20,7 +20,7 @@ struct Object {
     std::vector<float> shininess;
 };
 
-class Render {
+class Building {
     public:
         Object meshes;
         std::vector<std::string> file_paths;

@@ -35,6 +35,9 @@ public:
     float bottom_most_point = 0.0f;
     float front_most_point = 0.0f;
     float back_most_point = 0.0f;
+    bool apply_gravity = false;    
+    float gravity = 9.8f;
+    glm::vec3 position = glm::vec3(0.0f, 0.0f, 0.0f);
     AABB modelAABB;
 
     
@@ -49,7 +52,7 @@ public:
     AABB calculateBoundingBox();
     bool CheckCollision(AABB &one, AABB &two); // AABB - AABB collision
     Mesh generateBoundingBoxMesh(AABB aabb, glm::vec4 color);
-
+    void ApplyGravity();
     
 
 private:
