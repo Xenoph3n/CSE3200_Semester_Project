@@ -82,6 +82,7 @@ void Circle::calculate(glm::vec3 center_position, float angle_in_degrees, float 
         Vertex vertex;
 
         vertex.position = positions[i];
+        collision.processVertices(vertex.position);
         vertex.color = color; 
         vertex.normal = glm::vec3(0.0f, 1.0f, 0.0f);
         vertex.texUV = glm::vec2(positions[i].x, positions[i].z);

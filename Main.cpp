@@ -16,11 +16,12 @@
 #include "Shadow.h"
 #include <math.h>
 #include <iostream>
+#include "Collision.h"
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void mouse_callback(GLFWwindow* window, double xpos, double ypos);
 void scroll_callback(GLFWwindow* window, double xoffset, double yoffset);
-void processInput(GLFWwindow *window);
+glm::vec3 processInput(GLFWwindow *window, glm::vec3 player_position, glm::vec3 direction);
 void renderQuad();
 
 float rectangleVertices[] =
@@ -100,6 +101,7 @@ float deltaTime = 0.0f;
 float lastFrame = 0.0f;
 
 bool move = true;
+bool check = false;
 
 int main()
 {
@@ -135,7 +137,6 @@ int main()
 
     Shader ourShader("./model.vert", "./model.frag");
     Shader planeShader("./plane.vert", "./plane.frag");
-    Shader playerShader("./player.vert", "./player.frag");
 
     Shader lightShader("./light.vert", "./light.frag");
     Shader shinyShader("./shiny.vert", "./shiny.frag");
@@ -144,9 +145,12 @@ int main()
     Shader shadowShader("./shadow.vert", "./shadow.frag");
     Shader depthShader("./dept.vert", "./dept.frag");
     Shader debugShader("./debug.vert", "./debug.frag");
+    Shader playerShader("./player.vert", "./player.frag");
+
 
     GLuint tex_id_1;
     GLuint text_id_2;
+
 
     Texture textures[]
 	{
@@ -173,15 +177,18 @@ int main()
 
     Circle circle;
     circle.calculate(glm::vec3(0.0f, 0.0f, 0.0f), 30.0f, 200.0f, glm::vec4(1.0f, 0.0f, 0.0f, 1.0f));
-
+    
     Mesh grass(verts, ind, tex, true, true, grass_renderer.models);
     
     Mesh ground(verts, ind, tex, false);
 
     aModel mega_cube("./stadium/crow/scene.gltf", false);
+    
+    aModel test("./stadium/blue_1/bottom_green.obj", false);
+
     aModel player("./models/crow/scene.gltf", false);
-    aModel test("./models/crow/scene.gltf", false);
-    test.position = glm::vec3(0.0f, 50.0f, 0.0f);
+    test.position = glm::vec3(0.0f,-40.0f, 80.0f);
+    player.position = glm::vec3(0.0f, 0.0f, 0.0f);
 
     Mesh light(cubeVerts, cubeInd, tex, false); 
     Mesh plane(circle.vertices, circle.indices, dirt, true);
@@ -205,7 +212,7 @@ int main()
                 SCR_WIDTH, 
                 SCR_HEIGHT,
                 glm::vec3(1.0f, 1.0f, 1.0f),
-                glm::vec3(0.0f, 0.0f, 0.0f)   
+                glm::vec3(circle.vertices[3].position.x - 200.0f, -34.0f, circle.vertices[3].position.z - 200.0f)
                 );
            
     blue_2.render(  shadowShader, 
@@ -213,7 +220,7 @@ int main()
             SCR_WIDTH, 
             SCR_HEIGHT,
             glm::vec3(1.0f, 1.0f, 1.0f),
-            glm::vec3(0.0f, 0.0f, 0.0f)   
+            glm::vec3(circle.vertices[4].position.x - 190.0f, -34.0f, circle.vertices[4].position.z - 100.0f)
             );
 
     blue_3.render(  shadowShader, 
@@ -221,7 +228,7 @@ int main()
         SCR_WIDTH, 
         SCR_HEIGHT,
         glm::vec3(1.0f, 1.0f, 1.0f),
-        glm::vec3(0.0f, 0.0f, 0.0f)   
+        glm::vec3(circle.vertices[2].position.x - 150.0f, -34.0f, circle.vertices[2].position.z - 300.0f)
         );
     
     orange.render(  shadowShader, 
@@ -229,7 +236,7 @@ int main()
                     SCR_WIDTH, 
                     SCR_HEIGHT,
                     glm::vec3(1.0f, 1.0f, 1.0f),
-                    glm::vec3(0.0f, 0.0f, 0.0f)   
+                    glm::vec3(200.0f + circle.vertices[0].position.x, -31.0f, 0.0f + circle.vertices[0].position.z - 400.0f)
                     );
 
      
@@ -238,29 +245,40 @@ int main()
                     SCR_WIDTH, 
                     SCR_HEIGHT,
                     glm::vec3(1.0f, 1.0f, 1.0f),
-                    glm::vec3(0.0f, 0.0f, 0.0f)   
+                    glm::vec3(circle.vertices[8].position.x + 200.0f, -43.0f, 0.0f + circle.vertices[8].position.z - 100.0f)  
                     );
     
-    Shadow shadow;
+    Shadow shadow;  
     shadow.createDepthMap(shadowShader);
 
     glm::vec3 lightPos(-20.0f, 70.0f, 0.0f);
     glm::mat4 playerModel = glm::mat4(1.0f);
-    AABB aabb = player.calculateBoundingBox();
+    glm::mat4 testingModel = glm::mat4(1.0f);
+    
+    testingModel = glm::translate(testingModel, test.position);
+
+    AABB aabb = player.collision.calculateBoundingBox();
     AABB backupAABB = aabb;
 
-    AABB testAABB = test.calculateBoundingBox();
+    AABB testAABB = test.collision.calculateBoundingBox();
+    AABB testAABBBackup = testAABB;
+
+    AABB circleAABB = circle.collision.calculateBoundingBox();
+    
+    planeShader.printVec3("Player aabb", testAABB.position);
+    planeShader.printVec3("Test aabb", aabb.position);
 
     // -----------
     while (!glfwWindowShouldClose(window))
     {
 
+        // shadowShader.printVec3(camera.Position);
+        // camera.Position = glm::vec3(0.0f, 0.0f, 10.0f);
 
         float currentFrame = static_cast<float>(glfwGetTime());
         deltaTime = currentFrame - lastFrame;
         lastFrame = currentFrame;
 
-        processInput(window);
 
         glm::mat4 model = glm::mat4(1.0f);
         model = glm::translate(model, glm::vec3(0.0f, 0.0f, 0.0f)); // translate it down so it's at the center of the scene
@@ -324,7 +342,7 @@ int main()
                         
         depthShader.setMat4("projection", projection);
         depthShader.setMat4("view", view);
-        
+
         glm::mat4 testModel = glm::mat4(1.0f);
         depthShader.setMat4("model", glm::translate(testModel, glm::vec3(0.0f, -50.0f, 0.0f)));
         depthShader.setVec4("lightColor", glm::vec3(1.0f, 0.0f, 0.0f));
@@ -399,71 +417,119 @@ int main()
                         glm::vec3(circle.vertices[8].position.x + 200.0f, -43.0f, 0.0f + circle.vertices[8].position.z - 100.0f),
                         60.0f);
 
-        if (move) {
-            glm::vec3 movement = glm::vec3(20.0f, 20.0f, 20.0f);
-            glm::vec3 new_position = movement * camera.Front + camera.Position + glm::vec3(0.0f, -10.0f, 0.0f);
-            AABB old_aabb = aabb;
-            aabb.position *= 0.5f;
-            aabb.size *= 0.5f;
-            aabb.position += glm::vec3(20.0f, 20.0f, 20.0f) * camera.Front + camera.Position + glm::vec3(0.0f, -10.0f, 0.0f);
+        // if (move) {
+        //     glm::vec3 movement = glm::vec3(20.0f, 20.0f, 20.0f);
+        //     // glm::vec3 translation_offset = movement * camera.Front + camera.Position + glm::vec3(0.0f, -10.0f, 0.0f);
+        //     glm::vec3 translation_offset = movement * camera.Front;
+        //     AABB old_aabb = aabb;
+        //     aabb.position *= 0.5f;
+        //     aabb.size *= 0.5f;
+        //     aabb.position += glm::vec3(20.0f, 20.0f, 20.0f) * camera.Front + camera.Position + glm::vec3(0.0f, -10.0f, 0.0f);
         
-            playerShader.Activate();
+        //     playerShader.Activate();
 
-            if (player.CheckCollision(aabb, testAABB)) {
-                playerShader.setMat4("projection", projection);
-                playerShader.setMat4("view", view);
-                new_position = glm::vec3(20.0f, 20.0f, 20.0f) * camera.Front + camera.Position + glm::vec3(0.0f, -10.0f, 0.0f);
-                playerModel = glm::translate(playerModel, new_position);
-                playerModel = glm::scale(playerModel, glm::vec3(0.5f,0.5f, 0.5f));
-                playerShader.setMat4("model", playerModel);
-                camera.collided = true;
-            } else {
-                playerModel = glm::translate(playerModel, new_position);
-                // playerModel = glm::translate(playerModel, player.ApplyGravity(new_position));
-                playerShader.setMat4("projection", projection);
-                playerShader.setMat4("view", view);
-                playerShader.setMat4("model", playerModel);
-                camera.collided = false;
-            }
+        //     if (player.CheckCollision(aabb, testAABB)) {
+        //         playerShader.setMat4("projection", projection);
+        //         playerShader.setMat4("view", view);
+        //         translation_offset = glm::vec3(20.0f, 20.0f, 20.0f) * camera.Front + camera.Position + glm::vec3(0.0f, -10.0f, 0.0f);
+        //         playerModel = glm::translate(playerModel, translation_offset);
+        //         playerModel = glm::scale(playerModel, glm::vec3(0.5f,0.5f, 0.5f));
+        //         playerShader.setMat4("model", playerModel);
+        //         camera.collided = true;
+        //     } else {
+        //         playerModel = glm::translate(playerModel, translation_offset);
+        //         // playerModel = glm::translate(playerModel, player.ApplyGravity(translation_offset));
+        //         playerShader.setMat4("projection", projection);
+        //         playerShader.setMat4("view", view);
+        //         playerShader.setMat4("model", playerModel);
+        //         camera.collided = false;
+        //     }
+        // }
+        
+        glm::vec3 translation_offset = processInput(window, player.position, camera.Front);
+
+        player.apply_gravity = true;
+
+        glm::vec3 gravity = player.ApplyGravity();
+
+        glm::vec3 future_position = player.position + translation_offset + gravity;
+        
+        aabb.position += future_position;
+        testAABB.position += test.position;
+        circleAABB.position += glm::vec3(0.0f, -50.0f, 0.0f);
+
+        if  (player.collision.CheckCollisionY(aabb, circleAABB)) {
+            // std::cout << "COLLISION" << "\n";
+            // planeShader.printVec3("Translation offset", translation_offset);
+            // planeShader.printVec3("Player aabb", aabb.position);
+            // planeShader.printVec3("Circle aabb", circleAABB.position);
+            move = true;
+            gravity = glm::vec3(0.0f, 0.0f, 0.0f);
+            future_position = player.position + translation_offset;
+        } 
+        
+        if (player.collision.CheckCollision(aabb, testAABB)) {
+            move = false;
+            gravity =  glm::vec3(0.0f, 0.0f, 0.0f);
+            translation_offset =  glm::vec3(0.0f, 0.0f, 0.0f);
+        }
+        else {
+            move = true;
         }
 
-        playerModel = glm::scale(playerModel, glm::vec3(0.5f,0.5f, 0.5f));
-        playerShader.setMat4("model", playerModel);
+        if (move) {
+            player.position = future_position;
+            camera.Position = player.position + glm::vec3(-40.0f * camera.Front.x, 40.0f, -40.0f * camera.Front.z); 
+        }
+        
+        playerModel = glm::translate(playerModel, translation_offset + gravity);
 
+        playerShader.Activate();
+        playerShader.setMat4("projection", projection);
+        playerShader.setMat4("view", view);
+        playerShader.setMat4("model", playerModel);
+        // playerModel = glm::scale(playerModel, glm::vec3(0.5f,0.5f, 0.5f));
         player.Draw(playerShader);
         playerShader.setMat4("model", glm::mat4(1.0f));
-        // player.generateBoundingBoxMesh(aabb, glm::vec4(0.0f, 1.0f, 0.0f, 1.0f)).Draw(playerShader);
+        // player.collision.generateBoundingBoxMesh(aabb, glm::vec4(0.0f, 1.0f, 0.0f, 1.0f)).Draw(playerShader);
 
+        
         shadowShader.Activate();
         shadowShader.setMat4("projection", projection);
         shadowShader.setMat4("view", view);
-        testModel = glm::mat4(1.0f);
         
+        testModel = glm::mat4(1.0f); 
         testModel = glm::translate(testModel, glm::vec3(0.0f, 0.0f, 0.0f));
-        // testModel = glm::scale(testModel, glm::vec3(0.1f, 0.1f, 0.1f));
-
         shadowShader.setMat4("model", glm::translate(testModel, glm::vec3(0.0f, -50.0f, 0.0f)));
         shadowShader.setVec4("lightColor", glm::vec3(1.0f, 0.0f, 0.0f));
-   
+        // circle.collision.generateBoundingBoxMesh(circleAABB, glm::vec4(0.0f, 0.0f, 1.0f, 1.0f)).Draw(shadowShader);
         plane.Draw(shadowShader);
-        // shadow.debug(debugShader, true);
-        testModel = glm::translate(testModel, test.position);
-        shadowShader.setMat4("model", testModel);
-        test.apply_gravity = true;
-        test.ApplyGravity();
-        std::cout << "Position Y" << test.position.y;
 
-        // test.generateBoundingBoxMesh(testAABB, glm::vec4(0.0f, 0.0f, 1.0f, 1.0f)).Draw(shadowShader);
+        shadowShader.Activate();
+        test.apply_gravity = false;
+        testingModel = glm::translate(testingModel, test.ApplyGravity());
+        shadowShader.setMat4("projection", projection);
+        shadowShader.setMat4("view", view);
+        shadowShader.setMat4("model", testingModel);
         test.Draw(shadowShader);
+
+        shadowShader.setMat4("model", glm::mat4(1.0f));
+        test.collision.generateBoundingBoxMesh(testAABB, glm::vec4(0.0f, 0.0f, 1.0f, 1.0f)).Draw(shadowShader);
+
 
         grassShader.Activate();
         grassShader.setMat4("projection", projection);
         grassShader.setMat4("view", view);
         grass.Draw(grassShader, false, true, grass_renderer.models);
 
-        playerModel = glm::mat4(1.0f);
+        //playerModel = glm::mat4(1.0f);
         aabb.position = backupAABB.position;
         aabb.size = backupAABB.size;
+        testAABB.position = testAABBBackup.position;
+        testAABB.size = testAABBBackup.size;
+        circleAABB.position = circle.collision.aabb.position;
+
+        move = false;
       
         glfwSwapBuffers(window);
         glfwPollEvents();
@@ -477,22 +543,29 @@ int main()
 
 // process all input: query GLFW whether relevant keys are pressed/released this frame and react accordingly
 // ---------------------------------------------------------------------------------------------------------
-void processInput(GLFWwindow *window)
+glm::vec3 processInput(GLFWwindow *window, glm::vec3 player_position, glm::vec3 direction)
 {
+    glm::vec3 translation_offset = glm::vec3(0.0f, 0.0f, 0.0f);
+
     if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS) {
         glfwSetWindowShouldClose(window, true);
     }
 
     if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) {
-        camera.ProcessKeyboard(FORWARD, deltaTime);
-   
+        
+        // camera.ProcessKeyboard(FORWARD, deltaTime);
+        translation_offset = glm::vec3(1.0f, 0.0f, 1.0f) * direction;
+        move = true;
     }
+
     if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS) {
-        camera.ProcessKeyboard(BACKWARD, deltaTime);
-      
+        // camera.ProcessKeyboard(BACKWARD, deltaTime);
+        translation_offset = glm::vec3(1.0f, 0.0f, 1.0f) * -direction;
+        move = true;
+        // translation_offset.x -= 10.0f;
     }
     if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS) {
-        camera.ProcessKeyboard(LEFT, deltaTime);
+        // camera.ProcessKeyboard(LEFT, deltaTime);
     
     }
     if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) {
@@ -509,6 +582,7 @@ void processInput(GLFWwindow *window)
  
     if (glfwGetKey(window, GLFW_KEY_RIGHT_SHIFT) == GLFW_PRESS) {
         camera.MovementSpeed -= 1.0f;
+        check = true;
     }
 
     if (glfwGetKey(window, GLFW_KEY_TAB) == GLFW_PRESS) {
@@ -526,6 +600,8 @@ void processInput(GLFWwindow *window)
         camera.first_clickz = false;
         glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
     }
+
+    return translation_offset;
 
  
 }

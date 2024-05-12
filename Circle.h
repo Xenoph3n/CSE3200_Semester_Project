@@ -7,11 +7,14 @@
 #include "Vertex.h"
 #include <vector>
 #include <glad/glad.h>
+#include "Collision.h"
 
 class Circle {
     public:
         std::vector<Vertex> vertices;
         std::vector<GLuint> indices;
+        Collision collision;
+
         // std::vector<Texture> textures;
 
         void calculate(

@@ -15,11 +15,7 @@
 #include "Shader.h"
 #include "aMesh.h"
 #include "Mesh.h"
-
-struct AABB {
-    glm::vec3 position;
-    glm::vec3 size;
-};
+#include "Collision.h"
 
 class aModel
 {
@@ -29,16 +25,18 @@ public:
     // sizeX = right_most - left_most
     // sizeY = top_most - bottom_most
     // sizeZ = front_most - back_most
-    float right_most_point = 0.0f;
-    float left_most_point = 0.0f;
-    float top_most_point = 0.0f;
-    float bottom_most_point = 0.0f;
-    float front_most_point = 0.0f;
-    float back_most_point = 0.0f;
+    // float right_most_point = 0.0f;
+    // float left_most_point = 0.0f;
+    // float top_most_point = 0.0f;
+    // float bottom_most_point = 0.0f;
+    // float front_most_point = 0.0f;
+    // float back_most_point = 0.0f;
+
+    Collision collision;
     bool apply_gravity = false;    
     float gravity = 9.8f;
     glm::vec3 position = glm::vec3(0.0f, 0.0f, 0.0f);
-    AABB modelAABB;
+    // AABB modelAABB;
 
     
     std::vector<aTexture> textures_loaded;	// stores all the textures loaded so far, optimization to make sure textures aren't loaded more than once.
@@ -49,10 +47,10 @@ public:
 
     aModel(std::string const& path, bool gamma);
     void Draw(Shader& shader);
-    AABB calculateBoundingBox();
-    bool CheckCollision(AABB &one, AABB &two); // AABB - AABB collision
-    Mesh generateBoundingBoxMesh(AABB aabb, glm::vec4 color);
-    void ApplyGravity();
+    // AABB calculateBoundingBox();
+    // bool CheckCollision(AABB &one, AABB &two); // AABB - AABB collision
+    // Mesh generateBoundingBoxMesh(AABB aabb, glm::vec4 color);
+    glm::vec3 ApplyGravity();
     
 
 private:

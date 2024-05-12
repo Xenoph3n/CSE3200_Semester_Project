@@ -35,5 +35,6 @@ public:
 
 	void setInt(const std::string &name, int value) const;
 
+	void printVec3(std::string label, glm::vec3 vector);
 };
 #endif

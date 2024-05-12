@@ -48,6 +48,11 @@ void Building::render(Shader &shader, aCamera &camera, float screen_width, float
 
 void Building::render_model(Shader &shader, std::string file_path, glm::mat4 projection, glm::mat4 view, glm::mat4 model, glm::vec3 light_color, glm::vec3 scale, glm::vec3 translation) {
     aModel object(file_path, false);
+    AABB aabb = object.collision.calculateBoundingBox();
+    // aabb.position += translation;
+    aabbs.push_back(aabb);
+
+    models.push_back(object);
 
     shader.Activate();
     
@@ -99,15 +104,28 @@ void Building::draw(Shader &shader, aCamera &camera, float screen_height, float 
         local_model = glm::scale(local_model, scale);	
         local_model = glm::translate(local_model, translation);
         shader.setMat4("model", local_model);    
+
+        // if (!update) {
+        //     glm::vec4 aabb_position = glm::vec4(aabbs[i].position.x, aabbs[i].position.y, aabbs[i].position.z, 1.0f);
+        //     glm::vec4 new_aabb_position = view * local_model * aabb_position;
+
+        //     aabbs[i].position = glm::vec3(new_aabb_position.x, new_aabb_position.y, new_aabb_position.z);
+        //     shader.printVec3("AABB", aabbs[i].position);
+        // }
+        
         shader.setMat4("view", view);
+
         // std::cout << "SHININESS" << meshes.shininess[i] << "\n";
         shader.setFloat("shininess", meshes.shininess[i]);
         meshes.meshes[i].Draw(shader);
-
+        shader.setMat4("model", glm::mat4(1.0f));
+        // models[i].collision.generateBoundingBoxMesh(aabbs[i], glm::vec4(1.0f, 0.0f, 1.0f, 1.0f)).Draw(shader);
         // for (unsigned int x = 0; x < meshes[i].vertices.size(); x++) {
         //     std::cout << meshes[i].vertices[x].Position.x << "," << meshes[x].vertices[x].Position.y << "," << meshes[i].vertices[x].Position.z << ")" << "\n";
         // }
+        // aabbs[i].position = glm::vec3(aabb_position.x, aabb_position.y, aabb_position.z);
     }
+    update = true;
 }
 
 bool Building::endsWith(const std::string& str, const std::string& suffix) {
