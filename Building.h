@@ -33,7 +33,8 @@ class Building {
                     float screen_width, 
                     float screen_height,
                     glm::vec3 scale = glm::vec3(1.0f, 1.0f, 1.0f),
-                    glm::vec3 translation = glm::vec3(0.0f, 0.0f, 0.0f)
+                    glm::vec3 translation = glm::vec3(0.0f, 0.0f, 0.0f),
+                    float rotation_in_degrees = 0.0f
                     );
         void render_model(  Shader &shader, 
                             std::string file_path, 
@@ -42,7 +43,9 @@ class Building {
                             glm::mat4 model, 
                             glm::vec3 light_color,
                             glm::vec3 scale = glm::vec3(1.0f, 1.0f, 1.0f),
-                            glm::vec3 translation = glm::vec3(0.0f, 0.0f, 0.0f)                            );
+                            glm::vec3 translation = glm::vec3(0.0f, 0.0f, 0.0f),
+                            float rotation_in_degrees = 0.0f
+                        );
         void draw(
             Shader &shader,
             aCamera &camera,

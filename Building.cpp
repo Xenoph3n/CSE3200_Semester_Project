@@ -23,7 +23,7 @@ void Building::get_file_list(const std::string folder_path) {
     // }
 }
 
-void Building::render(Shader &shader, aCamera &camera, float screen_width, float screen_height, glm::vec3 scale, glm::vec3 translation) {
+void Building::render(Shader &shader, aCamera &camera, float screen_width, float screen_height, glm::vec3 scale, glm::vec3 translation, float rotation_in_degrees) {
     glm::mat4 projection = glm::perspective(glm::radians(camera.Zoom), (float)screen_width / (float) screen_height, 0.1f, 2000.0f);
     glm::mat4 view = camera.GetViewMatrix();
 
@@ -40,16 +40,24 @@ void Building::render(Shader &shader, aCamera &camera, float screen_width, float
             model, 
             lightColor, 
             scale,
-            translation
+            translation,
+            rotation_in_degrees
         );
     }
     
 }
 
-void Building::render_model(Shader &shader, std::string file_path, glm::mat4 projection, glm::mat4 view, glm::mat4 model, glm::vec3 light_color, glm::vec3 scale, glm::vec3 translation) {
+void Building::render_model(Shader &shader, std::string file_path, glm::mat4 projection, glm::mat4 view, glm::mat4 model, glm::vec3 light_color, glm::vec3 scale, glm::vec3 translation, float rotation_in_degrees) {
     aModel object(file_path, false);
     AABB aabb = object.collision.calculateBoundingBox();
-    // aabb.position += translation;
+
+    // glm::mat4 aabbModel = glm::mat4(1.0f);    
+
+    // aabbModel = glm::translate(aabbModel, glm::vec3(0.0f, 0.0f, 0.0f));
+    // aabbModel = glm::rotate(aabbModel, glm::radians(rotation_in_degrees), glm::vec3(0.0f, 1.0f, 0.0f));
+    // aabbModel = glm::translate(aabbModel, glm::vec3(0.0f, 0.0f, 0.0f));
+    // glm::vec3 new_position = glm::vec3(aabbModel * glm::vec4(aabb.position, 1.0f));
+    // aabb.position = new_position;
     aabbs.push_back(aabb);
 
     models.push_back(object);
@@ -100,19 +108,15 @@ void Building::draw(Shader &shader, aCamera &camera, float screen_height, float 
         glm::mat4 local_model = model;
         // glm::mat4 projection = glm::perspective(glm::radians(camera.Zoom), (float)screen_width / (float) screen_height, 0.1f, 2000.0f);
         glm::mat4 view = camera.GetViewMatrix();
-        local_model = glm::rotate(local_model, glm::radians(rotation), glm::vec3(0.0f, 1.0f, 0.0f));
+
+        local_model = glm::translate(local_model, glm::vec3(0.0f, 0.0f, 0.0f));
         local_model = glm::scale(local_model, scale);	
+        local_model = glm::rotate(local_model, glm::radians(rotation), glm::vec3(0.0f, 1.0f, 0.0f));
         local_model = glm::translate(local_model, translation);
+
         shader.setMat4("model", local_model);    
+        glm::vec4 aabb_position = glm::vec4(aabbs[i].position.x, aabbs[i].position.y, aabbs[i].position.z, 1.0f);
 
-        // if (!update) {
-        //     glm::vec4 aabb_position = glm::vec4(aabbs[i].position.x, aabbs[i].position.y, aabbs[i].position.z, 1.0f);
-        //     glm::vec4 new_aabb_position = view * local_model * aabb_position;
-
-        //     aabbs[i].position = glm::vec3(new_aabb_position.x, new_aabb_position.y, new_aabb_position.z);
-        //     shader.printVec3("AABB", aabbs[i].position);
-        // }
-        
         shader.setMat4("view", view);
 
         // std::cout << "SHININESS" << meshes.shininess[i] << "\n";
