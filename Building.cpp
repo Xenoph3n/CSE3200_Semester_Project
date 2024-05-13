@@ -76,18 +76,18 @@ void Building::render_model(Shader &shader, std::string file_path, glm::mat4 pro
 
     float shiny_value = 1.0f;
     if (file_path.find(WINDOW) != std::string::npos) {
-        std::cout << "WINDOW FOUND" << "\n";
+        // std::cout << "WINDOW FOUND" << "\n";
         shiny_value = 200.0f;
     } 
 
     if (file_path.find(CHAIR) != std::string::npos) {
-        std::cout << "CHAIR FOUND" << "\n";
+        // std::cout << "CHAIR FOUND" << "\n";
         shiny_value = 100.0f;
 
     }
 
     if (file_path.find(RAILING) != std::string::npos) {
-        std::cout << "RAILING FOUND" << "\n";
+        // std::cout << "RAILING FOUND" << "\n";
         shiny_value = 200.0f;
 
     }

@@ -4,6 +4,8 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
+#include <filesystem>
+#include <vector>
 
 #include "Shader.h"
 #include "aCamera.h"
@@ -18,6 +20,7 @@
 #include <iostream>
 #include "Collision.h"
 #include "WorldBoundary.h"
+#include "CubeMap.h"
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void mouse_callback(GLFWwindow* window, double xpos, double ypos);
@@ -49,6 +52,52 @@ float rectangleVertices2[] =
 	 0.5f - 1.0f, -1.0f, 0.0f, 1.0f, 0.0f,
 	0.0f - 1.0f,  -0.5f, 0.0f, 0.0f, 1.0f
 };
+
+float skyBoxVertices[] = {
+        // positions          
+        -1.0f,  1.0f, -1.0f,
+        -1.0f, -1.0f, -1.0f,
+         1.0f, -1.0f, -1.0f,
+         1.0f, -1.0f, -1.0f,
+         1.0f,  1.0f, -1.0f,
+        -1.0f,  1.0f, -1.0f,
+
+        -1.0f, -1.0f,  1.0f,
+        -1.0f, -1.0f, -1.0f,
+        -1.0f,  1.0f, -1.0f,
+        -1.0f,  1.0f, -1.0f,
+        -1.0f,  1.0f,  1.0f,
+        -1.0f, -1.0f,  1.0f,
+
+         1.0f, -1.0f, -1.0f,
+         1.0f, -1.0f,  1.0f,
+         1.0f,  1.0f,  1.0f,
+         1.0f,  1.0f,  1.0f,
+         1.0f,  1.0f, -1.0f,
+         1.0f, -1.0f, -1.0f,
+
+        -1.0f, -1.0f,  1.0f,
+        -1.0f,  1.0f,  1.0f,
+         1.0f,  1.0f,  1.0f,
+         1.0f,  1.0f,  1.0f,
+         1.0f, -1.0f,  1.0f,
+        -1.0f, -1.0f,  1.0f,
+
+        -1.0f,  1.0f, -1.0f,
+         1.0f,  1.0f, -1.0f,
+         1.0f,  1.0f,  1.0f,
+         1.0f,  1.0f,  1.0f,
+        -1.0f,  1.0f,  1.0f,
+        -1.0f,  1.0f, -1.0f,
+
+        -1.0f, -1.0f, -1.0f,
+        -1.0f, -1.0f,  1.0f,
+         1.0f, -1.0f, -1.0f,
+         1.0f, -1.0f, -1.0f,
+        -1.0f, -1.0f,  1.0f,
+         1.0f, -1.0f,  1.0f
+    };
+    
 
 Vertex miniSreenVertices[] = {
 	Vertex{glm::vec3(-0.5f, 0.5f,  0.0f), glm::vec3(0.0f, 1.0f, 0.0f), glm::vec4(1.0f, 1.0f, 1.0f, 1.0f), glm::vec2(0.0f, 0.0f)},
@@ -147,6 +196,7 @@ int main()
     Shader depthShader("./dept.vert", "./dept.frag");
     Shader debugShader("./debug.vert", "./debug.frag");
     Shader playerShader("./player.vert", "./player.frag");
+    Shader skyBoxShader("./skybox.vert", "./skybox.frag");
 
 
     GLuint tex_id_1;
@@ -280,6 +330,35 @@ int main()
     world_boundary.z_offset = 5.0f;
 
     world_boundary.calculateWorldAABBs();
+
+    CubeMap cubemap;
+
+    // cubemap.setUp(skyBoxVertices);
+
+    glGenVertexArrays(1, &cubemap.vao);
+    glGenBuffers(1, &cubemap.vbo);
+    glBindVertexArray(cubemap.vao);
+    glBindBuffer(GL_ARRAY_BUFFER, cubemap.vbo);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(skyBoxVertices), &skyBoxVertices, GL_STATIC_DRAW);
+    glEnableVertexAttribArray(0);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+
+
+    std::vector<std::string> faces
+    {
+        "./textures/skybox/right.jpg",
+        "./textures/skybox/left.jpg",
+        "./textures/skybox/top.jpg",
+        "./textures/skybox/bottom.jpg",
+        "./textures/skybox/front.jpg",
+        "./textures/skybox/back.jpg"
+    };
+
+    
+    cubemap.loadCubeMap(faces);
+
+    skyBoxShader.Activate();
+    skyBoxShader.setInt("skybox", 0);
     
     // -----------
     while (!glfwWindowShouldClose(window))
@@ -295,7 +374,7 @@ int main()
 
         glm::mat4 model = glm::mat4(1.0f);
         model = glm::translate(model, glm::vec3(0.0f, 0.0f, 0.0f)); // translate it down so it's at the center of the scene
-        glm::mat4 projection = glm::perspective(glm::radians(camera.Zoom), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 2000.0f);
+        glm::mat4 projection = glm::perspective(glm::radians(camera.Zoom), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 5000.0f);
         glm::mat4 view = camera.GetViewMatrix();
 
         glViewport(0, 0, SCR_WIDTH, SCR_HEIGHT);
@@ -532,6 +611,17 @@ int main()
         grassShader.setMat4("projection", projection);
         grassShader.setMat4("view", view);
         grass.Draw(grassShader, false, true, grass_renderer.models);
+        
+        glDepthFunc(GL_LEQUAL);
+        skyBoxShader.Activate();
+        view = glm::mat4(glm::mat3(camera.GetViewMatrix())); 
+        skyBoxShader.setMat4("view", view);
+        skyBoxShader.setMat4("projection", projection);
+        cubemap.bind();
+        cubemap.bindTexture();
+        cubemap.draw();
+        cubemap.unbind();
+        glDepthFunc(GL_LESS);
 
         aabb.position = backupAABB.position;
         aabb.size = backupAABB.size;
