@@ -54,7 +54,9 @@ class Building {
             glm::mat4 model, 
             glm::vec3 scale = glm::vec3(1.0f, 1.0f, 1.0f),
             glm::vec3 translation = glm::vec3(0.0f, 0.0f, 0.0f),
-            float rotation = 0.0f
+            float rotation = 0.0f,
+            glm::vec3 rotation_axis = glm::vec3(0.0f, 1.0f, 0.0f)
+
             );
     private:
         bool endsWith(const std::string& str, const std::string& suffix);

@@ -101,7 +101,9 @@ void Building::render_model(Shader &shader, std::string file_path, glm::mat4 pro
     // object.Draw(shader);
 }
 
-void Building::draw(Shader &shader, aCamera &camera, float screen_height, float screen_width, glm::mat4 model, glm::vec3 scale, glm::vec3 translation, float rotation) {
+void Building::draw(Shader &shader, aCamera &camera, float screen_height, float screen_width, glm::mat4 model, glm::vec3 scale, glm::vec3 translation, float rotation, glm::vec3 rotation_axis
+
+) {
     for (unsigned int i = 0; i < meshes.meshes.size(); i++) {
 
         shader.Activate();
@@ -111,7 +113,7 @@ void Building::draw(Shader &shader, aCamera &camera, float screen_height, float 
 
         local_model = glm::translate(local_model, glm::vec3(0.0f, 0.0f, 0.0f));
         local_model = glm::scale(local_model, scale);	
-        local_model = glm::rotate(local_model, glm::radians(rotation), glm::vec3(0.0f, 1.0f, 0.0f));
+        local_model = glm::rotate(local_model, glm::radians(rotation), rotation_axis);
         local_model = glm::translate(local_model, translation);
 
         shader.setMat4("model", local_model);    

@@ -254,7 +254,12 @@ int main()
     orange.get_file_list("./stadium/orange");
     Building green;
     green.get_file_list("./stadium/green");
-
+    Building red_1;
+    red_1.get_file_list("./stadium/red");
+    Building yellow;
+    yellow.get_file_list("./stadium/yellow");
+    Building purple;
+    purple.get_file_list("./stadium/purple");
     // std::cout << glGetString(GL_VENDOR) << "\n";
     // std::cout << glGetString(GL_RENDERER) << "\n";
     
@@ -304,6 +309,37 @@ int main()
                     60.0f
                     );
     
+     
+    red_1.render(     shadowShader, 
+                    camera, 
+                    SCR_WIDTH, 
+                    SCR_HEIGHT,
+                    glm::vec3(1.0f, 1.0f, 1.0f),
+                    glm::vec3(0.0f, 0.0f, 0.0f), 
+                    0.0f
+                    );
+    
+    
+     
+    yellow.render(  shadowShader, 
+                    camera, 
+                    SCR_WIDTH, 
+                    SCR_HEIGHT,
+                    glm::vec3(1.0f, 1.0f, 1.0f),
+                    glm::vec3(0.0f, 0.0f, 0.0f), 
+                    0.0f
+                    );
+
+    
+     
+    purple.render(  shadowShader, 
+                    camera, 
+                    SCR_WIDTH, 
+                    SCR_HEIGHT,
+                    glm::vec3(1.0f, 1.0f, 1.0f),
+                    glm::vec3(0.0f, 0.0f, 0.0f), 
+                    0.0f
+                    );
     Shadow shadow;  
     shadow.createDepthMap(shadowShader);
 
@@ -431,6 +467,17 @@ int main()
                         glm::vec3(1.0f, 1.0f, 1.0f), 
                         glm::vec3(circle.vertices[8].position.x + 200.0f, -43.0f, 0.0f + circle.vertices[8].position.z - 110.0f),
                         50.0f);
+
+                
+        
+        red_1.draw(     depthShader, 
+                        camera, 
+                        SCR_WIDTH, 
+                        SCR_HEIGHT, 
+                        glm::mat4(1.0f), 
+                        glm::vec3(1.0f, 1.0f, 1.0f), 
+                        glm::vec3(0.0f, 0.0f, 0.0f),
+                        0.0f);
                         
         depthShader.setMat4("projection", projection);
         depthShader.setMat4("view", view);
@@ -508,6 +555,74 @@ int main()
                         glm::vec3(1.0f, 1.0f, 1.0f), 
                         glm::vec3(circle.vertices[8].position.x + 200.0f, -43.0f, 0.0f + circle.vertices[8].position.z - 110.0f),
                         50.0f);
+
+        shadowShader.Activate();
+        glm::mat4 red_model = glm::mat4(1.0f);
+        red_model = glm::rotate(red_model, glm::radians(-40.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+        shadowShader.setMat4("model", red_model);
+        
+        red_1.draw(     shadowShader, 
+                        camera, 
+                        SCR_WIDTH, 
+                        SCR_HEIGHT, 
+                        red_model, 
+                        glm::vec3(1.2f, 1.0f, 1.0f), 
+                        glm::vec3(circle.vertices[11].position.x + 110.0f, circle.vertices[11].position.z - 365.0f, -45.0f),
+                        -90.0f,
+                        glm::vec3(1.0f, 0.0f, 0.0f));
+
+        
+        shadowShader.Activate();
+        red_model = glm::mat4(1.0f);
+        red_model = glm::rotate(red_model, glm::radians(40.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+        shadowShader.setMat4("model", red_model);
+        
+        red_1.draw(     shadowShader, 
+                        camera, 
+                        SCR_WIDTH, 
+                        SCR_HEIGHT, 
+                        red_model, 
+                        glm::vec3(1.2f, 1.0f, 1.0f), 
+                        glm::vec3(circle.vertices[0].position.x - 5.0f, circle.vertices[0].position.z - 390.0f, -45.0f),
+                        -90.0f,
+                        glm::vec3(1.0f, 0.0f, 0.0f));
+
+
+        
+        shadowShader.Activate();
+        red_model = glm::mat4(1.0f);
+        red_model = glm::rotate(red_model, glm::radians(150.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+        shadowShader.setMat4("model", red_model);
+        
+        red_1.draw(     shadowShader, 
+                        camera, 
+                        SCR_WIDTH, 
+                        SCR_HEIGHT, 
+                        red_model, 
+                        glm::vec3(1.2f, 1.0f, 1.0f), 
+                        glm::vec3(circle.vertices[0].position.x - 20.0f, circle.vertices[0].position.z - 390.0f, -45.0f),
+                        -90.0f,
+                        glm::vec3(1.0f, 0.0f, 0.0f));
+
+        // purple.draw(     shadowShader, 
+        //         camera, 
+        //         SCR_WIDTH, 
+        //         SCR_HEIGHT, 
+        //         glm::mat4(1.0f), 
+        //         glm::vec3(1.0f, 1.0f, 1.0f), 
+        //         glm::vec3(0.0f, 0.0f ,0.0f),
+        //         0.0f
+        //     );
+
+        yellow.draw(     shadowShader, 
+                camera, 
+                SCR_WIDTH, 
+                SCR_HEIGHT, 
+                glm::mat4(1.0f), 
+                glm::vec3(1.0f, 1.0f, 1.0f), 
+                glm::vec3(0.0f, 0.0f ,0.0f),
+                0.0f
+            );
 
         // if (move) {
         //     glm::vec3 movement = glm::vec3(20.0f, 20.0f, 20.0f);
