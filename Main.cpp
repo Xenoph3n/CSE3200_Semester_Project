@@ -24,121 +24,13 @@
 #include "Animation.h"
 #include "Animator.h"
 #include "Bone.h"
+#include "Points.h"
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void mouse_callback(GLFWwindow* window, double xpos, double ypos);
 void scroll_callback(GLFWwindow* window, double xoffset, double yoffset);
 glm::vec3 processInput(GLFWwindow *window, glm::vec3 player_position, glm::vec3 direction);
 void renderQuad();
-
-float rectangleVertices[] =
-{
-	// Coords    // texCoords
-	 0.5f, -1.0f, -1.0f, 1.0f, 0.0f,
-	0.0f, -1.0f, -1.0f, 0.0f, 0.0f,
-	0.0f,  -0.5f, -0.5f, 0.0f, 1.0f,
-
-	 0.5f,  -0.5f, 1.0f, 1.0f, 1.0f,
-	 0.5f, -1.0f,  1.0f, 1.0f, 0.0f,
-	-0.0f,  -0.5f, 1.0f, 0.0f, 1.0f
-};
-
-
-float rectangleVertices2[] =
-{
-	// Coords    // texCoords
-	 0.5f - 1.0f, -1.0f, 0.0f,  1.0f, 0.0f,
-	0.0f - 1.0f, -1.0f, 0.0f, 0.0f, 0.0f,
-	0.0f - 1.0f, -0.5f, 0.0f, 0.0f, 1.0f,
-
-	 0.5f - 1.0f,  -0.5f, 0.0f, 1.0f, 1.0f,
-	 0.5f - 1.0f, -1.0f, 0.0f, 1.0f, 0.0f,
-	0.0f - 1.0f,  -0.5f, 0.0f, 0.0f, 1.0f
-};
-
-float skyBoxVertices[] = {
-        // positions          
-        -1.0f,  1.0f, -1.0f,
-        -1.0f, -1.0f, -1.0f,
-         1.0f, -1.0f, -1.0f,
-         1.0f, -1.0f, -1.0f,
-         1.0f,  1.0f, -1.0f,
-        -1.0f,  1.0f, -1.0f,
-
-        -1.0f, -1.0f,  1.0f,
-        -1.0f, -1.0f, -1.0f,
-        -1.0f,  1.0f, -1.0f,
-        -1.0f,  1.0f, -1.0f,
-        -1.0f,  1.0f,  1.0f,
-        -1.0f, -1.0f,  1.0f,
-
-         1.0f, -1.0f, -1.0f,
-         1.0f, -1.0f,  1.0f,
-         1.0f,  1.0f,  1.0f,
-         1.0f,  1.0f,  1.0f,
-         1.0f,  1.0f, -1.0f,
-         1.0f, -1.0f, -1.0f,
-
-        -1.0f, -1.0f,  1.0f,
-        -1.0f,  1.0f,  1.0f,
-         1.0f,  1.0f,  1.0f,
-         1.0f,  1.0f,  1.0f,
-         1.0f, -1.0f,  1.0f,
-        -1.0f, -1.0f,  1.0f,
-
-        -1.0f,  1.0f, -1.0f,
-         1.0f,  1.0f, -1.0f,
-         1.0f,  1.0f,  1.0f,
-         1.0f,  1.0f,  1.0f,
-        -1.0f,  1.0f,  1.0f,
-        -1.0f,  1.0f, -1.0f,
-
-        -1.0f, -1.0f, -1.0f,
-        -1.0f, -1.0f,  1.0f,
-         1.0f, -1.0f, -1.0f,
-         1.0f, -1.0f, -1.0f,
-        -1.0f, -1.0f,  1.0f,
-         1.0f, -1.0f,  1.0f
-    };
-    
-
-Vertex miniSreenVertices[] = {
-	Vertex{glm::vec3(-0.5f, 0.5f,  0.0f), glm::vec3(0.0f, 1.0f, 0.0f), glm::vec4(1.0f, 1.0f, 1.0f, 1.0f), glm::vec2(0.0f, 0.0f)},
-	Vertex{glm::vec3(-0.5f, -0.5f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f), glm::vec4(1.0f, 1.0f, 1.0f, 1.0f), glm::vec2(0.0f, 1.0f)},
-	Vertex{glm::vec3( 0.5f, -0.5f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f), glm::vec4(1.0f, 1.0f, 1.0f, 1.0f), glm::vec2(1.0f, 1.0f)},
-	Vertex{glm::vec3( 0.5f, 0.5f,  0.0f), glm::vec3(0.0f, 1.0f, 0.0f), glm::vec4(1.0f, 1.0f, 1.0f, 1.0f), glm::vec2(1.0f, 0.0f)}
-};
-
-Vertex quadVertices[] = {
-	Vertex{glm::vec3(-1.0f, 0.0f,  1.0f), glm::vec3(0.0f, 1.0f, 0.0f), glm::vec4(1.0f, 1.0f, 1.0f, 1.0f), glm::vec2(0.0f, 0.0f)},
-	Vertex{glm::vec3(-1.0f, 0.0f, -1.0f), glm::vec3(0.0f, 1.0f, 0.0f), glm::vec4(1.0f, 1.0f, 1.0f, 1.0f), glm::vec2(0.0f, 1.0f)},
-	Vertex{glm::vec3( 1.0f, 0.0f, -1.0f), glm::vec3(0.0f, 1.0f, 0.0f), glm::vec4(1.0f, 1.0f, 1.0f, 1.0f), glm::vec2(1.0f, 1.0f)},
-	Vertex{glm::vec3( 1.0f, 0.0f,  1.0f), glm::vec3(0.0f, 1.0f, 0.0f), glm::vec4(1.0f, 1.0f, 1.0f, 1.0f), glm::vec2(1.0f, 0.0f)}
-};
-
-
-// Vertices coordinates
-Vertex cubeVertices[] =
-{ //               COORDINATES           /            COLORS          /           NORMALS         /       TEXTURE COORDINATES    //
-	Vertex{glm::vec3(-1.0f, 0.0f,  1.0f), glm::vec3(0.0f, 1.0f, 0.0f), glm::vec4(1.0f, 1.0f, 1.0f, 1.0f), glm::vec2(0.0f, 0.0f)},
-	Vertex{glm::vec3(-1.0f, 0.0f, -1.0f), glm::vec3(0.0f, 1.0f, 0.0f), glm::vec4(1.0f, 1.0f, 1.0f, 1.0f), glm::vec2(0.0f, 1.0f)},
-	Vertex{glm::vec3( 1.0f, 0.0f, -1.0f), glm::vec3(0.0f, 1.0f, 0.0f), glm::vec4(1.0f, 1.0f, 1.0f, 1.0f), glm::vec2(1.0f, 1.0f)},
-	Vertex{glm::vec3( 1.0f, 0.0f,  1.0f), glm::vec3(0.0f, 1.0f, 0.0f), glm::vec4(1.0f, 1.0f, 1.0f, 1.0f), glm::vec2(1.0f, 0.0f)}
-};
-
-// Indices for vertices order
-GLuint cubeIndices[] =
-{
-	0, 1, 2,
-	0, 2, 3
-};
-
-// Indices for vertices order
-GLuint indices[] =
-{
-	0, 1, 2,
-	0, 2, 3
-};
 
 // settings
 const unsigned int SCR_WIDTH = 1920;
@@ -215,7 +107,6 @@ int main()
 		Texture("./textures/dirt.jpg", "diffuse", 0, text_id_2)
 	};
 
-    
 	std::vector <Vertex> verts(miniSreenVertices, miniSreenVertices + sizeof(miniSreenVertices) / sizeof(Vertex));
     std::vector <Vertex> vertz(quadVertices, quadVertices + sizeof(quadVertices) / sizeof(Vertex));
     std::vector <Vertex> cubeVerts(cubeVertices, cubeVertices + sizeof(cubeVertices) / sizeof(Vertex));
@@ -236,10 +127,9 @@ int main()
     Mesh ground(verts, ind, tex, false);
 
     aModel mega_cube("./stadium/crow/scene.gltf", false);
-    
     aModel test("./stadium/blue_1/bottom_green.obj", false);
-
     aModel player("./models/crow/scene.gltf", false);
+
     test.position = glm::vec3(0.0f,-40.0f, 80.0f);
     player.position = glm::vec3(0.0f, 0.0f, 0.0f);
 
@@ -256,92 +146,22 @@ int main()
     orange.get_file_list("./stadium/orange");
     Building green;
     green.get_file_list("./stadium/green");
-    Building red_1;
-    red_1.get_file_list("./stadium/red");
+    Building red;
+    red.get_file_list("./stadium/red");
     Building yellow;
     yellow.get_file_list("./stadium/yellow");
     Building purple;
     purple.get_file_list("./stadium/purple");
-    // std::cout << glGetString(GL_VENDOR) << "\n";
-    // std::cout << glGetString(GL_RENDERER) << "\n";
     
-    render.render(shadowShader, 
-                camera, 
-                SCR_WIDTH, 
-                SCR_HEIGHT,
-                glm::vec3(1.0f, 1.0f, 1.0f),
-                glm::vec3(circle.vertices[0].position.x, -34.0f, circle.vertices[0].position.z),
-                0.0f
-                );
-           
-    blue_2.render(  shadowShader, 
-            camera, 
-            SCR_WIDTH, 
-            SCR_HEIGHT,
-            glm::vec3(1.0f, 1.0f, 1.0f),
-            glm::vec3(circle.vertices[4].position.x - 190.0f, -34.0f, circle.vertices[4].position.z - 100.0f),
-            280.0f
-            );
+    render.render(shadowShader, camera, SCR_WIDTH, SCR_HEIGHT);           
+    blue_2.render(  shadowShader, camera, SCR_WIDTH, SCR_HEIGHT);
+    blue_3.render(  shadowShader, camera, SCR_WIDTH, SCR_HEIGHT);
+    orange.render(  shadowShader, camera, SCR_WIDTH, SCR_HEIGHT);
+    green.render(   shadowShader, camera, SCR_WIDTH, SCR_HEIGHT );
+    red.render(     shadowShader, camera, SCR_WIDTH, SCR_HEIGHT);
+    yellow.render(  shadowShader, camera, SCR_WIDTH, SCR_HEIGHT);
+    purple.render(  shadowShader, camera, SCR_WIDTH, SCR_HEIGHT);
 
-    blue_3.render(  shadowShader, 
-        camera, 
-        SCR_WIDTH, 
-        SCR_HEIGHT,
-        glm::vec3(1.0f, 1.0f, 1.0f),
-        glm::vec3(circle.vertices[2].position.x - 150.0f, -34.0f, circle.vertices[2].position.z - 300.0f),
-        260.0f
-        );
-    
-    orange.render(  shadowShader, 
-                    camera, 
-                    SCR_WIDTH, 
-                    SCR_HEIGHT,
-                    glm::vec3(1.0f, 1.0f, 1.0f),
-                    glm::vec3(200.0f + circle.vertices[0].position.x, -31.0f, 0.0f + circle.vertices[0].position.z - 400.0f),
-                    0.0f
-                    );
-
-     
-    green.render(   shadowShader, 
-                    camera, 
-                    SCR_WIDTH, 
-                    SCR_HEIGHT,
-                    glm::vec3(1.0f, 1.0f, 1.0f),
-                    glm::vec3(circle.vertices[8].position.x + 200.0f, -43.0f, 0.0f + circle.vertices[8].position.z - 100.0f), 
-                    60.0f
-                    );
-    
-     
-    red_1.render(     shadowShader, 
-                    camera, 
-                    SCR_WIDTH, 
-                    SCR_HEIGHT,
-                    glm::vec3(1.0f, 1.0f, 1.0f),
-                    glm::vec3(0.0f, 0.0f, 0.0f), 
-                    0.0f
-                    );
-    
-    
-     
-    yellow.render(  shadowShader, 
-                    camera, 
-                    SCR_WIDTH, 
-                    SCR_HEIGHT,
-                    glm::vec3(1.0f, 1.0f, 1.0f),
-                    glm::vec3(0.0f, 0.0f, 0.0f), 
-                    0.0f
-                    );
-
-    
-     
-    purple.render(  shadowShader, 
-                    camera, 
-                    SCR_WIDTH, 
-                    SCR_HEIGHT,
-                    glm::vec3(1.0f, 1.0f, 1.0f),
-                    glm::vec3(0.0f, 0.0f, 0.0f), 
-                    0.0f
-                    );
     Shadow shadow;  
     shadow.createDepthMap(shadowShader);
 
@@ -402,13 +222,8 @@ int main()
     Animation animation("./vampire/dancing_vampire.dae", &animatedModel);
     Animator animator(&animation);
     
-    // -----------
     while (!glfwWindowShouldClose(window))
     {
-
-        // shadowShader.printVec3(camera.Position);
-        // camera.Position = glm::vec3(0.0f, 0.0f, 10.0f);
-
         float currentFrame = static_cast<float>(glfwGetTime());
         deltaTime = currentFrame - lastFrame;
         lastFrame = currentFrame;
@@ -475,8 +290,7 @@ int main()
                         50.0f);
 
                 
-        
-        red_1.draw(     depthShader, 
+        red.draw(     depthShader, 
                         camera, 
                         SCR_WIDTH, 
                         SCR_HEIGHT, 
@@ -499,7 +313,7 @@ int main()
         glClearColor(0.05f, 0.05f, 0.25f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         
-        model = glm::translate(model, glm::vec3(0.0f, 0.0f, 0.0f)); // translate it down so it's at the center of the scene
+        model = glm::translate(model, glm::vec3(0.0f, 0.0f, 0.0f)); 
 
         shadow.setUpShadowShader(
             shadowShader,
@@ -567,7 +381,7 @@ int main()
         red_model = glm::rotate(red_model, glm::radians(-40.0f), glm::vec3(0.0f, 1.0f, 0.0f));
         shadowShader.setMat4("model", red_model);
         
-        red_1.draw(     shadowShader, 
+        red.draw(     shadowShader, 
                         camera, 
                         SCR_WIDTH, 
                         SCR_HEIGHT, 
@@ -583,7 +397,7 @@ int main()
         red_model = glm::rotate(red_model, glm::radians(40.0f), glm::vec3(0.0f, 1.0f, 0.0f));
         shadowShader.setMat4("model", red_model);
         
-        red_1.draw(     shadowShader, 
+        red.draw(     shadowShader, 
                         camera, 
                         SCR_WIDTH, 
                         SCR_HEIGHT, 
@@ -600,7 +414,7 @@ int main()
         red_model = glm::rotate(red_model, glm::radians(150.0f), glm::vec3(0.0f, 1.0f, 0.0f));
         shadowShader.setMat4("model", red_model);
         
-        red_1.draw(     shadowShader, 
+        red.draw(     shadowShader, 
                         camera, 
                         SCR_WIDTH, 
                         SCR_HEIGHT, 
@@ -757,7 +571,6 @@ int main()
 		animationShader.setMat4("model", animated_model);
 		animatedModel.Draw(animationShader);
 
-        
         glDepthFunc(GL_LEQUAL);
         skyBoxShader.Activate();
         view = glm::mat4(glm::mat3(camera.GetViewMatrix())); 

@@ -69,6 +69,18 @@
     <ClCompile Include="Shadow.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+      <ClCompile Include="Animation.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Animator.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Bone.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+     <ClCompile Include="CubeMap.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="EBO.h">
@@ -111,6 +123,21 @@
       <Filter>Source Files</Filter>
     </ClInclude>
     <ClInclude Include="Shadow.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+     <ClInclude Include="Animation.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Animator.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Points.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Bone.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="CubeMap.h">
       <Filter>Source Files</Filter>
     </ClInclude>
   </ItemGroup>
