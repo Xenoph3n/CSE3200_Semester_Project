@@ -85,19 +85,19 @@ void aMesh::SetupMesh()
     glVertexAttribPointer(3, 4, GL_FLOAT, GL_FALSE, sizeof(aVertex), (void*)offsetof(aVertex, Color));
     
     // we will hook this up later
-    // // vertex tangent
-    // glEnableVertexAttribArray(3);
-    // glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, sizeof(aVertex), (void*)offsetof(aVertex, Tangent));
-    // // vertex bitangent
-    // glEnableVertexAttribArray(4);
-    // glVertexAttribPointer(4, 3, GL_FLOAT, GL_FALSE, sizeof(aVertex), (void*)offsetof(aVertex, Bitangent));
-    // // ids
-    // glEnableVertexAttribArray(5);
-    // glVertexAttribIPointer(5, 4, GL_INT, sizeof(aVertex), (void*)offsetof(aVertex, m_BoneIDs));
+    // vertex tangent
+    glEnableVertexAttribArray(3);
+    glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, sizeof(aVertex), (void*)offsetof(aVertex, Tangent));
+    // vertex bitangent
+    glEnableVertexAttribArray(4);
+    glVertexAttribPointer(4, 3, GL_FLOAT, GL_FALSE, sizeof(aVertex), (void*)offsetof(aVertex, Bitangent));
+    // ids
+    glEnableVertexAttribArray(5);
+    glVertexAttribIPointer(5, 4, GL_INT, sizeof(aVertex), (void*)offsetof(aVertex, m_BoneIDs));
 
-    // // weights
-    // glEnableVertexAttribArray(6);
-    // glVertexAttribPointer(6, 4, GL_FLOAT, GL_FALSE, sizeof(aVertex), (void*)offsetof(aVertex, m_Weights));
-
+    // weights
+    glEnableVertexAttribArray(6);
+    glVertexAttribPointer(6, 4, GL_FLOAT, GL_FALSE, sizeof(aVertex), (void*)offsetof(aVertex, m_Weights));
+    
     glBindVertexArray(0);
 }

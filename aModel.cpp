@@ -1,5 +1,4 @@
 #include "aModel.h"
-#include<stb/stb_image.h>
 
 unsigned int TextureFromFile2(const char* path, const std::string& directory, bool gamma = false);
 
@@ -75,6 +74,7 @@ aMesh aModel::processMesh(aiMesh* mesh, const aiScene* scene)
     for (unsigned int i = 0; i < mesh->mNumVertices; i++)
     {
         aVertex vertex;
+        SetVertexBoneDataToDefault(vertex);
         glm::vec3 vector; // we declare a placeholder std::vector since assimp uses its own std::vector class that doesn't directly convert to glm's vec3 class so we transfer the data to this placeholder glm::vec3 first.
         // positions
 
@@ -161,7 +161,7 @@ aMesh aModel::processMesh(aiMesh* mesh, const aiScene* scene)
     // 4. height maps
     std::vector<aTexture> heightMaps = loadMaterialTextures(material, aiTextureType_AMBIENT, "texture_height");
     textures.insert(textures.end(), heightMaps.begin(), heightMaps.end());
-
+    ExtractBoneWeightForVertices(vertices,mesh,scene);
     // return a mesh object created from the extracted mesh data
     return aMesh(vertices, indices, textures);
 }
@@ -199,94 +199,82 @@ std::vector<aTexture> aModel::loadMaterialTextures(aiMaterial* mat, aiTextureTyp
     return textures;
 }
 
-// AABB aModel::calculateBoundingBox() {
-//     glm::vec3 position = glm::vec3(left_most_point , top_most_point , back_most_point );
-//     float sizeX = right_most_point - left_most_point;
-//     float sizeY = top_most_point - bottom_most_point;
-//     float sizeZ = front_most_point - back_most_point;
+std::map<std::string, BoneInfo>& aModel::GetBoneInfoMap() {
+    return m_BoneInfoMap;
+}
 
-//     glm::vec3 size = glm::vec3(sizeX , sizeY , sizeZ ) ;
+int& aModel::GetBoneCount() {
+    return m_BoneCounter;
+}
 
-//     AABB aabb;
-//     aabb.position = position;
-//     aabb.size = size;
+void aModel::SetVertexBoneDataToDefault(aVertex& vertex) {
+    for (int i = 0; i < MAX_BONE_INFLUENCE; i++)
+    {
+        vertex.m_BoneIDs[i] = -1;
+        vertex.m_Weights[i] = 0.0f;
+    }
+}
 
-//     modelAABB = aabb;
+void aModel::SetVertexBoneData(aVertex& vertex, int boneID, float weight)
+	{
+		for (int i = 0; i < MAX_BONE_INFLUENCE; ++i)
+		{
+			if (vertex.m_BoneIDs[i] < 0)
+			{
+				vertex.m_Weights[i] = weight;
+				vertex.m_BoneIDs[i] = boneID;
+				break;
+			}
+		}
+	}
 
-//     return aabb;
-// }
 
-// bool aModel::CheckCollision(AABB &one, AABB &two) // AABB - AABB collision
+// void SetVertexBoneData(aVertex& vertex, int boneID, float weight)
 // {
-//     // collision x-axis?
-//     bool collisionX = one.position.x + one.size.x >= two.position.x &&
-//         two.position.x + two.size.x >= one.position.x;
-//     // collision y-axis?
-//     bool collisionY = one.position.y - one.size.y <= two.position.y &&
-//         two.position.y - two.size.y <= one.position.y;
-
-//     bool collisionZ = one.position.z + one.size.z >= two.position.z &&
-//         two.position.z + two.size.z >= one.position.z;
-//     // collision only if on both axes
-//     return collisionX && collisionY && collisionZ;
-// }  
-
-// Mesh aModel::generateBoundingBoxMesh(AABB aabb, glm::vec4 color) {
-
-//     std::vector<Vertex> vertices;
-//     std::vector<glm::vec3> vert;
-
-//     glm::vec3 vertex_1 = glm::vec3(aabb.position.x, aabb.position.y, aabb.position.z + aabb.size.z);
-//     glm::vec3 vertex_2 = glm::vec3(aabb.position.x + aabb.size.x, aabb.position.y, aabb.position.z + aabb.size.z);
-//     // glm::vec3 vertex_2 = glm::vec3(right_most_point, top_most_point, front_most_point);
-//     glm::vec3 vertex_3 = glm::vec3(aabb.position.x + aabb.size.x, aabb.position.y - aabb.size.y, aabb.position.z + aabb.size.z);
-//     glm::vec3 vertex_4 = glm::vec3(aabb.position.x, aabb.position.y - aabb.size.y,  aabb.position.z + aabb.size.z);
-
-//     glm::vec3 vertex_5 = glm::vec3(aabb.position.x, aabb.position.y - aabb.size.y,  aabb.position.z);
-//     glm::vec3 vertex_6 = glm::vec3(aabb.position.x + aabb.size.x, aabb.position.y - aabb.size.y, aabb.position.z);
-//     glm::vec3 vertex_7 = glm::vec3(aabb.position.x + aabb.size.x, aabb.position.y, aabb.position.z);
-//     glm::vec3 vertex_8 = glm::vec3(aabb.position.x, aabb.position.y, aabb.position.z);
-
-//     vert.push_back(vertex_1);
-//     vert.push_back(vertex_2);
-//     vert.push_back(vertex_3);
-//     vert.push_back(vertex_4);
-//     vert.push_back(vertex_5);
-//     vert.push_back(vertex_6);
-//     vert.push_back(vertex_7);
-//     vert.push_back(vertex_8);
-
-//     for (glm::vec3 vect : vert) {
-        
-//         Vertex vertex;
-//         vertex.position = vect;
-//         vertex.normal = glm::vec3(0.0f, 1.0f, 0.0f);
-
-
-//         if(vect == aabb.position) {
-//             vertex.color = color + glm::vec4(1.0f, 0.0f, 0.0f, 0.0f);
-//         } else {
-//             vertex.color = color;
+//     for (int i = 0; i < MAX_BONE_WEIGHTS; ++i)
+//     {
+//         if (vertex.m_BoneIDs[i] < 0)
+//         {
+//             vertex.m_Weights[i] = weight;
+//             vertex.m_BoneIDs[i] = boneID;
+//             break;
 //         }
-    
-//         vertex.texUV = glm::vec2(1.0f, 1.0f);
-//         vertices.push_back(vertex);
 //     }
-
-//     std::vector<GLuint> indices = {
-//         0, 1, 2, 3,
-//         0, 7, 6, 1,
-//         1, 2, 5, 6,
-//         6, 1, 0, 7,
-//         7, 6, 5, 4,
-//         4, 7, 0, 3
-//     };
-
-//     std::vector<Texture> textures;
-
-//     return Mesh(vertices, indices, textures, false);
-    
 // }
+
+void aModel::ExtractBoneWeightForVertices(std::vector<auto>& vertices, aiMesh* mesh, const aiScene* scene)
+{
+    for (int boneIndex = 0; boneIndex < mesh->mNumBones; ++boneIndex)
+    {
+        int boneID = -1;
+        std::string boneName = mesh->mBones[boneIndex]->mName.C_Str();
+        if (m_BoneInfoMap.find(boneName) == m_BoneInfoMap.end())
+        {
+            BoneInfo newBoneInfo;
+            newBoneInfo.id = m_BoneCounter;
+            newBoneInfo.offset = AssimpGLMHelpers::ConvertMatrixToGLMFormat(
+                mesh->mBones[boneIndex]->mOffsetMatrix);
+            m_BoneInfoMap[boneName] = newBoneInfo;
+            boneID = m_BoneCounter;
+            m_BoneCounter++;
+        }
+        else
+        {
+            boneID = m_BoneInfoMap[boneName].id;
+        }
+        assert(boneID != -1);
+        auto weights = mesh->mBones[boneIndex]->mWeights;
+        int numWeights = mesh->mBones[boneIndex]->mNumWeights;
+
+        for (int weightIndex = 0; weightIndex < numWeights; ++weightIndex)
+        {
+            int vertexId = weights[weightIndex].mVertexId;
+            float weight = weights[weightIndex].mWeight;
+            assert(vertexId <= vertices.size());
+            SetVertexBoneData(vertices[vertexId], boneID, weight);
+        }
+    }
+}
 
 glm::vec3 aModel::ApplyGravity() {
     glm::vec3 ground = glm::vec3(0.0f, -50.0f, 0.0f);

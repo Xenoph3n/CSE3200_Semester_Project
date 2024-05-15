@@ -4,6 +4,8 @@
 #include <assimp/Importer.hpp>
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
+#include<stb/stb_image.h>
+
 
 #include <string>
 #include <fstream>
@@ -16,28 +18,26 @@
 #include "aMesh.h"
 #include "Mesh.h"
 #include "Collision.h"
+#include "Bone.h"
+// #include "Helpers.h"
+
+struct BoneInfo
+{
+    int id;
+    glm::mat4 offset;
+};
 
 class aModel
 {
 public:
 
-    // position should be the top most, back most, left most point
-    // sizeX = right_most - left_most
-    // sizeY = top_most - bottom_most
-    // sizeZ = front_most - back_most
-    // float right_most_point = 0.0f;
-    // float left_most_point = 0.0f;
-    // float top_most_point = 0.0f;
-    // float bottom_most_point = 0.0f;
-    // float front_most_point = 0.0f;
-    // float back_most_point = 0.0f;
+    std::map<std::string, BoneInfo> m_BoneInfoMap;
+    int m_BoneCounter = 0;
 
     Collision collision;
     bool apply_gravity = false;    
     float gravity = 9.8f;
     glm::vec3 position = glm::vec3(0.0f, 0.0f, 0.0f);
-    // AABB modelAABB;
-
     
     std::vector<aTexture> textures_loaded;	// stores all the textures loaded so far, optimization to make sure textures aren't loaded more than once.
     std::vector<aMesh> meshes;
@@ -47,19 +47,18 @@ public:
 
     aModel(std::string const& path, bool gamma);
     void Draw(Shader& shader);
-    // AABB calculateBoundingBox();
-    // bool CheckCollision(AABB &one, AABB &two); // AABB - AABB collision
-    // Mesh generateBoundingBoxMesh(AABB aabb, glm::vec4 color);
     glm::vec3 ApplyGravity();
-    
-
+    std::map<std::string, BoneInfo>& GetBoneInfoMap();
+    int& GetBoneCount();  
+    void SetVertexBoneDataToDefault(aVertex& vertex);
+    void SetVertexBoneData(aVertex& vertex, int boneID, float weight);
+    void ExtractBoneWeightForVertices(std::vector<auto>& vertices, aiMesh *mesh, const aiScene *scene);
 private:
-    // model data
     void loadModel(std::string const& path);
     void processNode(aiNode* node, const aiScene* scene);
     aMesh processMesh(aiMesh* mesh, const aiScene* scene);
     std::vector<aTexture> loadMaterialTextures(aiMaterial* mat, aiTextureType type,
         std::string typeName);
-
+     
 };
 #endif

@@ -21,6 +21,9 @@
 #include "Collision.h"
 #include "WorldBoundary.h"
 #include "CubeMap.h"
+#include "Animation.h"
+#include "Animator.h"
+#include "Bone.h"
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void mouse_callback(GLFWwindow* window, double xpos, double ypos);
@@ -197,11 +200,10 @@ int main()
     Shader debugShader("./debug.vert", "./debug.frag");
     Shader playerShader("./player.vert", "./player.frag");
     Shader skyBoxShader("./skybox.vert", "./skybox.frag");
-
+    Shader animationShader("./animation.vert", "./animation.frag");
 
     GLuint tex_id_1;
     GLuint text_id_2;
-
 
     Texture textures[]
 	{
@@ -396,6 +398,10 @@ int main()
     skyBoxShader.Activate();
     skyBoxShader.setInt("skybox", 0);
     
+    aModel animatedModel("./vampire/dancing_vampire.dae", false);
+    Animation animation("./vampire/dancing_vampire.dae", &animatedModel);
+    Animator animator(&animation);
+    
     // -----------
     while (!glfwWindowShouldClose(window))
     {
@@ -478,7 +484,7 @@ int main()
                         glm::vec3(1.0f, 1.0f, 1.0f), 
                         glm::vec3(0.0f, 0.0f, 0.0f),
                         0.0f);
-                        
+            
         depthShader.setMat4("projection", projection);
         depthShader.setMat4("view", view);
 
@@ -734,6 +740,23 @@ int main()
         grassShader.setMat4("projection", projection);
         grassShader.setMat4("view", view);
         grass.Draw(grassShader, false, true, grass_renderer.models);
+
+
+        animator.UpdateAnimation(deltaTime);
+        animationShader.Activate();
+        auto transforms = animator.GetFinalBoneMatrices();
+
+		for (int i = 0; i < transforms.size(); ++i)
+			animationShader.setMat4("finalBonesMatrices[" + std::to_string(i) + "]", transforms[i]);
+
+		glm::mat4 animated_model = glm::mat4(1.0f);
+		animated_model = glm::translate(animated_model, glm::vec3(0.0f, -30.0f, 0.0f)); // translate it down so it's at the center of the scene
+		animated_model = glm::scale(animated_model, glm::vec3(1.0f, 1.0f, 1.0f));	
+        animationShader.setMat4("projection", projection);
+        animationShader.setMat4("view", view);
+		animationShader.setMat4("model", animated_model);
+		animatedModel.Draw(animationShader);
+
         
         glDepthFunc(GL_LEQUAL);
         skyBoxShader.Activate();
