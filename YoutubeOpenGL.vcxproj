@@ -180,7 +180,7 @@
     <ClCompile Include="Animator.cpp" />
     <ClCompile Include="Bone.cpp" />
     <ClCompile Include="CubeMap.cpp" />
-
+    <ClCompile Include="Render.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="aCamera.h" />
@@ -202,7 +202,7 @@
     <ClInclude Include="Bone.h" />
     <ClInclude Include="Points.h" />
     <ClInclude Include="CubeMap.h" />
-
+    <ClInclude Include="Render.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="default.frag" />

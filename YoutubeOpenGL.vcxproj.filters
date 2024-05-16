@@ -81,6 +81,9 @@
      <ClCompile Include="CubeMap.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Render.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="EBO.h">
@@ -138,6 +141,9 @@
       <Filter>Source Files</Filter>
     </ClInclude>
     <ClInclude Include="CubeMap.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Render.h">
       <Filter>Source Files</Filter>
     </ClInclude>
   </ItemGroup>
