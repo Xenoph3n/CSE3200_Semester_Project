@@ -225,7 +225,6 @@ int main()
     Animation animation("./animations/wave.dae", &animatedModel);
     Animator animator(&animation);
     
-    
     aModel animatedModel2("./vampire/dancing_vampire.dae", false);
     Animation animation2("./vampire/dancing_vampire.dae", &animatedModel2);
     Animator animator2(&animation2);
