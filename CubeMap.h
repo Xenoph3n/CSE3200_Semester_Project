@@ -5,6 +5,7 @@
 #include <glad/glad.h>
 #include <stb/stb_image.h>
 #include <iostream>
+#include "Shader.h"
 
  
 class CubeMap
@@ -15,6 +16,7 @@ class CubeMap
         unsigned int texture_id;
         void setUp(std::vector<float> vertices);
         void loadCubeMap(std::vector<std::string> faces);
+        void setUniforms(Shader& shader);
         void bind();
         void unbind();
         void bindTexture();

@@ -2,6 +2,10 @@
 
 unsigned int TextureFromFile2(const char* path, const std::string& directory, bool gamma = false);
 
+aModel::aModel() {
+
+}
+
 // constructor, expects a filepath to a 3D model.
 aModel::aModel(std::string const& path, bool gamma = false) : gammaCorrection(gamma)
 {

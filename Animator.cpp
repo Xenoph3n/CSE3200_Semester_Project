@@ -1,5 +1,7 @@
 #include "Animator.h"
 
+Animator::Animator() {}
+
 Animator::Animator(Animation* Animation)
 {
     m_CurrentTime = 0.0;

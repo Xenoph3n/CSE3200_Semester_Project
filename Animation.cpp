@@ -1,5 +1,7 @@
 #include "Animation.h"
 
+Animation::Animation() {}
+
 Animation::Animation(const std::string& animationPath, aModel* model)
 {
     Assimp::Importer importer;

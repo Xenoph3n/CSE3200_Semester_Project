@@ -44,7 +44,7 @@ public:
     std::string directory;
 
     bool gammaCorrection;
-
+    aModel();
     aModel(std::string const& path, bool gamma);
     void Draw(Shader& shader);
     glm::vec3 ApplyGravity();

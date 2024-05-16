@@ -25,6 +25,8 @@
 #include "Animator.h"
 #include "Bone.h"
 #include "Points.h"
+#include "Initialize.h"
+#include "Render.h"
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void mouse_callback(GLFWwindow* window, double xpos, double ypos);
@@ -80,6 +82,9 @@ int main()
 
     glEnable(GL_DEPTH_TEST);
 
+    GLuint tex_id_1;
+    GLuint text_id_2;
+
     Shader ourShader("./model.vert", "./model.frag");
     Shader planeShader("./plane.vert", "./plane.frag");
     Shader lightShader("./light.vert", "./light.frag");
@@ -93,8 +98,6 @@ int main()
     Shader skyBoxShader("./skybox.vert", "./skybox.frag");
     Shader animationShader("./animation.vert", "./animation.frag");
 
-    GLuint tex_id_1;
-    GLuint text_id_2;
 
     Texture textures[]
 	{
@@ -135,31 +138,8 @@ int main()
     Mesh light(cubeVerts, cubeInd, tex, false); 
     Mesh plane(circle.vertices, circle.indices, dirt, true);
 
-    Building render;
-    render.get_file_list("./stadium/blue_2");
-    Building blue_2;
-    blue_2.get_file_list("./stadium/blue_1");
-    Building blue_3;
-    blue_3.get_file_list("./stadium/blue_3");
-    Building orange;
-    orange.get_file_list("./stadium/orange");
-    Building green;
-    green.get_file_list("./stadium/green");
-    Building red;
-    red.get_file_list("./stadium/red");
-    Building yellow;
-    yellow.get_file_list("./stadium/yellow");
-    Building purple;
-    purple.get_file_list("./stadium/purple");
-    
-    render.render(shadowShader, camera, SCR_WIDTH, SCR_HEIGHT);           
-    blue_2.render(  shadowShader, camera, SCR_WIDTH, SCR_HEIGHT);
-    blue_3.render(  shadowShader, camera, SCR_WIDTH, SCR_HEIGHT);
-    orange.render(  shadowShader, camera, SCR_WIDTH, SCR_HEIGHT);
-    green.render(   shadowShader, camera, SCR_WIDTH, SCR_HEIGHT );
-    red.render(     shadowShader, camera, SCR_WIDTH, SCR_HEIGHT);
-    yellow.render(  shadowShader, camera, SCR_WIDTH, SCR_HEIGHT);
-    purple.render(  shadowShader, camera, SCR_WIDTH, SCR_HEIGHT);
+    Render render;
+    render.initialize(camera, shadowShader, SCR_WIDTH, SCR_HEIGHT);
 
     Shadow shadow;  
     shadow.createDepthMap(shadowShader);
@@ -187,8 +167,6 @@ int main()
 
     CubeMap cubemap;
 
-    // cubemap.setUp(skyBoxVertices);
-
     glGenVertexArrays(1, &cubemap.vao);
     glGenBuffers(1, &cubemap.vbo);
     glBindVertexArray(cubemap.vao);
@@ -197,34 +175,12 @@ int main()
     glEnableVertexAttribArray(0);
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
 
-
-    std::vector<std::string> faces
-    {
-        "./textures/skybox/right.jpg",
-        "./textures/skybox/left.jpg",
-        "./textures/skybox/top.jpg",
-        "./textures/skybox/bottom.jpg",
-        "./textures/skybox/front.jpg",
-        "./textures/skybox/back.jpg"
-    };
-
-    
     cubemap.loadCubeMap(faces);
-
-    skyBoxShader.Activate();
-    skyBoxShader.setInt("skybox", 0);
-    
-    int animation_state_matrix[4][12] = {
-        {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-        {0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0},
-        {0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0},
-        {0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0}
-    };
+    cubemap.setUniforms(skyBoxShader);
 
     aModel animatedModel("./animations/wave.dae", false);
     Animation animation("./animations/wave.dae", &animatedModel);
     Animator animator(&animation);
-    
     
     aModel animatedModel2("./vampire/dancing_vampire.dae", false);
     Animation animation2("./vampire/dancing_vampire.dae", &animatedModel2);
@@ -235,7 +191,6 @@ int main()
         float currentFrame = static_cast<float>(glfwGetTime());
         deltaTime = currentFrame - lastFrame;
         lastFrame = currentFrame;
-
 
         glm::mat4 model = glm::mat4(1.0f);
         model = glm::translate(model, glm::vec3(0.0f, 0.0f, 0.0f)); // translate it down so it's at the center of the scene
@@ -248,117 +203,8 @@ int main()
 
         shadow.setUpDepthMap(lightPos, depthShader);
               
-        render.draw(    depthShader, 
-                        camera, 
-                        SCR_WIDTH, 
-                        SCR_HEIGHT, 
-                        glm::mat4(1.0f), 
-                        glm::vec3(1.0f, 1.0f, 1.0f), 
-                        glm::vec3(circle.vertices[3].position.x - 200.0f, -34.0f, circle.vertices[3].position.z - 200.0f),
-                        270.0f
-                        );
-        
-        blue_2.draw(   depthShader, 
-                        camera, 
-                        SCR_WIDTH, 
-                        SCR_HEIGHT, 
-                        glm::mat4(1.0f), 
-                        glm::vec3(1.0f, 1.0f, 1.0f), 
-                        glm::vec3(circle.vertices[4].position.x - 190.0f, -34.0f, circle.vertices[4].position.z - 100.0f),
-                        280.0f
-                        );
+        render.drawBuildings(camera, depthShader, circle, SCR_WIDTH, SCR_WIDTH, model, view, projection);
 
-        blue_3.draw(   depthShader, 
-                        camera, 
-                        SCR_WIDTH, 
-                        SCR_HEIGHT, 
-                        glm::mat4(1.0f), 
-                        glm::vec3(1.0f, 1.0f, 1.0f), 
-                        glm::vec3(circle.vertices[2].position.x - 150.0f, -34.0f, circle.vertices[2].position.z - 300.0f),
-                        260.0f
-                        );
-                        
-        orange.draw(    depthShader, 
-                        camera, 
-                        SCR_WIDTH, 
-                        SCR_HEIGHT, 
-                        glm::mat4(1.0f), 
-                        glm::vec3(1.0f, 1.0f, 1.0f), 
-                        glm::vec3(circle.vertices[0].position.x, -31.0f, circle.vertices[0].position.z),
-                        0.0f);
-        
-        
-        green.draw(     depthShader, 
-                        camera, 
-                        SCR_WIDTH, 
-                        SCR_HEIGHT, 
-                        glm::mat4(1.0f), 
-                        glm::vec3(1.0f, 1.0f, 1.0f), 
-                        glm::vec3(circle.vertices[8].position.x + 200.0f, -43.0f, 0.0f + circle.vertices[8].position.z - 110.0f),
-                        50.0f);
-
-                
-          depthShader.Activate();
-        glm::mat4 red_model = glm::mat4(1.0f);
-        red_model = glm::rotate(red_model, glm::radians(-40.0f), glm::vec3(0.0f, 1.0f, 0.0f));
-        depthShader.setMat4("model", red_model);
-        
-        red.draw(     depthShader, 
-                        camera, 
-                        SCR_WIDTH, 
-                        SCR_HEIGHT, 
-                        red_model, 
-                        glm::vec3(1.2f, 1.0f, 1.0f), 
-                        glm::vec3(circle.vertices[11].position.x + 110.0f, circle.vertices[11].position.z - 365.0f, -45.0f),
-                        -90.0f,
-                        glm::vec3(1.0f, 0.0f, 0.0f));
-
-        depthShader.Activate();
-        red_model = glm::mat4(1.0f);
-        red_model = glm::rotate(red_model, glm::radians(40.0f), glm::vec3(0.0f, 1.0f, 0.0f));
-        depthShader.setMat4("model", red_model);
-        
-        red.draw(     depthShader, 
-                        camera, 
-                        SCR_WIDTH, 
-                        SCR_HEIGHT, 
-                        red_model, 
-                        glm::vec3(1.2f, 1.0f, 1.0f), 
-                        glm::vec3(circle.vertices[0].position.x - 5.0f, circle.vertices[0].position.z - 390.0f, -45.0f),
-                        -90.0f,
-                        glm::vec3(1.0f, 0.0f, 0.0f));
-        
-        depthShader.Activate();
-        red_model = glm::mat4(1.0f);
-        red_model = glm::rotate(red_model, glm::radians(150.0f), glm::vec3(0.0f, 1.0f, 0.0f));
-        depthShader.setMat4("model", red_model);
-        
-        red.draw(     depthShader, 
-                        camera, 
-                        SCR_WIDTH, 
-                        SCR_HEIGHT, 
-                        red_model, 
-                        glm::vec3(1.2f, 1.0f, 1.0f), 
-                        glm::vec3(circle.vertices[0].position.x - 20.0f, circle.vertices[0].position.z - 390.0f, -45.0f),
-                        -90.0f,
-                        glm::vec3(1.0f, 0.0f, 0.0f));
-
-        depthShader.Activate();
-        red_model = glm::mat4(1.0f);
-        red_model = glm::rotate(red_model, glm::radians(0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
-        depthShader.setMat4("model", red_model);
-        
-        yellow.draw(     depthShader, 
-                camera, 
-                SCR_WIDTH, 
-                SCR_HEIGHT, 
-                red_model, 
-                glm::vec3(1.5f, 1.5f, 1.5f), 
-                glm::vec3(circle.vertices[0].position.x - 20.0f, circle.vertices[0].position.z - 60.0f, -30.0f),
-                -90.0f,
-                glm::vec3(1.0f, 0.0f, 0.0f)
-            );
-            
         depthShader.setMat4("projection", projection);
         depthShader.setMat4("view", view);
         depthShader.setMat4("model", glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, -50.0f, 0.0f)));
@@ -381,168 +227,8 @@ int main()
             view
         );
 
-        shadowShader.Activate();
-        shadowShader.setMat4("model",glm::mat4(1.0f));
+        render.drawBuildings(camera, shadowShader, circle, SCR_WIDTH, SCR_WIDTH, model, view, projection);
 
-        render.draw(    shadowShader, 
-                        camera, 
-                        SCR_WIDTH, 
-                        SCR_HEIGHT, 
-                        glm::mat4(1.0f), 
-                        glm::vec3(1.0f, 1.0f, 1.0f), 
-                        glm::vec3(circle.vertices[3].position.x - 200.0f, -34.0f, circle.vertices[3].position.z - 200.0f),
-                        270.0f
-                        );
-
-        blue_2.draw(   shadowShader, 
-                        camera, 
-                        SCR_WIDTH, 
-                        SCR_HEIGHT, 
-                        glm::mat4(1.0f), 
-                        glm::vec3(1.0f, 1.0f, 1.0f), 
-                        glm::vec3(circle.vertices[4].position.x - 190.0f, -34.0f, circle.vertices[4].position.z - 100.0f),
-                        280.0f
-                        );
-
-        blue_3.draw(   shadowShader, 
-                        camera, 
-                        SCR_WIDTH, 
-                        SCR_HEIGHT, 
-                        glm::mat4(1.0f), 
-                        glm::vec3(1.0f, 1.0f, 1.0f), 
-                        glm::vec3(circle.vertices[2].position.x - 150.0f, -34.0f, circle.vertices[2].position.z - 300.0f),
-                        260.0f
-                        );
-                        
-        orange.draw(    shadowShader, 
-                        camera, 
-                        SCR_WIDTH, 
-                        SCR_HEIGHT, 
-                        glm::mat4(1.0f), 
-                        glm::vec3(1.0f, 1.0f, 1.0f), 
-                        glm::vec3(200.0f + circle.vertices[0].position.x, -31.0f, 0.0f + circle.vertices[0].position.z - 400.0f),
-                        180.0f);
-        
-        
-        green.draw(     shadowShader, 
-                        camera, 
-                        SCR_WIDTH, 
-                        SCR_HEIGHT, 
-                        glm::mat4(1.0f), 
-                        glm::vec3(1.0f, 1.0f, 1.0f), 
-                        glm::vec3(circle.vertices[8].position.x + 200.0f, -43.0f, 0.0f + circle.vertices[8].position.z - 110.0f),
-                        50.0f);
-
-        shadowShader.Activate();
-        red_model = glm::mat4(1.0f);
-        red_model = glm::rotate(red_model, glm::radians(-40.0f), glm::vec3(0.0f, 1.0f, 0.0f));
-        shadowShader.setMat4("model", red_model);
-        
-        red.draw(     shadowShader, 
-                        camera, 
-                        SCR_WIDTH, 
-                        SCR_HEIGHT, 
-                        red_model, 
-                        glm::vec3(1.2f, 1.0f, 1.0f), 
-                        glm::vec3(circle.vertices[11].position.x + 110.0f, circle.vertices[11].position.z - 365.0f, -45.0f),
-                        -90.0f,
-                        glm::vec3(1.0f, 0.0f, 0.0f));
-
-        
-        shadowShader.Activate();
-        red_model = glm::mat4(1.0f);
-        red_model = glm::rotate(red_model, glm::radians(40.0f), glm::vec3(0.0f, 1.0f, 0.0f));
-        shadowShader.setMat4("model", red_model);
-        
-        red.draw(     shadowShader, 
-                        camera, 
-                        SCR_WIDTH, 
-                        SCR_HEIGHT, 
-                        red_model, 
-                        glm::vec3(1.2f, 1.0f, 1.0f), 
-                        glm::vec3(circle.vertices[0].position.x - 5.0f, circle.vertices[0].position.z - 390.0f, -45.0f),
-                        -90.0f,
-                        glm::vec3(1.0f, 0.0f, 0.0f));
-
-
-        
-        shadowShader.Activate();
-        red_model = glm::mat4(1.0f);
-        red_model = glm::rotate(red_model, glm::radians(150.0f), glm::vec3(0.0f, 1.0f, 0.0f));
-        shadowShader.setMat4("model", red_model);
-        
-        red.draw(     shadowShader, 
-                        camera, 
-                        SCR_WIDTH, 
-                        SCR_HEIGHT, 
-                        red_model, 
-                        glm::vec3(1.2f, 1.0f, 1.0f), 
-                        glm::vec3(circle.vertices[0].position.x - 20.0f, circle.vertices[0].position.z - 390.0f, -45.0f),
-                        -90.0f,
-                        glm::vec3(1.0f, 0.0f, 0.0f));
-
-        shadowShader.Activate();
-        red_model = glm::mat4(1.0f);
-        red_model = glm::rotate(red_model, glm::radians(0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
-        shadowShader.setMat4("model", red_model);
-        
-        yellow.draw(     shadowShader, 
-                camera, 
-                SCR_WIDTH, 
-                SCR_HEIGHT, 
-                red_model, 
-                glm::vec3(1.5f, 1.5f, 1.5f), 
-                glm::vec3(circle.vertices[0].position.x - 20.0f, circle.vertices[0].position.z - 60.0f, -30.0f),
-                -90.0f,
-                glm::vec3(1.0f, 0.0f, 0.0f)
-        );
-
-        
-        shadowShader.Activate();
-        red_model = glm::mat4(1.0f);
-        red_model = glm::rotate(red_model, glm::radians(90.0f), glm::vec3(0.0f, 1.0f, 0.0f));
-        shadowShader.setMat4("model", red_model);
-
-        purple.draw(    shadowShader, 
-                        camera, 
-                        SCR_WIDTH, 
-                        SCR_HEIGHT, 
-                        red_model, 
-                        glm::vec3(1.0f, 1.0f, 1.0f), 
-                        glm::vec3(0.0f, 200.0f, -45.0f),
-                        -90.0f,
-                        glm::vec3(1.0f, 0.0f, 0.0f)    
-            );
-
-        // if (move) {
-        //     glm::vec3 movement = glm::vec3(20.0f, 20.0f, 20.0f);
-        //     // glm::vec3 translation_offset = movement * camera.Front + camera.Position + glm::vec3(0.0f, -10.0f, 0.0f);
-        //     glm::vec3 translation_offset = movement * camera.Front;
-        //     AABB old_aabb = aabb;
-        //     aabb.position *= 0.5f;
-        //     aabb.size *= 0.5f;
-        //     aabb.position += glm::vec3(20.0f, 20.0f, 20.0f) * camera.Front + camera.Position + glm::vec3(0.0f, -10.0f, 0.0f);
-        
-        //     playerShader.Activate();
-
-        //     if (player.CheckCollision(aabb, testAABB)) {
-        //         playerShader.setMat4("projection", projection);
-        //         playerShader.setMat4("view", view);
-        //         translation_offset = glm::vec3(20.0f, 20.0f, 20.0f) * camera.Front + camera.Position + glm::vec3(0.0f, -10.0f, 0.0f);
-        //         playerModel = glm::translate(playerModel, translation_offset);
-        //         playerModel = glm::scale(playerModel, glm::vec3(0.5f,0.5f, 0.5f));
-        //         playerShader.setMat4("model", playerModel);
-        //         camera.collided = true;
-        //     } else {
-        //         playerModel = glm::translate(playerModel, translation_offset);
-        //         // playerModel = glm::translate(playerModel, player.ApplyGravity(translation_offset));
-        //         playerShader.setMat4("projection", projection);
-        //         playerShader.setMat4("view", view);
-        //         playerShader.setMat4("model", playerModel);
-        //         camera.collided = false;
-        //     }
-        // }
-        
         glm::vec3 translation_offset = processInput(window, player.position, camera.Front);
         glm::vec3 gravity = player.ApplyGravity();
         glm::vec3 future_position = player.position + translation_offset + gravity;
@@ -576,10 +262,11 @@ int main()
         playerShader.setMat4("projection", projection);
         playerShader.setMat4("view", view);
         playerShader.setMat4("model", playerModel);
-        // playerModel = glm::scale(playerModel, glm::vec3(0.5f,0.5f, 0.5f));
+        playerShader.setVec4("lightColor", glm::vec3(1.0f, 1.0f, 1.0f));
+        playerShader.setVec3("camPosition", camera.Position);
         player.Draw(playerShader);
         playerShader.setMat4("model", glm::mat4(1.0f));
-        player.collision.generateBoundingBoxMesh(aabb, glm::vec4(1.0f, 0.0f, 0.0f, 1.0f)).Draw(playerShader);
+        // player.collision.generateBoundingBoxMesh(aabb, glm::vec4(1.0f, 0.0f, 0.0f, 1.0f)).Draw(playerShader);
 
         shadowShader.Activate();
         shadowShader.setMat4("projection", projection);
@@ -590,86 +277,75 @@ int main()
         // circle.collision.generateBoundingBoxMesh(circleAABB, glm::vec4(0.0f, 0.0f, 1.0f, 1.0f)).Draw(shadowShader);
         plane.Draw(shadowShader);
 
-        // shadowShader.Activate();
-        // shadowShader.setMat4("projection", projection);
-        // shadowShader.setMat4("view", view);
-        // shadowShader.setMat4("model", testingModel);
-        // test.Draw(shadowShader);
-
-        // shadowShader.setMat4("model", glm::mat4(1.0f));
-        // test.collision.generateBoundingBoxMesh(testAABB, glm::vec4(0.0f, 0.0f, 1.0f, 1.0f)).Draw(shadowShader);
-
         grassShader.Activate();
         grassShader.setMat4("projection", projection);
         grassShader.setMat4("view", view);
         grass.Draw(grassShader, false, true, grass_renderer.models);
 
+        render.drawAnimations(camera, animationShader, circle, SCR_WIDTH, SCR_HEIGHT, model, view, projection, deltaTime);
         /* ANIMATION */
+        // animator.UpdateAnimation(deltaTime);
 
-        animator.UpdateAnimation(deltaTime);
+        // animationShader.Activate();
+        // auto transforms = animator.GetFinalBoneMatrices();
 
-        animationShader.Activate();
-        auto transforms = animator.GetFinalBoneMatrices();
+		// glm::mat4 animated_model = glm::mat4(1.0f);
+        // glm::vec3 base_position = glm::vec3(circle.vertices[0].position.x - 40.0f, -40.0f, circle.vertices[0].position.z - 10.0f);
+        // glm::vec3 pos = glm::vec3(circle.vertices[0].position.x - 40.0f, base_position.y, circle.vertices[0].position.z - 10.0f);
+        // animationShader.setMat4("projection", projection);
+        // animationShader.setMat4("view", view);
 
+        // for (int x = 0; x < 4; x++) {
+        //     for (int i = 0; i < 12; i++) {
 
-		glm::mat4 animated_model = glm::mat4(1.0f);
-        // animated_model = glm::rotate(animated_model, glm::radians(-90.0f), glm::vec3(0.0f, 1.0f, 0.0f));
-        glm::vec3 base_position = glm::vec3(circle.vertices[0].position.x - 40.0f, -40.0f, circle.vertices[0].position.z - 10.0f);
-        glm::vec3 pos = glm::vec3(circle.vertices[0].position.x - 40.0f, base_position.y, circle.vertices[0].position.z - 10.0f);
-        animationShader.setMat4("projection", projection);
-        animationShader.setMat4("view", view);
-
-        for (int x = 0; x < 4; x++) {
-            for (int i = 0; i < 12; i++) {
-
-                animated_model = glm::mat4(1.0f);
-                animated_model = glm::translate(animated_model, base_position); // translate it down so it's at the center of the scene
-                animated_model = glm::scale(animated_model, glm::vec3(2.0f, 2.0f, 2.0f));	
-                animated_model = glm::rotate(animated_model, glm::radians(180.0f), glm::vec3(0.0f, 1.0f, 0.0f));
-                animationShader.setMat4("model", animated_model);
+        //         animated_model = glm::mat4(1.0f);
+        //         animated_model = glm::translate(animated_model, base_position); // translate it down so it's at the center of the scene
+        //         animated_model = glm::scale(animated_model, glm::vec3(2.0f, 2.0f, 2.0f));	
+        //         animated_model = glm::rotate(animated_model, glm::radians(180.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+        //         animationShader.setMat4("model", animated_model);
                 
-                if (animation_state_matrix[x][i] == 0) {
-                    transforms = animator.GetFinalBoneMatrices();
+        //         if (animation_state_matrix[x][i] == 0) {
+        //             transforms = animator.GetFinalBoneMatrices();
 
-                    for (int i = 0; i < transforms.size(); ++i)
-                        animationShader.setMat4("finalBonesMatrices[" + std::to_string(i) + "]", transforms[i]);
+        //             for (int i = 0; i < transforms.size(); ++i)
+        //                 animationShader.setMat4("finalBonesMatrices[" + std::to_string(i) + "]", transforms[i]);
 
-                    animatedModel.Draw(animationShader);
-                } 
+        //             animatedModel.Draw(animationShader);
+        //         } 
 
-                if (animation_state_matrix[x][i] == 1) {
-                    animator2.UpdateAnimation(deltaTime);
-                    animated_model = glm::scale(animated_model, glm::vec3(2.0f, 2.0f, 2.0f));	
-                    transforms = animator2.GetFinalBoneMatrices();
+        //         if (animation_state_matrix[x][i] == 1) {
+        //             animator2.UpdateAnimation(deltaTime);
+        //             animated_model = glm::scale(animated_model, glm::vec3(2.0f, 2.0f, 2.0f));	
+        //             transforms = animator2.GetFinalBoneMatrices();
 
-                    for (int i = 0; i < transforms.size(); ++i)
-                        animationShader.setMat4("finalBonesMatrices[" + std::to_string(i) + "]", transforms[i]);
-                    animationShader.setMat4("model", animated_model);
-                    animatedModel2.Draw(animationShader);
-                } 
+        //             for (int i = 0; i < transforms.size(); ++i)
+        //                 animationShader.setMat4("finalBonesMatrices[" + std::to_string(i) + "]", transforms[i]);
+        //             animationShader.setMat4("model", animated_model);
+        //             animatedModel2.Draw(animationShader);
+        //         } 
 
-                base_position = glm::vec3(base_position.x - 10.0f, base_position.y, base_position.z - 8.5f);
-            }
-            base_position = glm::vec3(pos.x - 5.0f, pos.y + 10.0f, pos.z + 5.0f);
-            pos = base_position;
-        } 
+        //         base_position = glm::vec3(base_position.x - 10.0f, base_position.y, base_position.z - 8.5f);
+        //     }
+        //     base_position = glm::vec3(pos.x - 5.0f, pos.y + 10.0f, pos.z + 5.0f);
+        //     pos = base_position;
+        // } 
 
-        base_position = glm::vec3(circle.vertices[0].position.x + 60.0f, -40.0f, circle.vertices[0].position.z - 25.0f);
-        pos = glm::vec3(circle.vertices[0].position.x + 60.0f, -40.0f, circle.vertices[0].position.z - 25.0f);
+        // base_position = glm::vec3(circle.vertices[0].position.x + 60.0f, -40.0f, circle.vertices[0].position.z - 25.0f);
+        // pos = glm::vec3(circle.vertices[0].position.x + 60.0f, -40.0f, circle.vertices[0].position.z - 25.0f);
         
-        for (int x = 0; x < 4; x++) {
-            for (int i = 0; i < 12; i++) {        
-                animated_model = glm::mat4(1.0f);
-                animated_model = glm::translate(animated_model, base_position);
-                animated_model = glm::scale(animated_model, glm::vec3(2.0f, 2.0f, 2.0f));
-                animated_model = glm::rotate(animated_model, glm::radians(180.0f), glm::vec3(0.0f, 1.0f, 0.0f));
-                animationShader.setMat4("model", animated_model);
-                animatedModel.Draw(animationShader);
-                base_position = glm::vec3(base_position.x + 10.0f, base_position.y, base_position.z - 8.5f);
-            }
-            base_position = glm::vec3(pos.x + 5.0f, pos.y + 10.0f, pos.z + 5.0f);
-            pos = base_position;
-        } 
+        // for (int x = 0; x < 4; x++) {
+        //     for (int i = 0; i < 12; i++) {        
+        //         animated_model = glm::mat4(1.0f);
+        //         animated_model = glm::translate(animated_model, base_position);
+        //         animated_model = glm::scale(animated_model, glm::vec3(2.0f, 2.0f, 2.0f));
+        //         animated_model = glm::rotate(animated_model, glm::radians(180.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+        //         animationShader.setMat4("model", animated_model);
+        //         animatedModel.Draw(animationShader);
+        //         base_position = glm::vec3(base_position.x + 10.0f, base_position.y, base_position.z - 8.5f);
+        //     }
+        //     base_position = glm::vec3(pos.x + 5.0f, pos.y + 10.0f, pos.z + 5.0f);
+        //     pos = base_position;
+        // } 
 
         /* SKYBOX */
 
@@ -840,3 +516,33 @@ void scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
         // // // material properties
         // // shinyShader.setFloat("material.shininess", 32.0f);
 
+
+// if (move) {
+        //     glm::vec3 movement = glm::vec3(20.0f, 20.0f, 20.0f);
+        //     // glm::vec3 translation_offset = movement * camera.Front + camera.Position + glm::vec3(0.0f, -10.0f, 0.0f);
+        //     glm::vec3 translation_offset = movement * camera.Front;
+        //     AABB old_aabb = aabb;
+        //     aabb.position *= 0.5f;
+        //     aabb.size *= 0.5f;
+        //     aabb.position += glm::vec3(20.0f, 20.0f, 20.0f) * camera.Front + camera.Position + glm::vec3(0.0f, -10.0f, 0.0f);
+        
+        //     playerShader.Activate();
+
+        //     if (player.CheckCollision(aabb, testAABB)) {
+        //         playerShader.setMat4("projection", projection);
+        //         playerShader.setMat4("view", view);
+        //         translation_offset = glm::vec3(20.0f, 20.0f, 20.0f) * camera.Front + camera.Position + glm::vec3(0.0f, -10.0f, 0.0f);
+        //         playerModel = glm::translate(playerModel, translation_offset);
+        //         playerModel = glm::scale(playerModel, glm::vec3(0.5f,0.5f, 0.5f));
+        //         playerShader.setMat4("model", playerModel);
+        //         camera.collided = true;
+        //     } else {
+        //         playerModel = glm::translate(playerModel, translation_offset);
+        //         // playerModel = glm::translate(playerModel, player.ApplyGravity(translation_offset));
+        //         playerShader.setMat4("projection", projection);
+        //         playerShader.setMat4("view", view);
+        //         playerShader.setMat4("model", playerModel);
+        //         camera.collided = false;
+        //     }
+        // }
+        

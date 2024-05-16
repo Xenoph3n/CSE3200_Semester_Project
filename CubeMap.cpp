@@ -43,6 +43,11 @@ void CubeMap::loadCubeMap(std::vector<std::string> faces)
 
 }
 
+void CubeMap::setUniforms(Shader& shader) {
+    shader.Activate();
+    shader.setInt("skybox", 0);
+}
+
 void CubeMap::bind() {
     // std::cout << "VAO" << vao << "VBO" << vbo << "\n";
     glBindVertexArray(vao);

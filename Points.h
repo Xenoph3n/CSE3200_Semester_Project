@@ -4,6 +4,17 @@
 #include "Vertex.h"
 #include <glm/glm.hpp>
 
+
+std::vector<std::string> faces
+{
+    "./textures/skybox/right.jpg",
+    "./textures/skybox/left.jpg",
+    "./textures/skybox/top.jpg",
+    "./textures/skybox/bottom.jpg",
+    "./textures/skybox/front.jpg",
+    "./textures/skybox/back.jpg"
+};
+
 float rectangleVertices[] =
 {
 	// Coords    // texCoords

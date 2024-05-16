@@ -28,7 +28,7 @@ class Animation {
         std::vector<Bone> m_Bones;
         AssimpNodeData m_RootNode;
         std::map<std::string, BoneInfo> m_BoneInfoMap;
-
+        Animation();
         Animation(const std::string& animationPath, aModel* model);
         Bone* FindBone(const std::string& name);
         float GetTicksPerSecond();
