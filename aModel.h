@@ -35,7 +35,7 @@ public:
     int m_BoneCounter = 0;
 
     Collision collision;
-    bool apply_gravity = false;    
+    bool apply_gravity = true;    
     float gravity = 9.8f;
     glm::vec3 position = glm::vec3(0.0f, 0.0f, 0.0f);
     

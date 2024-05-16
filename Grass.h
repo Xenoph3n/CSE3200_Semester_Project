@@ -25,7 +25,7 @@ class Grass {
         std::vector<glm::mat4> models;
         float offset = 0.0f;
 
-        int n = 10;
+        int n = 200;
 
         std::vector<GridOrientation> orientations;
         void DrawSingle(Mesh grass, Shader &shader, glm::vec3 position, glm::mat4 model, int index);

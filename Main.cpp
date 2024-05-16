@@ -82,7 +82,6 @@ int main()
 
     Shader ourShader("./model.vert", "./model.frag");
     Shader planeShader("./plane.vert", "./plane.frag");
-
     Shader lightShader("./light.vert", "./light.frag");
     Shader shinyShader("./shiny.vert", "./shiny.frag");
     Shader defaultShader("./default.vert", "./default.frag");
@@ -179,9 +178,6 @@ int main()
 
     AABB circleAABB = circle.collision.calculateBoundingBox();
     
-    planeShader.printVec3("Player aabb", testAABB.position);
-    planeShader.printVec3("Test aabb", aabb.position);
-
     WorldBoundary world_boundary;
     world_boundary.vertices = circle.vertices;
     world_boundary.y_offset = 50.0f;
@@ -218,8 +214,8 @@ int main()
     skyBoxShader.Activate();
     skyBoxShader.setInt("skybox", 0);
     
-    aModel animatedModel("./vampire/dancing_vampire.dae", false);
-    Animation animation("./vampire/dancing_vampire.dae", &animatedModel);
+    aModel animatedModel("./animations/wave.dae", false);
+    Animation animation("./animations/wave.dae", &animatedModel);
     Animator animator(&animation);
     
     while (!glfwWindowShouldClose(window))
@@ -290,20 +286,71 @@ int main()
                         50.0f);
 
                 
+          depthShader.Activate();
+        glm::mat4 red_model = glm::mat4(1.0f);
+        red_model = glm::rotate(red_model, glm::radians(-40.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+        depthShader.setMat4("model", red_model);
+        
         red.draw(     depthShader, 
                         camera, 
                         SCR_WIDTH, 
                         SCR_HEIGHT, 
-                        glm::mat4(1.0f), 
-                        glm::vec3(1.0f, 1.0f, 1.0f), 
-                        glm::vec3(0.0f, 0.0f, 0.0f),
-                        0.0f);
+                        red_model, 
+                        glm::vec3(1.2f, 1.0f, 1.0f), 
+                        glm::vec3(circle.vertices[11].position.x + 110.0f, circle.vertices[11].position.z - 365.0f, -45.0f),
+                        -90.0f,
+                        glm::vec3(1.0f, 0.0f, 0.0f));
+
+        
+        depthShader.Activate();
+        red_model = glm::mat4(1.0f);
+        red_model = glm::rotate(red_model, glm::radians(40.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+        depthShader.setMat4("model", red_model);
+        
+        red.draw(     depthShader, 
+                        camera, 
+                        SCR_WIDTH, 
+                        SCR_HEIGHT, 
+                        red_model, 
+                        glm::vec3(1.2f, 1.0f, 1.0f), 
+                        glm::vec3(circle.vertices[0].position.x - 5.0f, circle.vertices[0].position.z - 390.0f, -45.0f),
+                        -90.0f,
+                        glm::vec3(1.0f, 0.0f, 0.0f));
+        
+        depthShader.Activate();
+        red_model = glm::mat4(1.0f);
+        red_model = glm::rotate(red_model, glm::radians(150.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+        depthShader.setMat4("model", red_model);
+        
+        red.draw(     depthShader, 
+                        camera, 
+                        SCR_WIDTH, 
+                        SCR_HEIGHT, 
+                        red_model, 
+                        glm::vec3(1.2f, 1.0f, 1.0f), 
+                        glm::vec3(circle.vertices[0].position.x - 20.0f, circle.vertices[0].position.z - 390.0f, -45.0f),
+                        -90.0f,
+                        glm::vec3(1.0f, 0.0f, 0.0f));
+
+        depthShader.Activate();
+        red_model = glm::mat4(1.0f);
+        red_model = glm::rotate(red_model, glm::radians(0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+        depthShader.setMat4("model", red_model);
+        
+        yellow.draw(     depthShader, 
+                camera, 
+                SCR_WIDTH, 
+                SCR_HEIGHT, 
+                red_model, 
+                glm::vec3(1.5f, 1.5f, 1.5f), 
+                glm::vec3(circle.vertices[0].position.x - 20.0f, circle.vertices[0].position.z - 60.0f, -30.0f),
+                -90.0f,
+                glm::vec3(1.0f, 0.0f, 0.0f)
+            );
             
         depthShader.setMat4("projection", projection);
         depthShader.setMat4("view", view);
-
-        glm::mat4 testModel = glm::mat4(1.0f);
-        depthShader.setMat4("model", glm::translate(testModel, glm::vec3(0.0f, -50.0f, 0.0f)));
+        depthShader.setMat4("model", glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, -50.0f, 0.0f)));
         depthShader.setVec4("lightColor", glm::vec3(1.0f, 0.0f, 0.0f));
         plane.Draw(depthShader);
 
@@ -377,7 +424,7 @@ int main()
                         50.0f);
 
         shadowShader.Activate();
-        glm::mat4 red_model = glm::mat4(1.0f);
+        red_model = glm::mat4(1.0f);
         red_model = glm::rotate(red_model, glm::radians(-40.0f), glm::vec3(0.0f, 1.0f, 0.0f));
         shadowShader.setMat4("model", red_model);
         
@@ -424,23 +471,11 @@ int main()
                         -90.0f,
                         glm::vec3(1.0f, 0.0f, 0.0f));
 
-        // purple.draw(     shadowShader, 
-        //         camera, 
-        //         SCR_WIDTH, 
-        //         SCR_HEIGHT, 
-        //         glm::mat4(1.0f), 
-        //         glm::vec3(1.0f, 1.0f, 1.0f), 
-        //         glm::vec3(0.0f, 0.0f ,0.0f),
-        //         0.0f
-        //     );
-
-        
         shadowShader.Activate();
         red_model = glm::mat4(1.0f);
         red_model = glm::rotate(red_model, glm::radians(0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
         shadowShader.setMat4("model", red_model);
         
-
         yellow.draw(     shadowShader, 
                 camera, 
                 SCR_WIDTH, 
@@ -482,11 +517,7 @@ int main()
         // }
         
         glm::vec3 translation_offset = processInput(window, player.position, camera.Front);
-
-        player.apply_gravity = true;
-
         glm::vec3 gravity = player.ApplyGravity();
-
         glm::vec3 future_position = player.position + translation_offset + gravity;
         
         aabb.position += future_position;
@@ -499,12 +530,11 @@ int main()
             future_position = player.position + translation_offset;
         } 
         
-        if (player.collision.CheckCollision(aabb, testAABB) || player.collision.CheckMassCollision(aabb, world_boundary.aabbs)) {
+        if (player.collision.CheckMassCollision(aabb, world_boundary.aabbs)) {
             move = false;
             gravity =  glm::vec3(0.0f, 0.0f, 0.0f);
             translation_offset =  glm::vec3(0.0f, 0.0f, 0.0f);
-        }
-        else {
+        } else {
             move = true;
         }
 
@@ -524,37 +554,30 @@ int main()
         playerShader.setMat4("model", glm::mat4(1.0f));
         player.collision.generateBoundingBoxMesh(aabb, glm::vec4(1.0f, 0.0f, 0.0f, 1.0f)).Draw(playerShader);
 
-        // for (AABB world_aabb : world_boundary.aabbs) {
-        //     player.collision.generateBoundingBoxMesh(world_aabb, glm::vec4(0.0f, 1.0f, 0.0f, 1.0f)).Draw(playerShader);
-        // }
-
         shadowShader.Activate();
         shadowShader.setMat4("projection", projection);
         shadowShader.setMat4("view", view);
         
-        testModel = glm::mat4(1.0f); 
-        testModel = glm::translate(testModel, glm::vec3(0.0f, 0.0f, 0.0f));
-        shadowShader.setMat4("model", glm::translate(testModel, glm::vec3(0.0f, -50.0f, 0.0f)));
+        shadowShader.setMat4("model", glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, -50.0f, 0.0f)));
         shadowShader.setVec4("lightColor", glm::vec3(1.0f, 0.0f, 0.0f));
         // circle.collision.generateBoundingBoxMesh(circleAABB, glm::vec4(0.0f, 0.0f, 1.0f, 1.0f)).Draw(shadowShader);
         plane.Draw(shadowShader);
 
-        shadowShader.Activate();
-        test.apply_gravity = false;
-        testingModel = glm::translate(testingModel, test.ApplyGravity());
-        shadowShader.setMat4("projection", projection);
-        shadowShader.setMat4("view", view);
-        shadowShader.setMat4("model", testingModel);
-        test.Draw(shadowShader);
+        // shadowShader.Activate();
+        // shadowShader.setMat4("projection", projection);
+        // shadowShader.setMat4("view", view);
+        // shadowShader.setMat4("model", testingModel);
+        // test.Draw(shadowShader);
 
-        shadowShader.setMat4("model", glm::mat4(1.0f));
-        test.collision.generateBoundingBoxMesh(testAABB, glm::vec4(0.0f, 0.0f, 1.0f, 1.0f)).Draw(shadowShader);
+        // shadowShader.setMat4("model", glm::mat4(1.0f));
+        // test.collision.generateBoundingBoxMesh(testAABB, glm::vec4(0.0f, 0.0f, 1.0f, 1.0f)).Draw(shadowShader);
 
         grassShader.Activate();
         grassShader.setMat4("projection", projection);
         grassShader.setMat4("view", view);
         grass.Draw(grassShader, false, true, grass_renderer.models);
 
+        /* ANIMATION */
 
         animator.UpdateAnimation(deltaTime);
         animationShader.Activate();
@@ -564,12 +587,38 @@ int main()
 			animationShader.setMat4("finalBonesMatrices[" + std::to_string(i) + "]", transforms[i]);
 
 		glm::mat4 animated_model = glm::mat4(1.0f);
-		animated_model = glm::translate(animated_model, glm::vec3(0.0f, -30.0f, 0.0f)); // translate it down so it's at the center of the scene
-		animated_model = glm::scale(animated_model, glm::vec3(1.0f, 1.0f, 1.0f));	
+        // animated_model = glm::rotate(animated_model, glm::radians(-90.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+        glm::vec3 base_position = glm::vec3(circle.vertices[0].position.x - 40.0f, -40.0f, circle.vertices[0].position.z - 10.0f);
+        glm::vec3 pos = glm::vec3(circle.vertices[0].position.x - 40.0f, base_position.y, circle.vertices[0].position.z - 10.0f);
         animationShader.setMat4("projection", projection);
         animationShader.setMat4("view", view);
-		animationShader.setMat4("model", animated_model);
-		animatedModel.Draw(animationShader);
+
+        for (int x = 0; x < 4; x++) {
+            for (int i = 0; i < 12; i++) {
+                animated_model = glm::mat4(1.0f);
+                animated_model = glm::translate(animated_model, base_position); // translate it down so it's at the center of the scene
+                animated_model = glm::scale(animated_model, glm::vec3(2.0f, 2.0f, 2.0f));	
+                animated_model = glm::rotate(animated_model, glm::radians(180.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+                animationShader.setMat4("model", animated_model);
+                animatedModel.Draw(animationShader);
+                base_position = glm::vec3(base_position.x - 10.0f, base_position.y, base_position.z - 8.5f);
+            }
+            base_position = glm::vec3(pos.x - 5.0f, pos.y + 10.0f, pos.z + 5.0f);
+            pos = base_position;
+        } 
+
+        base_position = glm::vec3(circle.vertices[0].position.x + 60.0f, -40.0f, circle.vertices[0].position.z - 25.0f);
+        pos = glm::vec3(circle.vertices[0].position.x - 40.0f, base_position.y, circle.vertices[0].position.z - 10.0f);
+
+
+        animated_model = glm::mat4(1.0f);
+        animated_model = glm::translate(animated_model, base_position);
+        animated_model = glm::scale(animated_model, glm::vec3(2.0f, 2.0f, 2.0f));
+        animated_model = glm::rotate(animated_model, glm::radians(180.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+        animationShader.setMat4("model", animated_model);
+        animatedModel.Draw(animationShader);
+
+        /* SKYBOX */
 
         glDepthFunc(GL_LEQUAL);
         skyBoxShader.Activate();
@@ -587,6 +636,8 @@ int main()
         testAABB.position = testAABBBackup.position;
         testAABB.size = testAABBBackup.size;
         circleAABB.position = circle.collision.aabb.position;
+
+        shadow.debug(debugShader, false);
 
         move = false;
       
