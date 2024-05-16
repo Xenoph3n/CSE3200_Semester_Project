@@ -214,10 +214,22 @@ int main()
     skyBoxShader.Activate();
     skyBoxShader.setInt("skybox", 0);
     
+    int animation_state_matrix[4][12] = {
+        {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+        {0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0},
+        {0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0},
+        {0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0}
+    };
+
     aModel animatedModel("./animations/wave.dae", false);
     Animation animation("./animations/wave.dae", &animatedModel);
     Animator animator(&animation);
     
+    
+    aModel animatedModel2("./vampire/dancing_vampire.dae", false);
+    Animation animation2("./vampire/dancing_vampire.dae", &animatedModel2);
+    Animator animator2(&animation2);
+
     while (!glfwWindowShouldClose(window))
     {
         float currentFrame = static_cast<float>(glfwGetTime());
@@ -301,7 +313,6 @@ int main()
                         -90.0f,
                         glm::vec3(1.0f, 0.0f, 0.0f));
 
-        
         depthShader.Activate();
         red_model = glm::mat4(1.0f);
         red_model = glm::rotate(red_model, glm::radians(40.0f), glm::vec3(0.0f, 1.0f, 0.0f));
@@ -383,7 +394,6 @@ int main()
                         270.0f
                         );
 
-        
         blue_2.draw(   shadowShader, 
                         camera, 
                         SCR_WIDTH, 
@@ -580,11 +590,10 @@ int main()
         /* ANIMATION */
 
         animator.UpdateAnimation(deltaTime);
+
         animationShader.Activate();
         auto transforms = animator.GetFinalBoneMatrices();
 
-		for (int i = 0; i < transforms.size(); ++i)
-			animationShader.setMat4("finalBonesMatrices[" + std::to_string(i) + "]", transforms[i]);
 
 		glm::mat4 animated_model = glm::mat4(1.0f);
         // animated_model = glm::rotate(animated_model, glm::radians(-90.0f), glm::vec3(0.0f, 1.0f, 0.0f));
@@ -595,12 +604,33 @@ int main()
 
         for (int x = 0; x < 4; x++) {
             for (int i = 0; i < 12; i++) {
+
                 animated_model = glm::mat4(1.0f);
                 animated_model = glm::translate(animated_model, base_position); // translate it down so it's at the center of the scene
                 animated_model = glm::scale(animated_model, glm::vec3(2.0f, 2.0f, 2.0f));	
                 animated_model = glm::rotate(animated_model, glm::radians(180.0f), glm::vec3(0.0f, 1.0f, 0.0f));
                 animationShader.setMat4("model", animated_model);
-                animatedModel.Draw(animationShader);
+                
+                if (animation_state_matrix[x][i] == 0) {
+                    transforms = animator.GetFinalBoneMatrices();
+
+                    for (int i = 0; i < transforms.size(); ++i)
+                        animationShader.setMat4("finalBonesMatrices[" + std::to_string(i) + "]", transforms[i]);
+
+                    animatedModel.Draw(animationShader);
+                } 
+
+                if (animation_state_matrix[x][i] == 1) {
+                    animator2.UpdateAnimation(deltaTime);
+                    animated_model = glm::scale(animated_model, glm::vec3(2.0f, 2.0f, 2.0f));	
+                    transforms = animator2.GetFinalBoneMatrices();
+
+                    for (int i = 0; i < transforms.size(); ++i)
+                        animationShader.setMat4("finalBonesMatrices[" + std::to_string(i) + "]", transforms[i]);
+                    animationShader.setMat4("model", animated_model);
+                    animatedModel2.Draw(animationShader);
+                } 
+
                 base_position = glm::vec3(base_position.x - 10.0f, base_position.y, base_position.z - 8.5f);
             }
             base_position = glm::vec3(pos.x - 5.0f, pos.y + 10.0f, pos.z + 5.0f);
@@ -608,15 +638,21 @@ int main()
         } 
 
         base_position = glm::vec3(circle.vertices[0].position.x + 60.0f, -40.0f, circle.vertices[0].position.z - 25.0f);
-        pos = glm::vec3(circle.vertices[0].position.x - 40.0f, base_position.y, circle.vertices[0].position.z - 10.0f);
-
-
-        animated_model = glm::mat4(1.0f);
-        animated_model = glm::translate(animated_model, base_position);
-        animated_model = glm::scale(animated_model, glm::vec3(2.0f, 2.0f, 2.0f));
-        animated_model = glm::rotate(animated_model, glm::radians(180.0f), glm::vec3(0.0f, 1.0f, 0.0f));
-        animationShader.setMat4("model", animated_model);
-        animatedModel.Draw(animationShader);
+        pos = glm::vec3(circle.vertices[0].position.x + 60.0f, -40.0f, circle.vertices[0].position.z - 25.0f);
+        
+        for (int x = 0; x < 4; x++) {
+            for (int i = 0; i < 12; i++) {        
+                animated_model = glm::mat4(1.0f);
+                animated_model = glm::translate(animated_model, base_position);
+                animated_model = glm::scale(animated_model, glm::vec3(2.0f, 2.0f, 2.0f));
+                animated_model = glm::rotate(animated_model, glm::radians(180.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+                animationShader.setMat4("model", animated_model);
+                animatedModel.Draw(animationShader);
+                base_position = glm::vec3(base_position.x + 10.0f, base_position.y, base_position.z - 8.5f);
+            }
+            base_position = glm::vec3(pos.x + 5.0f, pos.y + 10.0f, pos.z + 5.0f);
+            pos = base_position;
+        } 
 
         /* SKYBOX */
 
