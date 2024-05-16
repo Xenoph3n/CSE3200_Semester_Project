@@ -495,6 +495,23 @@ int main()
                 glm::vec3(circle.vertices[0].position.x - 20.0f, circle.vertices[0].position.z - 60.0f, -30.0f),
                 -90.0f,
                 glm::vec3(1.0f, 0.0f, 0.0f)
+        );
+
+        
+        shadowShader.Activate();
+        red_model = glm::mat4(1.0f);
+        red_model = glm::rotate(red_model, glm::radians(90.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+        shadowShader.setMat4("model", red_model);
+
+        purple.draw(    shadowShader, 
+                        camera, 
+                        SCR_WIDTH, 
+                        SCR_HEIGHT, 
+                        red_model, 
+                        glm::vec3(1.0f, 1.0f, 1.0f), 
+                        glm::vec3(0.0f, 200.0f, -45.0f),
+                        -90.0f,
+                        glm::vec3(1.0f, 0.0f, 0.0f)    
             );
 
         // if (move) {

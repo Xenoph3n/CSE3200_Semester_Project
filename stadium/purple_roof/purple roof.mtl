@@ -2,6 +2,7 @@
 
 newmtl Material.001_0
 Kd 1.000000 0.000000 0.682996
-
+map_Kd ../../textures/roof.jpg
 newmtl Material.002_0
 Kd 0.800371 0.000000 0.548052
+map_Kd ../../textures/roof.jpg
