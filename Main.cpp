@@ -602,7 +602,7 @@ int main()
         animationShader.setMat4("view", view);
         animationShader.setMat4("model", glm::translate(model, glm::vec3(0.0f, 0.0f, 0.0f)));
         animatedModel2.Draw(animationShader);
-r
+
         // for (int x = 0; x < 4; x++) {
         //     for (int i = 0; i < 12; i++) {
 
