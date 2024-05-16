@@ -52,7 +52,7 @@ public:
     int& GetBoneCount();  
     void SetVertexBoneDataToDefault(aVertex& vertex);
     void SetVertexBoneData(aVertex& vertex, int boneID, float weight);
-    void ExtractBoneWeightForVertices(std::vector<aVertex> vertices, aiMesh *mesh, const aiScene *scene);
+    void ExtractBoneWeightForVertices(std::vector<aVertex>& vertices, aiMesh *mesh, const aiScene *scene);
 private:
     void loadModel(std::string const& path);
     void processNode(aiNode* node, const aiScene* scene);
