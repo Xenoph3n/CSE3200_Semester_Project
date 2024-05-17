@@ -22,19 +22,22 @@ class Render {
 
         aModel animated_model_0;
         aModel animated_model_1;
+        aModel animated_model_2;
 
         Animation animation_0;
         Animation animation_1;
+        Animation animation_2;
 
         Animator animator_0;
         Animator animator_1;
+        Animator animator_2;
 
 
         int animation_state_matrix[4][12] = {
-    {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-    {0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0},
-    {0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0},
-    {0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0}
+    {0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+    {0, 0, 2, 0, 0, 2, 0, 1, 0, 0, 2, 0},
+    {0, 1, 0, 0, 1, 0, 0, 0, 2, 0, 0, 2},
+    {0, 0, 1, 0, 2, 0, 1, 0, 0, 0, 0, 0}
 };
 
         void initialize(aCamera& camera, Shader& shader, int screen_width, int screen_height);

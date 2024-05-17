@@ -25,7 +25,6 @@
 #include "Animator.h"
 #include "Bone.h"
 #include "Points.h"
-#include "Initialize.h"
 #include "Render.h"
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
@@ -226,6 +225,15 @@ int main()
             projection,
             view
         );
+        
+        shadowShader.Activate();
+        // shadowShader.setVec3("lightPosition", lightPos);
+        // shadowShader.setVec3("lightColor", glm::vec3(0.5, 0.0, 0.0));
+        shadowShader.setVec3("lightPos", lightPos);
+        shadowShader.setVec3("viewPos", camera.Position);
+        // shadowShader.setMat3("normalMatrix", glm::transpose(glm::inverse(glm::mat3(model))));
+
+        // test.Draw(shadowShader);
 
         render.drawBuildings(camera, shadowShader, circle, SCR_WIDTH, SCR_WIDTH, model, view, projection);
 
@@ -263,7 +271,7 @@ int main()
         playerShader.setMat4("view", view);
         playerShader.setMat4("model", playerModel);
         playerShader.setVec4("lightColor", glm::vec3(1.0f, 1.0f, 1.0f));
-        playerShader.setVec3("camPosition", camera.Position);
+        playerShader.setVec3("camPos", camera.Position);
         player.Draw(playerShader);
         playerShader.setMat4("model", glm::mat4(1.0f));
         // player.collision.generateBoundingBoxMesh(aabb, glm::vec4(1.0f, 0.0f, 0.0f, 1.0f)).Draw(playerShader);
@@ -283,70 +291,6 @@ int main()
         grass.Draw(grassShader, false, true, grass_renderer.models);
 
         render.drawAnimations(camera, animationShader, circle, SCR_WIDTH, SCR_HEIGHT, model, view, projection, deltaTime);
-        /* ANIMATION */
-        // animator.UpdateAnimation(deltaTime);
-
-        // animationShader.Activate();
-        // auto transforms = animator.GetFinalBoneMatrices();
-
-		// glm::mat4 animated_model = glm::mat4(1.0f);
-        // glm::vec3 base_position = glm::vec3(circle.vertices[0].position.x - 40.0f, -40.0f, circle.vertices[0].position.z - 10.0f);
-        // glm::vec3 pos = glm::vec3(circle.vertices[0].position.x - 40.0f, base_position.y, circle.vertices[0].position.z - 10.0f);
-        // animationShader.setMat4("projection", projection);
-        // animationShader.setMat4("view", view);
-
-        // for (int x = 0; x < 4; x++) {
-        //     for (int i = 0; i < 12; i++) {
-
-        //         animated_model = glm::mat4(1.0f);
-        //         animated_model = glm::translate(animated_model, base_position); // translate it down so it's at the center of the scene
-        //         animated_model = glm::scale(animated_model, glm::vec3(2.0f, 2.0f, 2.0f));	
-        //         animated_model = glm::rotate(animated_model, glm::radians(180.0f), glm::vec3(0.0f, 1.0f, 0.0f));
-        //         animationShader.setMat4("model", animated_model);
-                
-        //         if (animation_state_matrix[x][i] == 0) {
-        //             transforms = animator.GetFinalBoneMatrices();
-
-        //             for (int i = 0; i < transforms.size(); ++i)
-        //                 animationShader.setMat4("finalBonesMatrices[" + std::to_string(i) + "]", transforms[i]);
-
-        //             animatedModel.Draw(animationShader);
-        //         } 
-
-        //         if (animation_state_matrix[x][i] == 1) {
-        //             animator2.UpdateAnimation(deltaTime);
-        //             animated_model = glm::scale(animated_model, glm::vec3(2.0f, 2.0f, 2.0f));	
-        //             transforms = animator2.GetFinalBoneMatrices();
-
-        //             for (int i = 0; i < transforms.size(); ++i)
-        //                 animationShader.setMat4("finalBonesMatrices[" + std::to_string(i) + "]", transforms[i]);
-        //             animationShader.setMat4("model", animated_model);
-        //             animatedModel2.Draw(animationShader);
-        //         } 
-
-        //         base_position = glm::vec3(base_position.x - 10.0f, base_position.y, base_position.z - 8.5f);
-        //     }
-        //     base_position = glm::vec3(pos.x - 5.0f, pos.y + 10.0f, pos.z + 5.0f);
-        //     pos = base_position;
-        // } 
-
-        // base_position = glm::vec3(circle.vertices[0].position.x + 60.0f, -40.0f, circle.vertices[0].position.z - 25.0f);
-        // pos = glm::vec3(circle.vertices[0].position.x + 60.0f, -40.0f, circle.vertices[0].position.z - 25.0f);
-        
-        // for (int x = 0; x < 4; x++) {
-        //     for (int i = 0; i < 12; i++) {        
-        //         animated_model = glm::mat4(1.0f);
-        //         animated_model = glm::translate(animated_model, base_position);
-        //         animated_model = glm::scale(animated_model, glm::vec3(2.0f, 2.0f, 2.0f));
-        //         animated_model = glm::rotate(animated_model, glm::radians(180.0f), glm::vec3(0.0f, 1.0f, 0.0f));
-        //         animationShader.setMat4("model", animated_model);
-        //         animatedModel.Draw(animationShader);
-        //         base_position = glm::vec3(base_position.x + 10.0f, base_position.y, base_position.z - 8.5f);
-        //     }
-        //     base_position = glm::vec3(pos.x + 5.0f, pos.y + 10.0f, pos.z + 5.0f);
-        //     pos = base_position;
-        // } 
-
         /* SKYBOX */
 
         glDepthFunc(GL_LEQUAL);
