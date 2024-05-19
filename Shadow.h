@@ -12,8 +12,10 @@ class Shadow {
         const unsigned int SHADOW_WIDTH = 1024, SHADOW_HEIGHT = 1024;
         unsigned int depthMapFBO;
         unsigned int depthMap;
+
         glm::mat4 lightProjection, lightView;
         glm::mat4 lightSpaceMatrix;
+
         float near_plane = 1.0f;
         float far_plane = 500.0f;
     

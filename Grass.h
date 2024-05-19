@@ -25,6 +25,7 @@ class Grass {
         std::vector<glm::mat4> models;
         float offset = 0.0f;
 
+        // int n = 380;
         int n = 10;
 
         std::vector<GridOrientation> orientations;

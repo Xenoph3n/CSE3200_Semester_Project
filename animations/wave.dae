@@ -128,7 +128,7 @@
       <init_from>hair.png</init_from>
     </image>
     <image id="tickets27_png" name="tickets27_png">
-      <init_from>tickets27.png</init_from>
+      <init_from>../../textures/board.png</init_from>
     </image>
   </library_images>
   <library_materials>

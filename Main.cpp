@@ -6,6 +6,9 @@
 #include <glm/gtc/type_ptr.hpp>
 #include <filesystem>
 #include <vector>
+#include <math.h>
+#include <iostream>
+
 
 #include "Shader.h"
 #include "aCamera.h"
@@ -16,8 +19,6 @@
 #include "Building.h"
 #include "Grass.h"
 #include "Shadow.h"
-#include <math.h>
-#include <iostream>
 #include "Collision.h"
 #include "WorldBoundary.h"
 #include "CubeMap.h"
@@ -97,7 +98,6 @@ int main()
     Shader skyBoxShader("./skybox.vert", "./skybox.frag");
     Shader animationShader("./animation.vert", "./animation.frag");
 
-
     Texture textures[]
 	{
 		Texture("./stadium/single/grass.png", "diffuse", 0, tex_id_1)
@@ -123,6 +123,9 @@ int main()
     Circle circle;
     circle.calculate(glm::vec3(0.0f, 0.0f, 0.0f), 30.0f, 200.0f, glm::vec4(1.0f, 0.0f, 0.0f, 1.0f));
     
+    Circle circle_2;
+    circle_2.calculate(glm::vec3(0.0f, 0.0f, 0.0f), 30.0f, 250.0f, glm::vec4(1.0f, 0.0f, 0.0f, 1.0f));
+    
     Mesh grass(verts, ind, tex, true, true, grass_renderer.models);
     
     Mesh ground(verts, ind, tex, false);
@@ -136,6 +139,7 @@ int main()
 
     Mesh light(cubeVerts, cubeInd, tex, false); 
     Mesh plane(circle.vertices, circle.indices, dirt, true);
+    Mesh plane_2(circle_2.vertices, circle_2.indices, dirt, true);
 
     Render render;
     render.initialize(camera, shadowShader, SCR_WIDTH, SCR_HEIGHT);
@@ -283,7 +287,8 @@ int main()
         shadowShader.setMat4("model", glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, -50.0f, 0.0f)));
         shadowShader.setVec4("lightColor", glm::vec3(1.0f, 0.0f, 0.0f));
         // circle.collision.generateBoundingBoxMesh(circleAABB, glm::vec4(0.0f, 0.0f, 1.0f, 1.0f)).Draw(shadowShader);
-        plane.Draw(shadowShader);
+        // plane.Draw(shadowShader);
+        plane_2.Draw(shadowShader);
 
         grassShader.Activate();
         grassShader.setMat4("projection", projection);
