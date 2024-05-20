@@ -27,6 +27,7 @@
 #include "Bone.h"
 #include "Points.h"
 #include "Render.h"
+#include "Util.h"
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void mouse_callback(GLFWwindow* window, double xpos, double ypos);
@@ -150,6 +151,8 @@ int main()
     glm::vec3 lightPos(-20.0f, 70.0f, 0.0f);
     glm::mat4 playerModel = glm::mat4(1.0f);
     glm::mat4 testingModel = glm::mat4(1.0f);
+
+   // playerModel = glm::rotate(playerModel, glm::radians(90.0f), glm::vec3(0.0f, 1.0f, 0.0f));
     
     testingModel = glm::translate(testingModel, test.position);
 
@@ -267,9 +270,15 @@ int main()
             player.position = future_position;
             camera.Position = player.position + glm::vec3(-40.0f * camera.Front.x, 40.0f, -40.0f * camera.Front.z); 
         }
-        
-        playerModel = glm::translate(playerModel, translation_offset + gravity);
 
+        // Util::PrintVec3("Camera Face", camera.Front);
+        // Util::PrintVec3("Camera Position", camera.Position);
+
+        // Util::Print("Camera Y Rotation", camera.Yaw);     
+
+        playerModel = glm::translate(playerModel, translation_offset + gravity);
+        playerModel = glm::rotate(playerModel, glm::radians(90.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+        playerModel = glm::rotate(playerModel, glm::radians(-camera.Yaw), glm::vec3(0.0f, 1.0f, 0.0f));
         playerShader.Activate();
         playerShader.setMat4("projection", projection);
         playerShader.setMat4("view", view);
@@ -278,6 +287,8 @@ int main()
         playerShader.setVec3("camPos", camera.Position);
         player.Draw(playerShader);
         playerShader.setMat4("model", glm::mat4(1.0f));
+        playerModel = glm::rotate(playerModel, glm::radians(camera.Yaw), glm::vec3(0.0f, 1.0f, 0.0f));
+        playerModel = glm::rotate(playerModel, glm::radians(-90.0f), glm::vec3(0.0f, 1.0f, 0.0f));
         // player.collision.generateBoundingBoxMesh(aabb, glm::vec4(1.0f, 0.0f, 0.0f, 1.0f)).Draw(playerShader);
 
         shadowShader.Activate();

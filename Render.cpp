@@ -369,7 +369,8 @@ void Render::drawAnimations(aCamera& camera,
                    
                     transforms = animator_2.GetFinalBoneMatrices();
 
-                    for (int i = 0; i < transforms.size(); ++i) :to_string(i) + "]", transforms[i]);
+                    for (int i = 0; i < transforms.size(); ++i)
+                        shader.setMat4("finalBonesMatrices[" + std::to_string(i) + "]", transforms[i]);
                     animated_model_2.Draw(shader);
                 } 
                 base_position = glm::vec3(base_position.x + 7.0f, base_position.y, base_position.z - 8.5f);
