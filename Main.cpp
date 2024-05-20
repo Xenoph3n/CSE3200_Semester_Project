@@ -95,7 +95,7 @@ int main()
     Shader shadowShader("./shadow.vert", "./shadow.frag");
     Shader depthShader("./dept.vert", "./dept.frag");
     Shader debugShader("./debug.vert", "./debug.frag");
-    Shader playerShader("./player.vert", "./player.frag");
+    Shader playerShader("./animation.vert", "./animation.frag");
     Shader skyBoxShader("./skybox.vert", "./skybox.frag");
     Shader animationShader("./animation.vert", "./animation.frag");
 
@@ -133,8 +133,12 @@ int main()
 
     aModel mega_cube("./stadium/crow/scene.gltf", false);
     aModel test("./stadium/blue_1/bottom_green.obj", false);
-    aModel player("./models/crow/scene.gltf", false);
+  //  aModel player("./models/crow/scene.gltf", false);
 
+    aModel player("./animations/player_walk.dae", false);
+    Animation player_walk_animation("./animations/player_walk.dae", &player);
+    Animator player_animator(&player_walk_animation);
+    
     test.position = glm::vec3(0.0f,-40.0f, 80.0f);
     player.position = glm::vec3(0.0f, 0.0f, 0.0f);
 
@@ -142,6 +146,7 @@ int main()
     Mesh plane(circle.vertices, circle.indices, dirt, true);
     Mesh plane_2(circle_2.vertices, circle_2.indices, dirt, true);
 
+ 
     Render render;
     render.initialize(camera, shadowShader, SCR_WIDTH, SCR_HEIGHT);
 
@@ -184,13 +189,6 @@ int main()
     cubemap.loadCubeMap(faces);
     cubemap.setUniforms(skyBoxShader);
 
-    aModel animatedModel("./animations/wave.dae", false);
-    Animation animation("./animations/wave.dae", &animatedModel);
-    Animator animator(&animation);
-    
-    aModel animatedModel2("./vampire/dancing_vampire.dae", false);
-    Animation animation2("./vampire/dancing_vampire.dae", &animatedModel2);
-    Animator animator2(&animation2);
 
     while (!glfwWindowShouldClose(window))
     {
@@ -285,16 +283,23 @@ int main()
         playerShader.setMat4("model", playerModel);
         playerShader.setVec4("lightColor", glm::vec3(1.0f, 1.0f, 1.0f));
         playerShader.setVec3("camPos", camera.Position);
+
+        player_animator.UpdateAnimation(deltaTime);
+        auto transforms = player_animator.GetFinalBoneMatrices();
+
+        for (int i = 0; i < transforms.size(); ++i)
+            playerShader.setMat4("finalBonesMatrices[" + std::to_string(i) + "]", transforms[i]);
+       // player_animator.Draw(playerShader);
         player.Draw(playerShader);
+        
         playerShader.setMat4("model", glm::mat4(1.0f));
         playerModel = glm::rotate(playerModel, glm::radians(camera.Yaw), glm::vec3(0.0f, 1.0f, 0.0f));
         playerModel = glm::rotate(playerModel, glm::radians(-90.0f), glm::vec3(0.0f, 1.0f, 0.0f));
-        // player.collision.generateBoundingBoxMesh(aabb, glm::vec4(1.0f, 0.0f, 0.0f, 1.0f)).Draw(playerShader);
+        player.collision.generateBoundingBoxMesh(aabb, glm::vec4(1.0f, 0.0f, 0.0f, 1.0f)).Draw(playerShader);
 
         shadowShader.Activate();
         shadowShader.setMat4("projection", projection);
         shadowShader.setMat4("view", view);
-        
         shadowShader.setMat4("model", glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, -50.0f, 0.0f)));
         shadowShader.setVec4("lightColor", glm::vec3(1.0f, 0.0f, 0.0f));
         // circle.collision.generateBoundingBoxMesh(circleAABB, glm::vec4(0.0f, 0.0f, 1.0f, 1.0f)).Draw(shadowShader);
