@@ -289,7 +289,8 @@ void Render::drawAnimations(aCamera& camera,
 
         base_position = glm::vec3(circle.vertices[4].position.x - 15.0f, -40.0f, circle.vertices[4].position.z - 5.0f);
         pos = glm::vec3(circle.vertices[4].position.x - 15.0f, -40.0f, circle.vertices[4].position.z - 5.0f);
-    
+        
+        // stand next to scoreboard
         for (int x = 0; x < 4; x++) {
             for (int i = 0; i < 12; i++) {        
                 animated_model = glm::mat4(1.0f);
@@ -332,4 +333,48 @@ void Render::drawAnimations(aCamera& camera,
             pos = base_position;
         } 
 
+        base_position = glm::vec3(circle.vertices[8].position.x + 7.0f, -40.0f, circle.vertices[8].position.z + 6.0f);
+        pos = glm::vec3(circle.vertices[8].position.x + 7.0f, -40.0f, circle.vertices[8].position.z + 6.0f);
+
+        // grass stand
+        for (int x = 0; x < 4; x++) {
+         for (int i = 0; i < 12; i++) {        
+                animated_model = glm::mat4(1.0f);
+                animated_model = glm::translate(animated_model, base_position);
+                animated_model = glm::scale(animated_model, glm::vec3(2.0f, 2.0f, 2.0f));
+                animated_model = glm::rotate(animated_model, glm::radians(50.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+                shader.setMat4("model", animated_model);
+                  
+                if (animation_state_matrix[x][i] == 0) {
+                    
+                    transforms = animator_0.GetFinalBoneMatrices();
+
+                    for (int i = 0; i < transforms.size(); ++i)
+                        shader.setMat4("finalBonesMatrices[" + std::to_string(i) + "]", transforms[i]);
+
+                    animated_model_0.Draw(shader);
+                } 
+
+                if (animation_state_matrix[x][i] == 1) {
+                   
+                    transforms = animator_1.GetFinalBoneMatrices();
+
+                    for (int i = 0; i < transforms.size(); ++i)
+                        shader.setMat4("finalBonesMatrices[" + std::to_string(i) + "]", transforms[i]);
+                    animated_model_1.Draw(shader);
+                } 
+
+
+                if (animation_state_matrix[x][i] == 2) {
+                   
+                    transforms = animator_2.GetFinalBoneMatrices();
+
+                    for (int i = 0; i < transforms.size(); ++i) :to_string(i) + "]", transforms[i]);
+                    animated_model_2.Draw(shader);
+                } 
+                base_position = glm::vec3(base_position.x + 7.0f, base_position.y, base_position.z - 8.5f);
+            }
+             base_position = glm::vec3(pos.x - 8.5f, pos.y + 2.0f, pos.z - 7.5f);
+            pos = base_position;
+        }
 }
