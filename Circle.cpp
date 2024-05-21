@@ -2,6 +2,8 @@
 
 void Circle::calculate(glm::vec3 center_position, float angle_in_degrees, float radius, glm::vec4 color) {
 
+    Circle::radius = radius;
+    
     int number_of_sections = floor(360.0f / angle_in_degrees);
     int number_of_sections_per_quadrant = number_of_sections / 4;
 

@@ -418,7 +418,7 @@ glm::vec3 Render::processInput(aCamera& camera, GLFWwindow *window, glm::vec3 pl
     {
         for (int i = 0; i < 4; i++) {
             for (int j = 0; j < 12; j++) {
-                animation_state_matrix[i][j] = animation_state_matrix[i][j] + 1 < 2 ? animation_state_matrix[i][j] + 1 : 0;
+                animation_state_matrix[i][j] = animation_state_matrix[i][j] + 1 < 3 ? animation_state_matrix[i][j] + 1 : 0;
             }
         }
     }

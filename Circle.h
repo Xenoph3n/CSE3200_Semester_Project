@@ -15,6 +15,8 @@ class Circle {
         std::vector<GLuint> indices;
         Collision collision;
 
+        float radius;
+
         // std::vector<Texture> textures;
 
         void calculate(

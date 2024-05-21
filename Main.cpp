@@ -28,6 +28,7 @@
 #include "Render.h"
 #include "Util.h"
 #include "Player.h"
+#include "Cricketers.h"
 
 void framebuffer_size_callback(GLFWwindow *window, int width, int height);
 void mouse_callback(GLFWwindow *window, double xpos, double ypos);
@@ -130,15 +131,6 @@ int main()
     aModel test("./stadium/blue_1/bottom_green.obj", false);
 
     Player player;
-    //  aModel player("./models/crow/scene.gltf", false);
-
-    // aModel player("./animations/player_walking.dae", false);
-    // aModel player_aabb_model("./animations/guy_object.obj", false);
-    // Animation player.walk_animation("./animations/player_walking.dae", &player);
-    // Animation player_arm_animation("./animations/player_arm.dae", &player);
-    // Animator player.player_animator(&player.walk_animation);
-
-    
     player.position = glm::vec3(0.0f, 0.0f, 0.0f);
 
     Mesh light(cubeVerts, cubeInd, tex, false);
@@ -155,11 +147,6 @@ int main()
     glm::mat4 playerModel = glm::mat4(1.0f);
     glm::mat4 testingModel = glm::mat4(1.0f);
 
-    // playerModel = glm::rotate(playerModel, glm::radians(90.0f), glm::vec3(0.0f, 1.0f, 0.0f));
-
-  
-
-    // AABB aabb = player.player_object.collision.calculateBoundingBox();
     AABB backupAABB = player.aabb;
 
     AABB circleAABB = circle.collision.calculateBoundingBox();
@@ -183,10 +170,12 @@ int main()
 
     cubemap.loadCubeMap(faces);
     cubemap.setUniforms(skyBoxShader);
-
     
     circleAABB.position += glm::vec3(0.0f, -50.0f, 0.0f);
 
+    Cricketers cricketers;
+    cricketers.generate_positions(circle.radius, grass_renderer.pitch_bounds);
+    cricketers.print_random_positions();
 
     while (!glfwWindowShouldClose(window))
     {
@@ -250,6 +239,8 @@ int main()
             view,
             deltaTime
         );
+
+        cricketers.draw(shadowShader, view, projection);
         
         shadowShader.Activate();
         shadowShader.setMat4("projection", projection);
