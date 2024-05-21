@@ -135,8 +135,9 @@ int main()
     aModel test("./stadium/blue_1/bottom_green.obj", false);
   //  aModel player("./models/crow/scene.gltf", false);
 
-    aModel player("./animations/player_walk.dae", false);
-    Animation player_walk_animation("./animations/player_walk.dae", &player);
+    aModel player("./animations/player_walking.dae", false);
+    aModel player_aabb_model("./animations/guy_object.obj", false);
+    Animation player_walk_animation("./animations/player_walking.dae", &player);
     Animator player_animator(&player_walk_animation);
     
     test.position = glm::vec3(0.0f,-40.0f, 80.0f);
@@ -161,7 +162,8 @@ int main()
     
     testingModel = glm::translate(testingModel, test.position);
 
-    AABB aabb = player.collision.calculateBoundingBox();
+    AABB aabb = player_aabb_model.collision.calculateBoundingBox();
+    AABB player_aabb = player.collision.calculateBoundingBox();
     AABB backupAABB = aabb;
 
     AABB testAABB = test.collision.calculateBoundingBox();
@@ -188,7 +190,6 @@ int main()
 
     cubemap.loadCubeMap(faces);
     cubemap.setUniforms(skyBoxShader);
-
 
     while (!glfwWindowShouldClose(window))
     {
@@ -275,7 +276,7 @@ int main()
         // Util::Print("Camera Y Rotation", camera.Yaw);     
 
         playerModel = glm::translate(playerModel, translation_offset + gravity);
-        playerModel = glm::rotate(playerModel, glm::radians(90.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+        playerModel = glm::rotate(playerModel, glm::radians(-90.0f), glm::vec3(0.0f, 1.0f, 0.0f));
         playerModel = glm::rotate(playerModel, glm::radians(-camera.Yaw), glm::vec3(0.0f, 1.0f, 0.0f));
         playerShader.Activate();
         playerShader.setMat4("projection", projection);
@@ -294,9 +295,13 @@ int main()
         
         playerShader.setMat4("model", glm::mat4(1.0f));
         playerModel = glm::rotate(playerModel, glm::radians(camera.Yaw), glm::vec3(0.0f, 1.0f, 0.0f));
-        playerModel = glm::rotate(playerModel, glm::radians(-90.0f), glm::vec3(0.0f, 1.0f, 0.0f));
-        player.collision.generateBoundingBoxMesh(aabb, glm::vec4(1.0f, 0.0f, 0.0f, 1.0f)).Draw(playerShader);
+        playerModel = glm::rotate(playerModel, glm::radians(90.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+      //  player.collision.generateBoundingBoxMesh(aabb, glm::vec4(0.0, 1.0f, 0.0f, 1.0f)).Draw(playerShader);
 
+        // for (AABB aabb_ : world_boundary.aabbs) {
+        //     player.collision.generateBoundingBoxMesh(aabb_, glm::vec4(0.0, 1.0f, 0.0f, 1.0f)).Draw(playerShader);
+        // }
+        
         shadowShader.Activate();
         shadowShader.setMat4("projection", projection);
         shadowShader.setMat4("view", view);

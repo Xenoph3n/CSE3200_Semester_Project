@@ -2,7 +2,6 @@
 
 void WorldBoundary::calculateWorldAABBs() {
 
-    float radius_size = 140.0f;
     glm::vec3 q1_point = glm::vec3(radius_size, 0.0f, radius_size);
     glm::vec3 q2_point = glm::vec3(-radius_size, 0.0f, radius_size);
     glm::vec3 q3_point = glm::vec3(-radius_size, 0.0f, -radius_size);
