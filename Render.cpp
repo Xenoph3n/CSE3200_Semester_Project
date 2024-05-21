@@ -379,3 +379,76 @@ void Render::drawAnimations(aCamera& camera,
             pos = base_position;
         }
 }
+
+// process all input: query GLFW whether relevant keys are pressed/released this frame and react accordingly
+// ---------------------------------------------------------------------------------------------------------
+glm::vec3 Render::processInput(aCamera& camera, GLFWwindow *window, glm::vec3 player_position, glm::vec3 direction)
+{
+    glm::vec3 translation_offset = glm::vec3(0.0f, 0.0f, 0.0f);
+
+    if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
+    {
+        glfwSetWindowShouldClose(window, true);
+    }
+
+    if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
+    {
+        translation_offset = glm::vec3(1.0f, 0.0f, 1.0f) * direction;
+        move = true;
+    }
+
+    if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
+    {
+        translation_offset = glm::vec3(1.0f, 0.0f, 1.0f) * -direction;
+        move = true;
+    }
+    if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
+    {
+    }
+    if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
+    {
+        //    camera.ProcessKeyboard(RIGHT, deltaTime);
+    }
+    if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS)
+    {
+        translation_offset = glm::vec3(0.0f, 20.0f, 0.0f);
+    }
+
+    if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS)
+    {
+        for (int i = 0; i < 4; i++) {
+            for (int j = 0; j < 12; j++) {
+                animation_state_matrix[i][j] = animation_state_matrix[i][j] + 1 < 2 ? animation_state_matrix[i][j] + 1 : 0;
+            }
+        }
+    }
+
+    if (glfwGetKey(window, GLFW_KEY_RIGHT_SHIFT) == GLFW_PRESS)
+    {
+        camera.MovementSpeed -= 1.0f;
+     
+    }
+
+    if (glfwGetKey(window, GLFW_KEY_TAB) == GLFW_PRESS)
+    {
+        move = false;
+    }
+
+    if (glfwGetKey(window, GLFW_KEY_CAPS_LOCK) == GLFW_PRESS)
+    {
+        move = true;
+    }
+
+    if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS)
+    {
+        glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+        camera.first_clickz = true;
+    }
+    else if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_RIGHT) == GLFW_PRESS)
+    {
+        camera.first_clickz = false;
+        glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+    }
+
+    return translation_offset;
+}

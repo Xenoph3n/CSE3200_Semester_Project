@@ -19,6 +19,7 @@ class Animator {
         float m_DeltaTime;	
         Animator();
         Animator(Animation* Animation);
+        void SetNewAnimation(Animation* Animation);
         void UpdateAnimation(float dt);
         void PlayAnimation(Animation* pAnimation);
         void CalculateBoneTransform(const AssimpNodeData* node, glm::mat4 parentTransform);

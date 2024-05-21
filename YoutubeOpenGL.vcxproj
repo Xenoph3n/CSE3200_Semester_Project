@@ -181,6 +181,7 @@
     <ClCompile Include="Bone.cpp" />
     <ClCompile Include="CubeMap.cpp" />
     <ClCompile Include="Render.cpp" />
+    <ClCompile Include="Player.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="aCamera.h" />
@@ -203,6 +204,7 @@
     <ClInclude Include="Points.h" />
     <ClInclude Include="CubeMap.h" />
     <ClInclude Include="Render.h" />
+    <ClInclude Include="Player.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="default.frag" />

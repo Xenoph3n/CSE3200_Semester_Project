@@ -37,7 +37,6 @@ public:
     Collision collision;
     bool apply_gravity = true;    
     float gravity = 9.8f;
-    glm::vec3 position = glm::vec3(0.0f, 0.0f, 0.0f);
     
     std::vector<aTexture> textures_loaded;	// stores all the textures loaded so far, optimization to make sure textures aren't loaded more than once.
     std::vector<aMesh> meshes;

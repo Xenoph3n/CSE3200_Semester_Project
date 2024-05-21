@@ -15,6 +15,13 @@ std::vector<std::string> faces
     "./textures/skybox/back.jpg"
 };
 
+    int animation_state_matrix[4][12] = {
+          {0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+          {0, 0, 2, 0, 0, 2, 0, 1, 0, 0, 2, 0},
+          {0, 1, 0, 0, 1, 0, 0, 0, 2, 0, 0, 2},
+          {0, 0, 1, 0, 2, 0, 1, 0, 0, 0, 0, 0}
+        };
+
 float rectangleVertices[] =
 {
 	// Coords    // texCoords

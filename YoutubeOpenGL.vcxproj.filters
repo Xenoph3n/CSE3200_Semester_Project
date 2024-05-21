@@ -84,6 +84,9 @@
     <ClCompile Include="Render.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+     <ClCompile Include="Player.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="EBO.h">
@@ -144,6 +147,9 @@
       <Filter>Source Files</Filter>
     </ClInclude>
     <ClInclude Include="Render.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Player.h">
       <Filter>Source Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -208,5 +214,6 @@
     <None Include="player.vert">
       <Filter>Resource Files\Shaders</Filter>
     </None>
+    
   </ItemGroup>
 </Project>

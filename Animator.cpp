@@ -13,6 +13,12 @@ Animator::Animator(Animation* Animation)
         m_FinalBoneMatrices.push_back(glm::mat4(1.0f));
 }
 
+void Animator::SetNewAnimation(Animation* Animation)
+{
+    m_CurrentAnimation = Animation;
+}
+
+
 void Animator::UpdateAnimation(float dt)
 {
     m_DeltaTime = dt;

@@ -7,6 +7,8 @@
 #include "Animator.h"
 #include "Animation.h"
 #include "aModel.h"
+#include <GLFW/glfw3.h>
+#include <math.h>
 
 
 class Render {
@@ -32,6 +34,7 @@ class Render {
         Animator animator_1;
         Animator animator_2;
 
+        bool move = false;
 
         int animation_state_matrix[4][12] = {
           {0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
@@ -45,5 +48,6 @@ class Render {
         void drawAnimations(aCamera& camera, Shader &shader, Circle& circle, int screen_width, int screen_height, glm::mat4 model, glm::mat4 view, glm::mat4 projection, float deltaTime);
         void drawEntities(aCamera& camera, Shader &shader, Circle& circle, int screen_width, int screen_height, glm::mat4 model, glm::mat4 view, glm::mat4 projection);
 
+        glm::vec3 processInput(aCamera &camera, GLFWwindow *window, glm::vec3 player_position, glm::vec3 direction);
 };
 #endif
