@@ -425,8 +425,7 @@ glm::vec3 Render::processInput(aCamera& camera, GLFWwindow *window, glm::vec3 pl
 
     if (glfwGetKey(window, GLFW_KEY_RIGHT_SHIFT) == GLFW_PRESS)
     {
-        camera.MovementSpeed -= 1.0f;
-     
+        spot_light_on = !spot_light_on;
     }
 
     if (glfwGetKey(window, GLFW_KEY_TAB) == GLFW_PRESS)

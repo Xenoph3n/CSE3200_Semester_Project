@@ -8,12 +8,31 @@ in VS_OUT {
     vec4 FragPosLightSpace;
 } fs_in;
 
+
+struct Light {
+    vec3 position[4];
+    vec3 direction[4];
+    vec3 ambient;
+    vec3 diffuse;
+    vec3 specular;
+
+    float cutOff;
+    float outerCutOff;
+    float constant;
+    float linear;
+    float quadratic;
+};
+
+uniform Light light;
+
 uniform sampler2D texture_diffuse1;
 uniform sampler2D shadowMap;
+uniform bool spotlightOn;
 
 uniform vec3 lightPos;
 uniform vec3 viewPos;
 uniform float shininess;
+
 
 float ShadowCalculation(vec4 fragPosLightSpace)
 {
@@ -51,6 +70,72 @@ float ShadowCalculation(vec4 fragPosLightSpace)
     return shadow;
 }
 
+vec3 flashLight(vec3 position) {
+
+    vec3 ambient = light.ambient * 0.1;
+
+    vec3 norm = normalize(fs_in.Normal);
+    vec3 lightDir = normalize(position - fs_in.FragPos);
+
+    float diff = max(dot(norm, lightDir), 0.0);
+    vec3 diffuse = light.diffuse * diff * texture(texture_diffuse1, fs_in.TexCoords).rgb;
+
+    vec3 viewDir = normalize(viewPos - fs_in.FragPos);
+    vec3 reflectDir = reflect(-lightDir, norm);
+    float spec = pow(max(dot(viewDir, reflectDir), 0.0), shininess);
+    vec3 specular = light.specular * spec * texture(texture_diffuse1, fs_in.TexCoords).rgb;
+
+    float theta = dot(lightDir, normalize(-position));
+    float epsilon = light.cutOff - light.outerCutOff;
+
+    float intensity = clamp((theta - light.outerCutOff) / epsilon, 0.0, 1.0);
+    diffuse *= intensity;
+    specular *= intensity;
+
+    float distance    = length(position - fs_in.FragPos);
+    float attenuation = 1.0 / (light.constant + light.linear * distance + light.quadratic * (distance * distance)); 
+    
+    ambient *= attenuation * 30.0;
+    diffuse *= attenuation * 30.0;
+    specular *= attenuation * 30.0;
+
+    vec3 result = ambient + specular + diffuse;
+
+    // vec3 result[3];
+    // result[0] = ambient;
+    // result[1] = specular;
+    // result[2] = diffuse;
+
+    // return result;
+    return result;
+}
+
+// calculates the color when using a point light.
+vec3 CalcSpotLight(vec3 position, vec3 direction, vec3 normal, vec3 fragPos, vec3 viewDir)
+{
+    vec3 lightDir = normalize(position - fragPos);
+    // diffuse shading
+    float diff = max(dot(normal, lightDir), 0.0);
+    // specular shading
+    vec3 reflectDir = reflect(-lightDir, normal);
+    float spec = pow(max(dot(viewDir, reflectDir), 0.0), shininess);
+    // attenuation
+    float distance = length(position - fragPos);
+    float attenuation = 1.0 / (light.constant + light.linear * distance + light.quadratic * (distance * distance));    
+    // spotlight intensity
+    float theta = dot(lightDir, normalize(-direction)); 
+    float epsilon = light.cutOff - light.outerCutOff;
+    float intensity = clamp((theta - light.outerCutOff) / epsilon, 0.0, 1.0);
+    // combine results
+    vec3 ambient = light.ambient * vec3(texture(texture_diffuse1, fs_in.TexCoords));
+    vec3 diffuse = light.diffuse * diff * vec3(texture(texture_diffuse1, fs_in.TexCoords));
+    vec3 specular = light.specular * spec * vec3(texture(texture_diffuse1, fs_in.TexCoords));
+    ambient *= attenuation * intensity * 100.0;
+    diffuse *= attenuation * intensity * 100.0;
+    specular *= attenuation * intensity * 100.0;
+    return (ambient + diffuse + specular);
+}
+
 void main()
 {           
     vec3 color = texture(texture_diffuse1, fs_in.TexCoords).rgb;
@@ -70,8 +155,22 @@ void main()
     spec = pow(max(dot(normal, halfwayDir), 0.0), shininess);
     vec3 specular = spec * lightColor;    
     // calculate shadow
+
+    vec3 stadium_light = vec3(0.0);
+
     float shadow = ShadowCalculation(fs_in.FragPosLightSpace);                      
     vec3 lighting = (ambient + (1.0 - shadow) * (diffuse + specular)) * color;    
     
-    FragColor = vec4(lighting, 1.0);
+    if (spotlightOn) {
+        for (int i = 0; i < 4; i++) {
+            stadium_light += CalcSpotLight(light.position[i], light.direction[i], normal, fs_in.FragPos, viewDir);
+        }
+
+        FragColor = vec4(lighting + stadium_light, 1.0);
+    } else {
+        FragColor = vec4(lighting, 1.0);
+    }
+    
+
+    
 }

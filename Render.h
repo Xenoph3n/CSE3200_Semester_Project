@@ -35,6 +35,7 @@ class Render {
         Animator animator_2;
 
         bool move = false;
+        bool spot_light_on = true;
 
         int animation_state_matrix[4][12] = {
           {0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},

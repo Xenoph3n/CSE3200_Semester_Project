@@ -101,3 +101,8 @@ void Shader::setMat3(const std::string &name, const glm::mat3 &mat) const
 {
     glUniformMatrix3fv(glGetUniformLocation(ID, name.c_str()), 1, GL_FALSE, &mat[0][0]);
 }
+
+void Shader::setBool(const std::string &name, bool value) const
+{         
+	glUniform1i(glGetUniformLocation(ID, name.c_str()), (int)value); 
+}

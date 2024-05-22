@@ -29,6 +29,8 @@
 #include "Util.h"
 #include "Player.h"
 #include "Cricketers.h"
+#include "Light.h"
+
 
 void framebuffer_size_callback(GLFWwindow *window, int width, int height);
 void mouse_callback(GLFWwindow *window, double xpos, double ypos);
@@ -50,6 +52,7 @@ float lastFrame = 0.0f;
 
 bool move = true;
 bool check = false;
+
 
 int main()
 {
@@ -98,6 +101,7 @@ int main()
     Shader playerShader("./animation.vert", "./animation.frag");
     Shader skyBoxShader("./skybox.vert", "./skybox.frag");
     Shader animationShader("./animation.vert", "./animation.frag");
+    Shader stadiumShader("./stadium_light.vert", "./stadium_light.frag");
 
     Texture textures[]{
         Texture("./stadium/single/grass.png", "diffuse", 0, tex_id_1)};
@@ -177,6 +181,42 @@ int main()
     cricketers.generate_positions(circle.radius, grass_renderer.pitch_bounds);
     cricketers.get_batter_starting_positions(grass_renderer.pitch_bounds);
 
+    Light stadium_light_0;
+    stadium_light_0.position = glm::vec3(circle.vertices[0].position.x, -50.0f, circle.vertices[0].position.z + 30.0f);
+    stadium_light_0.rotation = 180.0f;
+    Light stadium_light_1;
+    stadium_light_1.position = glm::vec3(circle.vertices[3].position.x + 40.0f, -50.0f, circle.vertices[3].position.z);
+    stadium_light_1.rotation = -90.0f;
+
+    Light stadium_light_2;
+    stadium_light_2.position = glm::vec3(circle.vertices[6].position.x, -50.0f, circle.vertices[6].position.z);
+    Light stadium_light_3;
+    stadium_light_3.position = glm::vec3(circle.vertices[9].position.x - 40.0f, -50.0f, circle.vertices[9].position.z);
+    stadium_light_3.rotation = 90.0f;
+
+
+    std::vector<glm::vec3> light_positions = {
+        glm::vec3(circle.vertices[0].position.x, 100.0f, circle.vertices[0].position.z + 30.0f),
+        glm::vec3(circle.vertices[3].position.x + 40.0f, 100.0f, circle.vertices[3].position.z),
+        glm::vec3(circle.vertices[6].position.x, 100.0f, circle.vertices[6].position.z),
+        glm::vec3(circle.vertices[9].position.x - 40.0f, 100.0f, circle.vertices[9].position.z)
+    };
+
+    std::vector<glm::vec3> light_directions = {
+        glm::vec3(0.0f, -1.0f, -1.0f),
+        glm::vec3(-1.0f, -1.0f, 0.0f),
+        glm::vec3(0.0f, -1.0f, 1.0f),
+        glm::vec3(1.0f, -1.0, 0.0f)
+    };
+
+
+
+    //         x: 0.461299, y: -0.34202, z: 0.818673)
+// Camera Front( x: 0.461299, y: -0.34202, z: 0.818673)
+// Camera Front( x: 0.461299, y: -0.34202, z: 0.818673)
+// 0.461299Camera Front( x: 0.461299, y: -0.34202, z: 0.818673)
+        // shadowShader.setVec3("light.position", glm::vec3(0.0f,-20.0f,20.0f));
+
     while (!glfwWindowShouldClose(window))
     {
         float currentFrame = static_cast<float>(glfwGetTime());
@@ -222,6 +262,25 @@ int main()
         shadowShader.setVec3("lightPos", lightPos);
         shadowShader.setVec3("viewPos", camera.Position);
 
+        for(int i = 0; i < 4; i++) {
+            shadowShader.setVec3("light.position[" + std::to_string(i) + "]", light_positions[i]);
+            shadowShader.setVec3("light.direction[" + std::to_string(i) + "]", light_directions[i]);
+
+        }
+
+
+        Util::PrintVec3("Camera Front", camera.Front);
+
+        shadowShader.setVec3("light.ambient", glm::vec3(0.1f, 0.1f, 0.1f));
+        shadowShader.setVec3("light.diffuse", glm::vec3(0.8f, 0.8f, 0.8f));
+        shadowShader.setVec3("light.specular", glm::vec3(1.0f, 1.0f, 1.0f));
+        shadowShader.setFloat("light.constant", 1.0f);
+        shadowShader.setFloat("light.linear", 0.07f);
+        shadowShader.setFloat("light.quadratic", 0.017f);
+        shadowShader.setFloat("light.outerCutOff", glm::cos(glm::radians(80.5f)));
+        shadowShader.setFloat("light.cutOff",   glm::cos(glm::radians(50.5f)));
+        shadowShader.setBool("spotlightOn", render.spot_light_on);
+        
         render.drawBuildings(camera, shadowShader, circle, SCR_WIDTH, SCR_WIDTH, model, view, projection);
         glm::vec3 translation_offset = render.processInput(camera, window, player.position, camera.Front);
         
@@ -236,13 +295,17 @@ int main()
             deltaTime
         );
 
+        stadium_light_0.draw(shadowShader, view, projection);
+        stadium_light_1.draw(shadowShader, view, projection);
+        stadium_light_2.draw(shadowShader, view, projection);
+        stadium_light_3.draw(shadowShader, view, projection);
+
         cricketers.draw(shadowShader, view, projection);
         
         shadowShader.Activate();
         shadowShader.setMat4("projection", projection);
         shadowShader.setMat4("view", view);
         shadowShader.setMat4("model", glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, -50.0f, 0.0f)));
-        shadowShader.setVec4("lightColor", glm::vec3(1.0f, 0.0f, 0.0f));
         plane_2.Draw(shadowShader);
 
         grassShader.Activate();
@@ -251,7 +314,6 @@ int main()
         grass.Draw(grassShader, false, true, grass_renderer.models);
 
         render.drawAnimations(camera, animationShader, circle, SCR_WIDTH, SCR_HEIGHT, model, view, projection, deltaTime);
-        /* SKYBOX */
 
         glDepthFunc(GL_LEQUAL);
         skyBoxShader.Activate();
