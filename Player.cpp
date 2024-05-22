@@ -4,7 +4,8 @@ Player::Player() {
     player =    aModel("./animations/player_walking.dae", false);
     player_object = aModel("./animations/guy_object.obj", false);
     walk_animation = Animation("./animations/player_walking.dae", &player);
-    idle_animation = Animation("./animations/player_arm.dae", &player);
+    idle_animation = Animation("./animations/player_idle.dae", &player);
+    jump_animation = Animation("./animations/player_jump.dae", &player);
     player_animator = Animator(&walk_animation);
 
     aabb = player_object.collision.calculateBoundingBox();
@@ -27,7 +28,13 @@ void Player::Draw(
 
     aabb.position += future_position;
     
-    if (player.collision.CheckCollisionY(aabb, circle_aabb))
+    if (glm::vec3(position.x, 0.0f, position.z) == glm::vec3(future_position.x, 0.0f, future_position.z)) {
+        moving = false;
+    } else {
+        moving = true;
+    }
+    // check collision if on ground
+    if (player.collision.CheckCollision(aabb, circle_aabb))
     {
         move = true;
         instantaneus_velocity = glm::vec3(0.0f, 0.0f, 0.0f);
@@ -49,11 +56,19 @@ void Player::Draw(
     {
         position = future_position;
         camera.Position = position + glm::vec3(-40.0f * camera.Front.x, 40.0f, -40.0f * camera.Front.z);
+    }
+
+    // play the currect animation
+    if (moving && move) {
         player_animator.SetNewAnimation(&walk_animation);
     }
-    else
-    {
+
+    if (!move || !moving) {
         player_animator.SetNewAnimation(&idle_animation);
+    }
+
+    if (position.y > -35.0f) {
+        player_animator.SetNewAnimation(&jump_animation);
     }
 
     player_animator.UpdateAnimation(delta_time);

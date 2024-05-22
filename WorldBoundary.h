@@ -13,7 +13,7 @@ class WorldBoundary {
     
     
     public:
-        float radius_size = 120.0f;
+        float radius_size = 200.0f;
         
         float size_x = 0.0f;
         float size_y = 0.0f;

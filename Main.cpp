@@ -176,7 +176,6 @@ int main()
     Cricketers cricketers;
     cricketers.generate_positions(circle.radius, grass_renderer.pitch_bounds);
     cricketers.get_batter_starting_positions(grass_renderer.pitch_bounds);
-    // cricketers.print_random_positions();
 
     while (!glfwWindowShouldClose(window))
     {
@@ -201,6 +200,7 @@ int main()
         depthShader.setMat4("view", view);
         depthShader.setMat4("model", glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, -50.0f, 0.0f)));
         depthShader.setVec4("lightColor", glm::vec3(1.0f, 0.0f, 0.0f));
+        cricketers.draw(depthShader, view, projection);
         plane_2.Draw(depthShader);
 
         shadow.unBindFrameBuffer();
@@ -219,13 +219,8 @@ int main()
             view);
 
         shadowShader.Activate();
-        // shadowShader.setVec3("lightPosition", lightPos);
-        // shadowShader.setVec3("lightColor", glm::vec3(0.5, 0.0, 0.0));
         shadowShader.setVec3("lightPos", lightPos);
         shadowShader.setVec3("viewPos", camera.Position);
-        // shadowShader.setMat3("normalMatrix", glm::transpose(glm::inverse(glm::mat3(model))));
-
-        // test.Draw(shadowShader);
 
         render.drawBuildings(camera, shadowShader, circle, SCR_WIDTH, SCR_WIDTH, model, view, projection);
         glm::vec3 translation_offset = render.processInput(camera, window, player.position, camera.Front);
@@ -248,8 +243,6 @@ int main()
         shadowShader.setMat4("view", view);
         shadowShader.setMat4("model", glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, -50.0f, 0.0f)));
         shadowShader.setVec4("lightColor", glm::vec3(1.0f, 0.0f, 0.0f));
-        // circle.collision.generateBoundingBoxMesh(circleAABB, glm::vec4(0.0f, 0.0f, 1.0f, 1.0f)).Draw(shadowShader);
-        // plane.Draw(shadowShader);
         plane_2.Draw(shadowShader);
 
         grassShader.Activate();

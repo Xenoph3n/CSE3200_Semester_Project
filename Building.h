@@ -27,7 +27,9 @@ class Building {
         std::vector<AABB> aabbs;
         std::vector<aModel> models;
         std::vector<std::string> file_paths;
+        
         void get_file_list(const std::string folder_path);
+
         void render(Shader &shader, 
                     aCamera &camera, 
                     float screen_width, 

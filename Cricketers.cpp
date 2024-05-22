@@ -105,10 +105,6 @@ void Cricketers::get_batter_starting_positions(glm::vec4 pitch_bounds) {
 
     batter_1_position = glm::vec3(pitch_bounds.x, -50.0f, 0.0f);
     batter_2_position = glm::vec3(pitch_bounds.z, -50.0f, 0.0f);
-
-    std::cout << "Batter Position" << "( x: " << batter_1_position.x << ", y: " << batter_1_position.y << ", z: " << batter_1_position.z << ")" << std::endl;
-    std::cout << "Batter Position" << "( x: " << batter_2_position.x << ", y: " << batter_2_position.y << ", z: " << batter_2_position.z << ")" << std::endl;
-
 }
 
 void Cricketers::print_random_positions() {
@@ -127,21 +123,21 @@ void Cricketers::draw(Shader& shader, glm::mat4 view, glm::mat4 projection) {
 
     glm::mat4 model;
 
-    for(int i = 0; i < positions.size(); i++) {
-        model = glm::mat4(1.0f);
+    // for(int i = 0; i < positions.size(); i++) {
+    //     model = glm::mat4(1.0f);
 
-        // rotations[i] += 0.1f;
+    //     // rotations[i] += 0.1f;
 
-        model = glm::translate(model, positions[i]);
+    //     model = glm::translate(model, positions[i]);
 
-        if (rotations[i] == 0.0f) {
-            model = glm::scale(model, glm::vec3(5.0f, 5.0f, 5.0f));
-        } 
-        model = glm::rotate(model, rotations[i], glm::vec3(0.0f, 1.0f, 0.0f));
+    //     if (rotations[i] == 0.0f) {
+    //         model = glm::scale(model, glm::vec3(5.0f, 5.0f, 5.0f));
+    //     } 
+    //     model = glm::rotate(model, rotations[i], glm::vec3(0.0f, 1.0f, 0.0f));
 
-        shader.setMat4("model", model);
-        field_man.Draw(shader);
-    }
+    //     shader.setMat4("model", model);
+    //     field_man.Draw(shader);
+    // }
     
     model = glm::mat4(1.0f);
     model = glm::translate(model, batter_1_position);
@@ -151,6 +147,18 @@ void Cricketers::draw(Shader& shader, glm::mat4 view, glm::mat4 projection) {
 
     model = glm::mat4(1.0f);
     model = glm::translate(model, batter_2_position);
+    model = glm::rotate(model, glm::radians(-90.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+    shader.setMat4("model", model);
+    field_man.Draw(shader);
+
+    model = glm::mat4(1.0f);
+    model = glm::translate(model, glm::vec3(batter_1_position.x - 30.0f, batter_1_position.y, -10.0f));
+    model = glm::rotate(model, glm::radians(90.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+    shader.setMat4("model", model);
+    field_man.Draw(shader);
+
+    model = glm::mat4(1.0f);
+    model = glm::translate(model, glm::vec3(batter_2_position.x + 20.0f, batter_1_position.y, 0.0f));
     model = glm::rotate(model, glm::radians(-90.0f), glm::vec3(0.0f, 1.0f, 0.0f));
     shader.setMat4("model", model);
     field_man.Draw(shader);
