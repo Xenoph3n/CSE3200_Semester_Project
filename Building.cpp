@@ -111,10 +111,9 @@ void Building::draw(Shader &shader, aCamera &camera, float screen_height, float 
         // glm::mat4 projection = glm::perspective(glm::radians(camera.Zoom), (float)screen_width / (float) screen_height, 0.1f, 2000.0f);
         glm::mat4 view = camera.GetViewMatrix();
 
-        local_model = glm::translate(local_model, glm::vec3(0.0f, 0.0f, 0.0f));
+        local_model = glm::translate(local_model, translation);
         local_model = glm::scale(local_model, scale);	
         local_model = glm::rotate(local_model, glm::radians(rotation), rotation_axis);
-        local_model = glm::translate(local_model, translation);
         
         shader.setMat4("model", local_model);    
         glm::vec4 aabb_position = glm::vec4(aabbs[i].position.x, aabbs[i].position.y, aabbs[i].position.z, 1.0f);

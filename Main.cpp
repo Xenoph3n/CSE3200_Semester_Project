@@ -175,7 +175,8 @@ int main()
 
     Cricketers cricketers;
     cricketers.generate_positions(circle.radius, grass_renderer.pitch_bounds);
-    cricketers.print_random_positions();
+    cricketers.get_batter_starting_positions(grass_renderer.pitch_bounds);
+    // cricketers.print_random_positions();
 
     while (!glfwWindowShouldClose(window))
     {
