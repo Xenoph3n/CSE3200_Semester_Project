@@ -60,7 +60,7 @@
      <ClCompile Include="Circle.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Render.cpp">
+    <ClCompile Include="Building.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Grass.cpp">
@@ -128,7 +128,7 @@
      <ClInclude Include="Circle.h">
       <Filter>Source Files</Filter>
     </ClInclude>
-    <ClInclude Include="Render.h">
+    <ClInclude Include="Building.h">
       <Filter>Source Files</Filter>
     </ClInclude>
     <ClInclude Include="Vertex.h">

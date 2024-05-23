@@ -173,7 +173,7 @@
     <ClCompile Include="VAO.cpp" />
     <ClCompile Include="VBO.cpp" />
     <ClCompile Include="Circle.cpp" />
-    <ClCompile Include="Render.cpp" />
+    <ClCompile Include="Building.cpp" />
     <ClCompile Include="Grass.cpp" />
     <ClCompile Include="Shadow.cpp" />
     <ClCompile Include="Animation.cpp" />
@@ -200,7 +200,7 @@
     <ClInclude Include="VAO.h" />
     <ClInclude Include="VBO.h" />
     <ClInclude Include="Circle.h" />
-    <ClInclude Include="Render.h" />
+    <ClInclude Include="Building.h" />
     <ClInclude Include="Vertex.h" />
     <ClInclude Include="Grass.h" />
     <ClInclude Include="Shadow.h" />
