@@ -10,8 +10,6 @@ void Circle::calculate(glm::vec3 center_position, float angle_in_degrees, float 
     glm::vec3 positions[number_of_sections + 1];
     unsigned int ind[number_of_sections * number_of_sections_per_quadrant];
 
-    std::cout << number_of_sections << "\n";
-
     float x = center_position.x;
     float z = center_position.z + radius;
     
@@ -56,10 +54,6 @@ void Circle::calculate(glm::vec3 center_position, float angle_in_degrees, float 
 
     positions[number_of_sections] = center_position;
 
-    // for (int i = 0; i < number_of_sections + 1; i++) {
-    //     std::cout << "(" << positions[i].x << "," << positions[i].z << "," << positions[i].z << ")" << "\n";
-    // }
-
     unsigned int count = 0;
     for (int i = 0; i < number_of_sections * number_of_sections_per_quadrant; i+=number_of_sections_per_quadrant) {
         // ind[i] = number_of_sections;
@@ -76,10 +70,6 @@ void Circle::calculate(glm::vec3 center_position, float angle_in_degrees, float 
         count +=1;
     }
 
-    // for (int i = 0; i < number_of_sections * number_of_sections_per_quadrant; i++) {
-    //     std::cout << "Index " << indices.at(i) << "\n";
-    // }
-
     for (int i = 0; i <= number_of_sections; i++) {
         Vertex vertex;
 
@@ -88,26 +78,8 @@ void Circle::calculate(glm::vec3 center_position, float angle_in_degrees, float 
         vertex.color = color; 
         vertex.normal = glm::vec3(0.0f, 1.0f, 0.0f);
         vertex.texUV = glm::vec2(positions[i].x, positions[i].z);
-        // std::cout << "(" << positions[i].x << "," << positions[i].z << "," << positions[i].z << ")" << "\n";
-        // std::cout << "(" << vertex.position.x << "," << vertex.position.z << "," << vertex.position.z << ")" << "\n";
-        // std::cout << "(" << vertex.normal.x << "," << vertex.normal.z << "," << vertex.normal.z << ")" << "\n";
-        // std::cout << "(" << vertex.color.x << "," << vertex.color.z << "," << vertex.color.z << ")" << "\n";
-        // std::cout << "(" << vertex.texUV.x << "," << vertex.texUV.z << ")" << "\n";
-
+    
         vertices.push_back(vertex);
     }
-
-    
-    // for (int i = 0; i < number_of_sections; i++) {
-    //     std::cout << "(" << vertices[i].position.x << "," << vertices[i].position.y << "," << vertices[i].position.z << ")" << "\n";
-    //     // std::cout << "(" << vertices[i].color.x << "," << vertices[i].color.y << "," << vertices[i].color.z << ")" << "\n";
-
-    // }
-
-	// glm::vec3 position;
-	// glm::vec3 normal; --> up vector
-	// glm::vec3 color; --> random color
-	// glm::vec2 texUV; --> just the x and z for position
-
 
 }

@@ -83,7 +83,6 @@ Mesh Collision::generateBoundingBoxMesh(AABB _aabb, glm::vec4 color) {
 
     glm::vec3 vertex_1 = glm::vec3(_aabb.position.x, _aabb.position.y, _aabb.position.z + _aabb.size.z);
     glm::vec3 vertex_2 = glm::vec3(_aabb.position.x + _aabb.size.x, _aabb.position.y, _aabb.position.z + _aabb.size.z);
-    // glm::vec3 vertex_2 = glm::vec3(right_most_point, top_most_point, front_most_point);
     glm::vec3 vertex_3 = glm::vec3(_aabb.position.x + _aabb.size.x, _aabb.position.y - _aabb.size.y, _aabb.position.z + _aabb.size.z);
     glm::vec3 vertex_4 = glm::vec3(_aabb.position.x, _aabb.position.y - _aabb.size.y,  _aabb.position.z + _aabb.size.z);
 

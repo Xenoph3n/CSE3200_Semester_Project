@@ -7,12 +7,6 @@ Light::Light() {
 void Light::draw(Shader& shader, glm::mat4 view, glm::mat4 projection) {
     
     shader.Activate();
-    shader.setVec3("lightPos", lightPosition);
-    shader.setVec3("spotlightDirection", spotlightDirection);
-    shader.setBool("spotlightOn", spotLightOn);
-    shader.setVec3("lightColor", glm::vec3(1.0f, 1.0f, 1.0f)); 
-    shader.setVec3("viewPos", glm::vec3(0.0f, 0.0f, 3.0f)); 
-    
     glm::mat4 model = glm::mat4(1.0f);
     model = glm::translate(model, position);
     model = glm::rotate(model, glm::radians(rotation), glm::vec3(0.0f, 1.0f, 0.0f));

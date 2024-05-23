@@ -402,13 +402,7 @@ glm::vec3 Render::processInput(aCamera& camera, GLFWwindow *window, glm::vec3 pl
         translation_offset = glm::vec3(1.0f, 0.0f, 1.0f) * -direction;
         move = true;
     }
-    if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
-    {
-    }
-    if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
-    {
-        //    camera.ProcessKeyboard(RIGHT, deltaTime);
-    }
+    
     if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS)
     {
         translation_offset = glm::vec3(0.0f, 20.0f, 0.0f);
@@ -451,3 +445,4 @@ glm::vec3 Render::processInput(aCamera& camera, GLFWwindow *window, glm::vec3 pl
 
     return translation_offset;
 }
+

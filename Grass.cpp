@@ -12,11 +12,8 @@ void Grass::DrawSingle(Mesh grass, Shader &shader, glm::vec3 position, glm::mat4
 
         randomNumber = getRandomNumber(1, 30);
         
-        // std::cout << randomNumber << "\n";
-
         model = glm::rotate(model, glm::radians((float) orientations[index].s1), glm::vec3(0.0f, -1.0f, 0.0f));
         shader.setMat4("model", model);
-        // shader.setVec4("lightColor", lightColor);
         grass.Draw(shader, false);
 
         model = glm::rotate(model, glm::radians((float) -orientations[index].s1), glm::vec3(0.0f, -1.0f, 0.0f));
@@ -25,7 +22,6 @@ void Grass::DrawSingle(Mesh grass, Shader &shader, glm::vec3 position, glm::mat4
 
         randomNumber = getRandomNumber(30, 60);
 
-        // std::cout << randomNumber << "\n";
         
         model = glm::rotate(model, glm::radians((float) orientations[index].s2), glm::vec3(0.0f, -1.0f, 0.0f));
         shader.setMat4("model", model);
@@ -36,7 +32,6 @@ void Grass::DrawSingle(Mesh grass, Shader &shader, glm::vec3 position, glm::mat4
         grass.Draw(shader, false);
 
         randomNumber = getRandomNumber(60, 90);
-        // std::cout << randomNumber << "\n";
 
         model = glm::rotate(model, glm::radians((float) orientations[index].s3), glm::vec3(0.0f, -1.0f, 0.0f));
         shader.setMat4("model", model);
@@ -73,12 +68,7 @@ void Grass::DrawGrid(Mesh grass, Shader &shader, glm::vec3 position, glm::mat4 m
         for (int j = 0; j < 2; j++) {
             pos.z += 10.0f;
             shader.Activate();
-            // shader.setMat4("model", local_model);
             shader.setMat4("model[" + std::to_string(index) + "]", glm::translate(local_model, glm::vec3(offset, 0.0f, 0.0f)));
-            // shader.setVec3("offsets[" + std::to_string(index) + "]", glm::vec3(offset , 0.0f, 0.0f));   
-            // DrawSingle(grass, shader, pos, model, index);
-            // DrawSingle(grass, shader, glm::vec3(pos.x, pos.y, pos.z + 0.3), model, index);
-            // std::cout << pos.x << "\n";
             index++;
             offset += 1.0f;
         }

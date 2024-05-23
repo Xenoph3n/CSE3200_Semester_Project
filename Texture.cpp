@@ -17,12 +17,10 @@ Texture::Texture(const char* image, const char* texType, GLuint slot, GLuint id)
 	// Generates an OpenGL texture object
 	glGenTextures(1, &ID);
 
-	std::cout << "texture id on texture \n" << ID;
 	// Assigns the texture to a Texture Unit
 	glActiveTexture(GL_TEXTURE0 + slot);
 	unit = slot;
 
-	std::cout << "Unit \n" << slot;
 	glBindTexture(GL_TEXTURE_2D, ID);
 
 	// Configures the type of algorithm that is used to make the image smaller or bigger

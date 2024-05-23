@@ -1,9 +1,5 @@
 #include "Building.h"
 
-// Building::Building(Shader &shader, aCamera &camera) {
-//     ourCamera = camera;
-// }
-
 void Building::get_file_list(const std::string folder_path) {
 
     // Iterate over all files in the folder
@@ -18,9 +14,6 @@ void Building::get_file_list(const std::string folder_path) {
         } 
     }
 
-    // for (std::string file_path : file_paths) {
-    //     std::cout << file_path << "\n";
-    // }
 }
 
 void Building::render(Shader &shader, aCamera &camera, float screen_width, float screen_height, glm::vec3 scale, glm::vec3 translation, float rotation_in_degrees) {
@@ -51,13 +44,6 @@ void Building::render_model(Shader &shader, std::string file_path, glm::mat4 pro
     aModel object(file_path, false);
     AABB aabb = object.collision.calculateBoundingBox();
 
-    // glm::mat4 aabbModel = glm::mat4(1.0f);    
-
-    // aabbModel = glm::translate(aabbModel, glm::vec3(0.0f, 0.0f, 0.0f));
-    // aabbModel = glm::rotate(aabbModel, glm::radians(rotation_in_degrees), glm::vec3(0.0f, 1.0f, 0.0f));
-    // aabbModel = glm::translate(aabbModel, glm::vec3(0.0f, 0.0f, 0.0f));
-    // glm::vec3 new_position = glm::vec3(aabbModel * glm::vec4(aabb.position, 1.0f));
-    // aabb.position = new_position;
     aabbs.push_back(aabb);
 
     models.push_back(object);
@@ -76,29 +62,21 @@ void Building::render_model(Shader &shader, std::string file_path, glm::mat4 pro
 
     float shiny_value = 1.0f;
     if (file_path.find(WINDOW) != std::string::npos) {
-        // std::cout << "WINDOW FOUND" << "\n";
         shiny_value = 200.0f;
     } 
 
     if (file_path.find(CHAIR) != std::string::npos) {
-        // std::cout << "CHAIR FOUND" << "\n";
         shiny_value = 100.0f;
-
     }
 
     if (file_path.find(RAILING) != std::string::npos) {
-        // std::cout << "RAILING FOUND" << "\n";
         shiny_value = 200.0f;
-
     }
      
     for (aMesh mesh :  object.meshes) {
         meshes.meshes.push_back(mesh);
         meshes.shininess.push_back(shiny_value);
     }
-
-    // meshes.push_back(object);
-    // object.Draw(shader);
 }
 
 void Building::draw(Shader &shader, aCamera &camera, float screen_height, float screen_width, glm::mat4 model, glm::vec3 scale, glm::vec3 translation, float rotation, glm::vec3 rotation_axis
@@ -108,7 +86,6 @@ void Building::draw(Shader &shader, aCamera &camera, float screen_height, float 
 
         shader.Activate();
         glm::mat4 local_model = model;
-        // glm::mat4 projection = glm::perspective(glm::radians(camera.Zoom), (float)screen_width / (float) screen_height, 0.1f, 2000.0f);
         glm::mat4 view = camera.GetViewMatrix();
 
         local_model = glm::translate(local_model, glm::vec3(0.0f, 0.0f, 0.0f));
@@ -120,16 +97,9 @@ void Building::draw(Shader &shader, aCamera &camera, float screen_height, float 
         glm::vec4 aabb_position = glm::vec4(aabbs[i].position.x, aabbs[i].position.y, aabbs[i].position.z, 1.0f);
 
         shader.setMat4("view", view);
-
-        // std::cout << "SHININESS" << meshes.shininess[i] << "\n";
         shader.setFloat("shininess", meshes.shininess[i]);
         meshes.meshes[i].Draw(shader);
         shader.setMat4("model", glm::mat4(1.0f));
-        // models[i].collision.generateBoundingBoxMesh(aabbs[i], glm::vec4(1.0f, 0.0f, 1.0f, 1.0f)).Draw(shader);
-        // for (unsigned int x = 0; x < meshes[i].vertices.size(); x++) {
-        //     std::cout << meshes[i].vertices[x].Position.x << "," << meshes[x].vertices[x].Position.y << "," << meshes[i].vertices[x].Position.z << ")" << "\n";
-        // }
-        // aabbs[i].position = glm::vec3(aabb_position.x, aabb_position.y, aabb_position.z);
     }
     update = true;
 }

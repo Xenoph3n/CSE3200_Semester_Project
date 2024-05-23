@@ -184,6 +184,10 @@
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="Cricketers.cpp" />
+    <ClCompile Include="Light.cpp" />
+    <ClCompile Include="Collosion.cpp" />
+
+
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="aCamera.h" />
@@ -208,6 +212,9 @@
     <ClInclude Include="Render.h" />
     <ClInclude Include="Player.h" />
     <ClInclude Include="Cricketers.h" />
+    <ClInclude Include="Light.h" />
+    <ClInclude Include="Collision.h" />
+
 
   </ItemGroup>
   <ItemGroup>

@@ -50,10 +50,6 @@ bool firstMouse = true;
 float deltaTime = 0.0f;
 float lastFrame = 0.0f;
 
-bool move = true;
-bool check = false;
-
-
 int main()
 {
 
@@ -131,9 +127,6 @@ int main()
 
     Mesh ground(verts, ind, tex, false);
 
-    aModel mega_cube("./stadium/crow/scene.gltf", false);
-    aModel test("./stadium/blue_1/bottom_green.obj", false);
-
     Player player;
     player.position = glm::vec3(0.0f, 0.0f, 0.0f);
 
@@ -194,7 +187,6 @@ int main()
     stadium_light_3.position = glm::vec3(circle.vertices[9].position.x - 40.0f, -50.0f, circle.vertices[9].position.z);
     stadium_light_3.rotation = 90.0f;
 
-
     std::vector<glm::vec3> light_positions = {
         glm::vec3(circle.vertices[0].position.x, 100.0f, circle.vertices[0].position.z + 30.0f),
         glm::vec3(circle.vertices[3].position.x + 40.0f, 100.0f, circle.vertices[3].position.z),
@@ -208,14 +200,6 @@ int main()
         glm::vec3(0.0f, -1.0f, 1.0f),
         glm::vec3(1.0f, -1.0, 0.0f)
     };
-
-
-
-    //         x: 0.461299, y: -0.34202, z: 0.818673)
-// Camera Front( x: 0.461299, y: -0.34202, z: 0.818673)
-// Camera Front( x: 0.461299, y: -0.34202, z: 0.818673)
-// 0.461299Camera Front( x: 0.461299, y: -0.34202, z: 0.818673)
-        // shadowShader.setVec3("light.position", glm::vec3(0.0f,-20.0f,20.0f));
 
     while (!glfwWindowShouldClose(window))
     {
@@ -234,6 +218,11 @@ int main()
 
         shadow.setUpDepthMap(lightPos, depthShader);
 
+        stadium_light_0.draw(depthShader, view, projection);
+        stadium_light_1.draw(depthShader, view, projection);
+        stadium_light_2.draw(depthShader, view, projection);
+        stadium_light_3.draw(depthShader, view, projection);
+
         render.drawBuildings(camera, depthShader, circle, SCR_WIDTH, SCR_WIDTH, model, view, projection);
 
         depthShader.setMat4("projection", projection);
@@ -241,6 +230,7 @@ int main()
         depthShader.setMat4("model", glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, -50.0f, 0.0f)));
         depthShader.setVec4("lightColor", glm::vec3(1.0f, 0.0f, 0.0f));
         cricketers.draw(depthShader, view, projection);
+        
         plane_2.Draw(depthShader);
 
         shadow.unBindFrameBuffer();
@@ -265,11 +255,7 @@ int main()
         for(int i = 0; i < 4; i++) {
             shadowShader.setVec3("light.position[" + std::to_string(i) + "]", light_positions[i]);
             shadowShader.setVec3("light.direction[" + std::to_string(i) + "]", light_directions[i]);
-
         }
-
-
-        Util::PrintVec3("Camera Front", camera.Front);
 
         shadowShader.setVec3("light.ambient", glm::vec3(0.1f, 0.1f, 0.1f));
         shadowShader.setVec3("light.diffuse", glm::vec3(0.8f, 0.8f, 0.8f));
@@ -330,8 +316,6 @@ int main()
         player.aabb.size = backupAABB.size;
       
         shadow.debug(debugShader, false);
-
-        move = false;
 
         glfwSwapBuffers(window);
         glfwPollEvents();

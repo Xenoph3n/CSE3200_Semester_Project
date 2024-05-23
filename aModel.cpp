@@ -236,20 +236,6 @@ void aModel::SetVertexBoneData(aVertex& vertex, int boneID, float weight)
 		}
 	}
 
-
-// void SetVertexBoneData(aVertex& vertex, int boneID, float weight)
-// {
-//     for (int i = 0; i < MAX_BONE_WEIGHTS; ++i)
-//     {
-//         if (vertex.m_BoneIDs[i] < 0)
-//         {
-//             vertex.m_Weights[i] = weight;
-//             vertex.m_BoneIDs[i] = boneID;
-//             break;
-//         }
-//     }
-// }
-
 void aModel::ExtractBoneWeightForVertices(std::vector<aVertex>& vertices, aiMesh* mesh, const aiScene* scene)
 {
     for (int boneIndex = 0; boneIndex < mesh->mNumBones; ++boneIndex)
@@ -288,7 +274,6 @@ glm::vec3 aModel::ApplyGravity() {
     glm::vec3 ground = glm::vec3(0.0f, -50.0f, 0.0f);
 
     if (apply_gravity) {
-        // position.y -= 0.1f;
         return glm::vec3(0.0f, -9.8f, 0.0f);       
     }
 
@@ -304,9 +289,6 @@ unsigned int TextureFromFile2(const char* path, const std::string& directory, bo
 
     unsigned int textureID;
     glGenTextures(1, &textureID);
-
-    // std::cout << "Texture: " << filename << std::endl;
-
 
     int width, height, nrComponents;
     unsigned char* data = stbi_load(filename.c_str(), &width, &height, &nrComponents, 0);

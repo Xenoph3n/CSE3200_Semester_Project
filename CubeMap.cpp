@@ -12,7 +12,6 @@ void CubeMap::setUp(std::vector<float> vertices) {
     for(float vert : vertices) {
         std::cout << "Vertice" << vert << "\n";
     }
-   // std::cout << "VAO" << vao << "VBO" << vbo << "\n";
 }
 
 void CubeMap::loadCubeMap(std::vector<std::string> faces)
