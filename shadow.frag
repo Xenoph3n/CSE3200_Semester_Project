@@ -118,7 +118,8 @@ vec3 CalcSpotLight(vec3 position, vec3 direction, vec3 normal, vec3 fragPos, vec
     float diff = max(dot(normal, lightDir), 0.0);
     // specular shading
     vec3 reflectDir = reflect(-lightDir, normal);
-    float spec = pow(max(dot(viewDir, reflectDir), 0.0), shininess);
+    vec3 halfwayDir = normalize(lightDir + viewDir);  
+    float spec = pow(max(dot(viewDir, halfwayDir), 0.0), shininess);
     // attenuation
     float distance = length(position - fragPos);
     float attenuation = 1.0 / (light.constant + light.linear * distance + light.quadratic * (distance * distance));    
