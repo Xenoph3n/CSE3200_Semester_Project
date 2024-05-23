@@ -182,7 +182,6 @@
     <ClCompile Include="CubeMap.cpp" />
     <ClCompile Include="Render.cpp" />
     <ClCompile Include="Player.cpp" />
-    <ClCompile Include="Player.cpp" />
     <ClCompile Include="Cricketers.cpp" />
     <ClCompile Include="Light.cpp" />
     <ClCompile Include="Collosion.cpp" />
