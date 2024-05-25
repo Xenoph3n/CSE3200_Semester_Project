@@ -35,7 +35,8 @@ public:
     int m_BoneCounter = 0;
 
     Collision collision;
-    bool apply_gravity = true;    
+    bool apply_gravity = true; 
+    bool full_path = true;   
     float gravity = 9.8f;
     
     std::vector<aTexture> textures_loaded;	// stores all the textures loaded so far, optimization to make sure textures aren't loaded more than once.
@@ -58,6 +59,8 @@ private:
     aMesh processMesh(aiMesh* mesh, const aiScene* scene);
     std::vector<aTexture> loadMaterialTextures(aiMaterial* mat, aiTextureType type,
         std::string typeName);
+    unsigned int TextureFromFile2(const char* path, const std::string& directory, bool gamma = false);
+
      
 };
 #endif

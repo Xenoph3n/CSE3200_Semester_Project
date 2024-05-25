@@ -1,8 +1,6 @@
 #include "Shadow.h"
 
 void Shadow::createDepthMap(Shader &shader) {
-     
- 
 
     glGenFramebuffers(1, &depthMapFBO);
 

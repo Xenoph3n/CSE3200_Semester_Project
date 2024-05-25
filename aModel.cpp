@@ -282,10 +282,16 @@ glm::vec3 aModel::ApplyGravity() {
 }
 
 
-unsigned int TextureFromFile2(const char* path, const std::string& directory, bool gamma)
+unsigned int aModel::TextureFromFile2(const char* path, const std::string& directory, bool gamma)
 {
     std::string filename = std::string(path);
-    filename = directory + '/' + filename;
+
+    if (!full_path) {
+        filename = directory + '/' + filename;
+    } else {
+        filename = filename;
+        std::cout << filename << "\n";
+    }
 
     unsigned int textureID;
     glGenTextures(1, &textureID);
