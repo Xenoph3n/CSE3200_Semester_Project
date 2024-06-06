@@ -1,0 +1,22 @@
+{
+    "version": 1,
+    "revision": 0,
+    "rules": [
+        {
+            "primary-output": "x64\\Debug\\Shader.h.obj",
+            "outputs": [
+                "C:\\Users\\shive\\source\\repos\\CSE3200_Semester_Project\\x64\\Debug\\vc143.pdb",
+                "x64\\Debug\\",
+                "C:\\Users\\shive\\source\\repos\\CSE3200_Semester_Project\\x64\\Debug\\Shader.h.ifc"
+            ],
+            "provides": [
+                {
+                    "logical-name": "Shader.h",
+                    "source-path": "c:\\users\\shive\\source\\repos\\cse3200_semester_project\\shader.h",
+                    "lookup-method": "absolute"
+                }
+            ],
+            "requires": []
+        }
+    ]
+}

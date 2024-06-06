@@ -7,8 +7,8 @@ void Circle::calculate(glm::vec3 center_position, float angle_in_degrees, float 
     int number_of_sections = floor(360.0f / angle_in_degrees);
     int number_of_sections_per_quadrant = number_of_sections / 4;
 
-    glm::vec3 positions[number_of_sections + 1];
-    unsigned int ind[number_of_sections * number_of_sections_per_quadrant];
+    glm::vec3 positions[20];
+    unsigned int ind[200];
 
     float x = center_position.x;
     float z = center_position.z + radius;

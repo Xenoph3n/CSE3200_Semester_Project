@@ -35,7 +35,6 @@
 void framebuffer_size_callback(GLFWwindow *window, int width, int height);
 void mouse_callback(GLFWwindow *window, double xpos, double ypos);
 void scroll_callback(GLFWwindow *window, double xoffset, double yoffset);
-void renderQuad();
 
 // settings
 const unsigned int SCR_WIDTH = 1920;
@@ -82,8 +81,8 @@ int main()
 
     glEnable(GL_DEPTH_TEST);
 
-    GLuint tex_id_1;
-    GLuint text_id_2;
+    GLuint tex_id_1 = 0;
+    GLuint text_id_2 = 1;
 
     Shader ourShader("./model.vert", "./model.frag");
     Shader planeShader("./plane.vert", "./plane.frag");
@@ -267,7 +266,7 @@ int main()
         shadowShader.setFloat("light.cutOff",   glm::cos(glm::radians(50.5f)));
         shadowShader.setBool("spotlightOn", render.spot_light_on);
         
-        render.drawBuildings(camera, shadowShader, circle, SCR_WIDTH, SCR_WIDTH, model, view, projection);
+  
         glm::vec3 translation_offset = render.processInput(camera, window, player.position, camera.Front);
         
         player.Draw(
@@ -285,6 +284,8 @@ int main()
         stadium_light_1.draw(shadowShader, view, projection);
         stadium_light_2.draw(shadowShader, view, projection);
         stadium_light_3.draw(shadowShader, view, projection);
+
+        render.drawBuildings(camera, shadowShader, circle, SCR_WIDTH, SCR_WIDTH, model, view, projection);
 
         cricketers.draw(shadowShader, view, projection);
         

@@ -290,7 +290,6 @@ unsigned int aModel::TextureFromFile2(const char* path, const std::string& direc
         filename = directory + '/' + filename;
     } else {
         filename = filename;
-        std::cout << filename << "\n";
     }
 
     unsigned int textureID;
@@ -321,7 +320,7 @@ unsigned int aModel::TextureFromFile2(const char* path, const std::string& direc
     }
     else
     {
-        std::cout << "aTexture failed to load at path: " << path << std::endl;
+       // std::cout << "aTexture failed to load at path: " << path << std::endl;
         stbi_image_free(data);
     }
 

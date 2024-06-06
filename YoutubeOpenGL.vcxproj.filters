@@ -57,7 +57,7 @@
     <ClCompile Include="aCamera.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-     <ClCompile Include="Circle.cpp">
+    <ClCompile Include="Circle.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Building.cpp">
@@ -69,7 +69,7 @@
     <ClCompile Include="Shadow.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-      <ClCompile Include="Animation.cpp">
+    <ClCompile Include="Animation.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Animator.cpp">
@@ -78,13 +78,13 @@
     <ClCompile Include="Bone.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-     <ClCompile Include="CubeMap.cpp">
+    <ClCompile Include="CubeMap.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Render.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-     <ClCompile Include="Player.cpp">
+    <ClCompile Include="Player.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Cricketers.cpp">
@@ -94,6 +94,12 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Collosion.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Shader.h">
+      <Filter>Header Files</Filter>
+    </ClCompile>
+    <ClCompile Include="WorldBoundary.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -110,65 +116,65 @@
     <ClInclude Include="Texture.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Camera.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="aMesh.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="aModel.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Shader.h">
-      <Filter>Source Files</Filter>
+    <ClInclude Include="Mesh.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="aCamera.h">
-      <Filter>Source Files</Filter>
+      <Filter>Header Files</Filter>
     </ClInclude>
-     <ClInclude Include="Circle.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Building.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Vertex.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Grass.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Shadow.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
-     <ClInclude Include="Animation.h">
-      <Filter>Source Files</Filter>
+    <ClInclude Include="Animation.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Animator.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Points.h">
-      <Filter>Source Files</Filter>
+      <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Bone.h">
-      <Filter>Source Files</Filter>
+      <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="CubeMap.h">
-      <Filter>Source Files</Filter>
+    <ClInclude Include="Building.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Render.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Player.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Cricketers.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Light.h">
-      <Filter>Source Files</Filter>
+    <ClInclude Include="Circle.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Collision.h">
-      <Filter>Source Files</Filter>
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Cricketers.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="CubeMap.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Grass.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Light.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Player.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Points.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Render.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Shadow.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Vertex.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="WorldBoundary.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -196,19 +202,19 @@
     <None Include="plane.vert">
       <Filter>Resource Files\Shaders</Filter>
     </None>
-      <None Include="shiny.frag">
+    <None Include="shiny.frag">
       <Filter>Resource Files\Shaders</Filter>
     </None>
     <None Include="shiny.vert">
       <Filter>Resource Files\Shaders</Filter>
     </None>
-      <None Include="grass.frag">
+    <None Include="grass.frag">
       <Filter>Resource Files\Shaders</Filter>
     </None>
     <None Include="grass.vert">
       <Filter>Resource Files\Shaders</Filter>
     </None>
-      <None Include="shadow.frag">
+    <None Include="shadow.frag">
       <Filter>Resource Files\Shaders</Filter>
     </None>
     <None Include="shadow.vert">
@@ -232,6 +238,17 @@
     <None Include="player.vert">
       <Filter>Resource Files\Shaders</Filter>
     </None>
-    
+    <None Include="skybox.vert">
+      <Filter>Resource Files\Shaders</Filter>
+    </None>
+    <None Include="skybox.frag">
+      <Filter>Resource Files\Shaders</Filter>
+    </None>
+    <None Include="animation.vert">
+      <Filter>Resource Files\Shaders</Filter>
+    </None>
+    <None Include="animation.frag">
+      <Filter>Resource Files\Shaders</Filter>
+    </None>
   </ItemGroup>
 </Project>

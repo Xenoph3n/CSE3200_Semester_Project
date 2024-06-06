@@ -2,7 +2,7 @@
 
 newmtl None_0
 Kd 0.800000 0.800000 0.800000
-map_Kd ../../textures/green_concrete_2.jpg
+map_Kd C:\textures\green_concrete_2.jpg
 newmtl Material.001_0
 Kd 0.799103 0.000000 0.015996
-map_Kd ../../textures/green_concrete_2.jpg
+map_Kd C:\textures\green_concrete_2.jpg

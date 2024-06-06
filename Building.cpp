@@ -94,7 +94,7 @@ void Building::draw(Shader &shader, aCamera &camera, float screen_height, float 
         local_model = glm::translate(local_model, translation);
         
         shader.setMat4("model", local_model);    
-        glm::vec4 aabb_position = glm::vec4(aabbs[i].position.x, aabbs[i].position.y, aabbs[i].position.z, 1.0f);
+        // glm::vec4 aabb_position = glm::vec4(aabbs[i].position.x, aabbs[i].position.y, aabbs[i].position.z, 1.0f);
 
         shader.setMat4("view", view);
         shader.setFloat("shininess", meshes.shininess[i]);
